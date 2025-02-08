@@ -2,7 +2,7 @@ import './App.css';
 
 function App() {
   return (
-    <h2>Trial</h2>
+    <h2>Welcome to Ijenga</h2>
   );
 }
 
