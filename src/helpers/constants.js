@@ -1,4 +1,5 @@
 export const constants = {
+    BASE_URL: "http://localhost:8000",
     endpoints: {
         auth: {
             login: "/userAccounts/login/",
@@ -24,7 +25,7 @@ export const constants = {
         },
         reports: {
             deadlines: "/reports/deadlines/",
-            "time-logs": "/reports/time-logs/"
+            time_logs: "/reports/time-logs/"
         },
         notifications: "/notifications/"
     }}
