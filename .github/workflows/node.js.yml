@@ -42,3 +42,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: dist/
+          remote-dir: /public_html/ijenga/  # Target deployment directory on your server
