@@ -1,1 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 976px;
+}
+
+@layer base {
+  body {
+    font-family: "Noto Sans", serif;
+  }
+  .text-blue{
+    @apply text-[#1D3557];
+  }
+  .text-green{
+    @apply text-[#2ECC71];
+  }
+  .blue{
+    @apply bg-[#1D3557];
+  }
+  .green{
+    @apply bg-[#2ECC71];
+  }
+  .sign-up-input{
+    @apply w-full pl-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2ECC71];
+  }
+}
+
+.container{
+  padding: 1rem;
+}
+
+#particles{
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background: linear-gradient(45deg, #1D3557, #2ECC71, #1D3557);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 5s ease infinite;
+}
