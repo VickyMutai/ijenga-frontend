@@ -33,7 +33,12 @@
   padding: 1rem;
 }
 
-
+#particles{
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
 
 @keyframes float {
   0%, 100% {

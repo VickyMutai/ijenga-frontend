@@ -1,12 +1,14 @@
 import { FaRegBuilding } from "react-icons/fa";
 import { UserRound, UserRoundPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ParticlesComponent from "../components/Particles";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   return (
     <div>
-      <div className="h-screen bg-gradient-to-br from-[#1D3557] to-[#1D3557]/90 p-4 lg:p-8 flex items-center justify-center">
+      <ParticlesComponent id="particles" />
+      <div className="h-screen p-4 lg:p-8 flex items-center justify-center">
         <main className="flex flex-col-reverse lg:flex-row items-center justify-center">
           {/* Left section */}
           <div className="text-center lg:text-left lg:w-1/2 px-4">
@@ -37,8 +39,8 @@ const LandingPage = () => {
 
           {/* Right section */}
           <div className="lg:w-1/2 flex justify-center mb-8 lg:mb-0">
-            <div className="w-[250px] h-[250px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] bg-white/10 backdrop-blur-lg rounded-full flex items-center justify-center">
-              <FaRegBuilding className="text-[#2ECC71] text-8xl md:text-9xl transform transition-all duration-500 hover:scale-105 animate-float" />
+            <div className="w-[250px] h-[250px] md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[400px] bg-white/5 backdrop-blur-sm rounded-full flex items-center justify-center">
+              <FaRegBuilding className="text-[#2ECC71] text-8xl md:text-9xl" />
             </div>
           </div>
         </main>
