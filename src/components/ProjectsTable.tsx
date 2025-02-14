@@ -18,6 +18,10 @@ interface ProjectsTableProps {
 
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
+
+  const handleRowClick = (projectId: number) => {
+    navigate(`/project-details/${projectId}`); // Navigates to project details page
+  };
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md mt-3">
       <table className="min-w-full divide-y divide-gray-200">
@@ -48,8 +52,12 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
         </thead>
 
         <tbody className="divide-y divide-gray-200">
-          {projects.map((project, index) => (
-            <tr key={index} className="hover:bg-gray-50 transition duration-200">
+          {projects.map((project) => (
+            <tr
+              key={project.id}
+              className="hover:bg-gray-100 transition duration-200 cursor-pointer"
+              onClick={() => handleRowClick(project.id)}
+            >
               <td className="px-6 py-4 text-sm text-gray-700">
                 {project.projectName}
               </td>
@@ -73,7 +81,10 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                   {/* View Button */}
                   <button
                     className="text-secondary hover:text-green-600 transition duration-200 cursor-pointer"
-                    onClick={() => navigate("/project-details")}
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleRowClick(project.id); 
+                    }}
                   >
                     <FaEye className="w-5 h-5" />
                   </button>
@@ -81,7 +92,10 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                   {/* Edit Button */}
                   <button
                     className="text-primary hover:text-blue-800 transition duration-200 cursor-pointer"
-                    onClick={() => {}}
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      handleRowClick(project.id); 
+                    }}
                   >
                     <FaPencilAlt className="w-5 h-5" />
                   </button>
