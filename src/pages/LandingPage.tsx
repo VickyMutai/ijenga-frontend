@@ -12,7 +12,7 @@ const LandingPage = () => {
         <main className="flex flex-col-reverse lg:flex-row items-center justify-center">
           {/* Left section */}
           <div className="text-center lg:text-left lg:w-1/2 px-4">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight animate-gradient">
+            <h2 className="text-[44px] md:text-6xl font-bold text-white mb-6 leading-tight animate-gradient">
               Welcome to <span className="text-[#2ECC71]">Ijenga</span> Portal
             </h2>
             <p className="text-gray-300 text-lg md:text-xl mb-8">
@@ -22,14 +22,14 @@ const LandingPage = () => {
             <div className="flex gap-6">
               <button
                 onClick={() => navigate("/login")} // Redirect to login page
-                className="flex gap-1.5 items-center cursor-pointer px-4 md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
+                className="flex gap-1.5 items-center cursor-pointer px-[16px] md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
               >
                 <UserRound />
                 <span className="font-medium text-[18px]">Login</span>
               </button>
               <button
                 onClick={() => navigate("/signup")} // Redirect to signup page
-                className="flex gap-1.5 items-center cursor-pointer px-4 md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105"
+                className="flex gap-1.5 items-center cursor-pointer px-[16px] md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105"
               >
                 <UserRoundPlus />
                 <span className="font-medium text-[18px]">Sign Up</span>
