@@ -22,7 +22,7 @@ const LandingPage = () => {
             <div className="flex gap-6">
               <button
                 onClick={() => navigate("/login")} // Redirect to login page
-                className="flex gap-1.5 items-center cursor-pointer px-5 md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
+                className="flex gap-1.5 items-center cursor-pointer px-4 md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
               >
                 <UserRound />
                 <span className="font-medium text-[18px]">Login</span>
