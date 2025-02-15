@@ -5,7 +5,8 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/HomePage";
 import ProjectDetails from "./pages/ProjectDetails";
-import SubContractedWorks from "./pages/SubContractedWorks";
+import CreateSubContractedWorks from "./pages/CreateSubContractedWorks";
+import SubcontractedWorkDetails from "./pages/SubcontractedWorksDetails";
 
 function App() {
 
@@ -17,9 +18,11 @@ function App() {
         <Route path="/signup" element={<Signup />}/>
         <Route path="forgot-password" element={<ForgotPassword />}/>
         <Route path="/home" element={<Home />}/>
-        <Route path="/project-details" element={<Navigate to="/" />} />
+        <Route path="/project-details" element={<Navigate to="/home" />} />
         <Route path="/project-details/:id" element={<ProjectDetails />} />
-        <Route path="/subcontracted-works-details/:id" element={<SubContractedWorks />} />
+        <Route path="/subcontracted-works-details" element={<Navigate to="/home" />} />
+        <Route path="/subcontracted-works-details/:id" element={<SubcontractedWorkDetails />} />
+        <Route path="/create-subcontracted-works" element={<CreateSubContractedWorks />}/>
       </Routes>
     </Router>
   )
