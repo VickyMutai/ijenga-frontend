@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { CirclePlus, X } from "lucide-react";
+import { X } from "lucide-react";
+import { FaPencilAlt } from "react-icons/fa";
 
-export default function CreateProjectModal() {
+export default function EditProjectDetails() {
   const [open, setOpen] = useState(false);
 
   return (
     <div>
-      <CirclePlus
-        type="button"
+      <button
+        className="flex items-center green text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-200 cursor-pointer"
         onClick={() => setOpen(true)}
-        className="text-blue cursor-pointer hover:scale-105"
-        size={28}
-      />
+      >
+        <FaPencilAlt className="mr-2" /> Edit Project Details
+      </button>
       <Dialog open={open} onClose={() => {}} className="relative z-10">
         <DialogBackdrop
           transition
@@ -25,9 +26,9 @@ export default function CreateProjectModal() {
               transition
               className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
             >
-              <div className="flex justify-between items-center gap-16 mt-4 px-4">
+              <div className="flex justify-between items-center gap-7 mt-4 px-4">
                 <h2 className="text-xl md:text-2xl font-bold text-blue">
-                  Create Project
+                  Edit Project Details
                 </h2>
                 <button
                   onClick={() => setOpen(false)}
@@ -38,7 +39,7 @@ export default function CreateProjectModal() {
               </div>
               <div className="bg-white px-4 pt-3 pb-4 sm:p-6 sm:pb-4">
                 <div>
-                  <form className="space-y-3">
+                  <form className="space-y-2.5">
                     <div>
                       <label
                         htmlFor="project-name"
@@ -106,6 +107,25 @@ export default function CreateProjectModal() {
                         className="block text-sm font-medium text-gray-700 mb-1"
                       >
                         Assign Supervisor-Consultant
+                      </label>
+                      <select
+                        id="supervisor-consultant"
+                        className="project-modal-input pr-2"
+                      >
+                        <option value=""></option>
+                        <option value="person1">Person 1</option>
+                        <option value="person2">Person 2</option>
+                        <option value="person3">Person 3</option>
+                        <option value="person4">Person 4</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="supervisor-consultant"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Assign Sub-Contractor
                       </label>
                       <select
                         id="supervisor-consultant"
