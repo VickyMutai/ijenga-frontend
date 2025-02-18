@@ -109,6 +109,49 @@ export const loadUser = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  "auth/forgotPassword",
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await api.post(constants.endpoints.auth.forgot_password, { email });
+
+      console.log("📩 Forgot Password response:", response.data);
+      return response.data.message || "Password reset link sent! Check your email.";
+    } catch (error: unknown) {
+      console.error("Forgot Password error:", error);
+      return rejectWithValue("Failed to send password reset link. Please try again.");
+    }
+  }
+);
+
+export const resetPassword = createAsyncThunk(
+  "auth/resetPassword",
+  async (
+    { user_id, token, new_password, re_enter_password }: { 
+      user_id: string; 
+      token: string; 
+      new_password: string; 
+      re_enter_password: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.post(constants.endpoints.auth.password_reset, {
+        user_id,
+        token,
+        new_password,
+        re_enter_password,
+      });
+
+      console.log("🔑 Reset Password response:", response.data);
+      return response.data.message || "Password successfully reset!";
+    } catch (error: unknown) {
+      console.error("Reset Password error:", error);
+      return rejectWithValue("Failed to reset password. Please try again.");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
