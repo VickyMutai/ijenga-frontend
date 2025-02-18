@@ -10,6 +10,7 @@ const Signup = () => {
   const navigate = useNavigate();
   
   const { loading, error } = useSelector((state: RootState) => state.auth);
+  const [errors, setErrors] = useState<{ phone?: string; password?: string }>({});
 
   // Form state
   const [formData, setFormData] = useState({
@@ -30,26 +31,40 @@ const Signup = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const validationErrors: { phone?: string; password?: string } = {};
   
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      validationErrors.password = "Passwords do not match!";
+    }
+  
+    if (!formData.phone.startsWith("0")) {
+      validationErrors.phone = "Phone number must start with 0.";
+    } else if (formData.phone.length !== 10) {
+      validationErrors.phone = "Phone number must be exactly 10 digits.";
+    }
+    
+  
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
+  
+    setErrors({}); // Clear errors if valid
   
     const userData = {
       email: formData.email,
       password: formData.password,
-      re_enter_password: formData.confirmPassword, // API expects this field
+      re_enter_password: formData.confirmPassword,
       first_name: formData.firstName,
       last_name: formData.lastName,
-      role: formData.role.toLowerCase().replace(/\s+/g, "-"), // Convert to API format
+      role: formData.role.toLowerCase().replace(/\s+/g, "-"),
       phone_number: formData.phone,
     };
   
     const result = await dispatch(registerUser(userData));
   
     if (registerUser.fulfilled.match(result)) {
-      navigate("/home"); // Redirect after successful signup
+      navigate("/home");
     }
   };
   
@@ -112,6 +127,7 @@ const Signup = () => {
               className="sign-up-input"
               required
             />
+            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}         
           </div>
           <div className="relative">
             <HardHat className="absolute left-3 top-3 opacity-50" size={21} />
@@ -153,6 +169,8 @@ const Signup = () => {
               required
             />
           </div>
+
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
