@@ -1,10 +1,14 @@
 import { FaRegBuilding } from "react-icons/fa";
-import { UserRound, UserRoundPlus } from "lucide-react";
+import { UserRound, UserRoundPlus, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../reducers/store";
 import ParticlesComponent from "../components/Particles";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const token = useSelector((state: RootState) => state.auth.token); // 🔍 Check if user is logged in
+
   return (
     <div>
       <ParticlesComponent id="particles" />
@@ -19,22 +23,37 @@ const LandingPage = () => {
               Your gateway to simplify project workflows for construction
               companies.
             </p>
-            <div className="flex gap-6">
-              <button
-                onClick={() => navigate("/login")} // Redirect to login page
-                className="flex gap-1.5 items-center cursor-pointer px-[16px] md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
-              >
-                <UserRound />
-                <span className="font-medium text-[18px]">Login</span>
-              </button>
-              <button
-                onClick={() => navigate("/signup")} // Redirect to signup page
-                className="flex gap-1.5 items-center cursor-pointer px-[16px] md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105"
-              >
-                <UserRoundPlus />
-                <span className="font-medium text-[18px]">Sign Up</span>
-              </button>
-            </div>
+
+            {/* 🔥 Show "Go to Home" if user is logged in */}
+            {token ? (
+              <div className="flex justify-center">
+                <button
+                  onClick={() => navigate("/home")}
+                  className="flex gap-1.5 items-center px-[16px] md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105"
+                >
+                  <Home />
+                  <span className="font-medium text-[18px]">Go to Home</span>
+                </button>
+              </div>
+            ) : (
+              // Show Login and Signup buttons if user is not logged in
+              <div className="flex justify-center gap-6">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex gap-1.5 items-center px-[16px] md:px-6 py-3 text-white border-2 border-[#2ECC71] rounded-full hover:bg-[#2ECC71] transition-all duration-300 transform hover:scale-105"
+                >
+                  <UserRound />
+                  <span className="font-medium text-[18px]">Login</span>
+                </button>
+                <button
+                  onClick={() => navigate("/signup")}
+                  className="flex gap-1.5 items-center px-[16px] md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105"
+                >
+                  <UserRoundPlus />
+                  <span className="font-medium text-[18px]">Sign Up</span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right section */}
