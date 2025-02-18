@@ -8,6 +8,7 @@ export const constants = {
             register: "/auth/register/",
             password_reset: "/users/reset_password/",
             logout: "/auth/logout/",
-            user: "/users/profile/"
+            user: "/users/profile/",
+            is_logged_in: "auth/is_logged_in/"
         }
     }}
