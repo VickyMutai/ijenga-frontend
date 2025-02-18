@@ -8,7 +8,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/resetPassword";
+import ResetPassword from "./pages/ResetPassword";
 import Home from "./pages/HomePage";
 import ProjectDetails from "./pages/ProjectDetails";
 import CreateSubContractedWorks from "./pages/CreateSubContractedWorks";
