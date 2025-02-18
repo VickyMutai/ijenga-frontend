@@ -3,8 +3,14 @@ import { IoWallet } from "react-icons/io5";
 import Avatar from "../components/Avatar";
 import CreateProjectModal from "../components/CreateProjectModal";
 import ProjectsTable from "../components/ProjectsTable";
+import { useDispatch } from "react-redux";
+import { logout } from "../reducers/authReducer";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   // User data (to be fetched from backend)
   const user = {
     firstName: "John",
@@ -13,6 +19,11 @@ export default function Home() {
   };
 
   const fullName = `${user.firstName} ${user.lastName}`;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
   // Wallet balance (to be fetched from backend)
   const walletBalance = 2500.75;
@@ -51,8 +62,10 @@ export default function Home() {
             </p>
           </div>
         </div>
-        {/* Add signout functionality here */}
-        <div className="bg-gray-300 rounded-full md:px-4 p-3 flex gap-2 cursor-pointer hover:bg-gray-400 transition-colors">
+        <div
+          onClick={handleLogout}
+          className="bg-gray-300 rounded-full md:px-4 p-3 flex gap-2 cursor-pointer hover:bg-gray-400 transition-colors"
+        >
           <p className="text-blue font-semibold hidden md:block">Logout</p>
           <LogOut />
         </div>
