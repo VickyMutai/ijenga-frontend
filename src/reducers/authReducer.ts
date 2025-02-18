@@ -4,31 +4,71 @@ import { constants } from "../helpers/constants";
 
 interface AuthState {
   user: Record<string, unknown> | null;
+  token: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  token: localStorage.getItem("authToken") || null, // Retrieve token if exists
   loading: false,
   error: null,
 };
 
 export const registerUser = createAsyncThunk(
-  "auth/register",
-  async (userData: { email: string; password: string }, { rejectWithValue }) => {
+  constants.endpoints.auth.register,
+  async (userData: { 
+    email: string; 
+    password: string; 
+    re_enter_password: string; 
+    first_name: string; 
+    last_name: string; 
+    role: string; 
+    phone_number: string; 
+  }, { rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.register, userData);
-      return response.data;
+      
+      // Extract user and token from response
+      const { user, tokens } = response.data.data;
+
+      // Store the token securely
+      localStorage.setItem("authToken", tokens.access);
+      localStorage.setItem("refreshToken", tokens.refresh);
+
+      return { user, token: tokens.access };
     } catch (error: unknown) {
       if (error instanceof Error) return rejectWithValue(error.message);
-      if (typeof error === 'object' && error !== null && 'response' in error) {
+      if (typeof error === "object" && error !== null && "response" in error) {
         return rejectWithValue((error as { response?: { data?: string } }).response?.data || "Registration failed");
       }
-      return rejectWithValue("An unknown error occurred")
+      return rejectWithValue("An unknown error occurred");
     }
-}
+  }
 );
+
+export const loadUser = createAsyncThunk("auth/loadUser", async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      return rejectWithValue("No token found");
+    }
+
+    try {
+      const response = await api.get(constants.endpoints.auth.user, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return { user: response.data.user, token };
+  } catch (error: unknown) {
+    if (error instanceof Error) return rejectWithValue(error.message);
+    if (typeof error === "object" && error !== null && "response" in error) {
+      return rejectWithValue((error as { response?: { data?: string } }).response?.data || "Registration failed");
+    }
+    return rejectWithValue("An unknown error occurred");
+  }
+});
 
 const authSlice = createSlice({
   name: "auth",
@@ -36,21 +76,19 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
+      state.token = null;
+      localStorage.removeItem("authToken"); // Clear token on logout
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+      .addCase(loadUser.rejected, (state) => {
+        state.user = null;
+        state.token = null;
       });
   },
 });

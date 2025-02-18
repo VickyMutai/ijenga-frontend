@@ -35,6 +35,8 @@ const Signup = () => {
   
     if (formData.password !== formData.confirmPassword) {
       validationErrors.password = "Passwords do not match!";
+    } else if (formData.password.length < 8) {
+      validationErrors.password = "Password must be at least 8 characters long.";
     }
   
     if (!formData.phone.startsWith("0")) {
@@ -49,7 +51,7 @@ const Signup = () => {
       return;
     }
   
-    setErrors({}); // Clear errors if valid
+    setErrors({});
   
     const userData = {
       email: formData.email,
