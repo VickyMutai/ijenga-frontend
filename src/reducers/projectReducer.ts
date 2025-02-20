@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
@@ -43,6 +44,7 @@ export const fetchProjects = createAsyncThunk(
 
       console.log("✅ Fetch Projects Response:", response.data); // ✅ Debugging
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedProjects: Project[] = response.data.data.map((proj: any) => ({
         id: proj.id,
         projectName: proj.project_name,
