@@ -10,7 +10,6 @@ interface User {
   phone_number: string;
   role: string;
 }
-
 interface AuthState {
   user: User | null;
   users: User[];
@@ -22,12 +21,32 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  users: User[];
+  users: [],
   permissions: null,
   token: localStorage.getItem("authToken") || null,
   loading: false,
   error: null,
 };
+
+export const fetchUsers = createAsyncThunk(
+  "auth/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const response = await api.get(constants.endpoints.auth.all_users, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("✅ Fetched Users:", response.data);
+      return response.data.data as User[]; // ✅ Fix: Ensure correct return type
+    } catch (error: any) {
+      console.error("❌ Fetch Users Error:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch users");
+    }
+  }
+);
 
 export const fetchUserProfile = createAsyncThunk(
   "auth/fetchUserProfile",
