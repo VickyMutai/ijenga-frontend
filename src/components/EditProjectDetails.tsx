@@ -11,7 +11,7 @@ import { useParams } from "react-router-dom";
 export default function EditProjectDetails() {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
-  const { projectId } = useParams<{ projectId: string }>(); // ✅ Get projectId from URL
+  const { projectId } = useParams<{ projectId: string }>();
 
   const { selectedProject } = useSelector((state: RootState) => state.projects);
   const { users } = useSelector((state: RootState) => state.auth);
@@ -38,7 +38,6 @@ export default function EditProjectDetails() {
     }
   }, [selectedProject]);
 
-  // ✅ Fetch all users for assignment lists
   useEffect(() => {
     if (open) {
       dispatch(fetchUsers());

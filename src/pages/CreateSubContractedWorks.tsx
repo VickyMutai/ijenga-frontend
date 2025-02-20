@@ -6,7 +6,7 @@ import { createSubcontractedWork } from "../reducers/subcontractedWorksReducer";
 import { HardHat } from "lucide-react";
 
 const CreateSubContractedWorks = () => {
-  const { projectId } = useParams<{ projectId: string }>(); // ✅ Get projectId from URL
+  const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -18,7 +18,7 @@ const CreateSubContractedWorks = () => {
   });
 
   if (!projectId) {
-    console.error("❌ No projectId found in URL");
+    console.error(" No projectId found in URL");
     return <p>Project ID is required</p>;
   }
 
@@ -31,16 +31,16 @@ const CreateSubContractedWorks = () => {
 
     const result = await dispatch(
       createSubcontractedWork({
-        project: projectId, // ✅ Include project ID
+        project: projectId,
         task_title: formData.task_title,
         task_description: formData.task_description,
-        task_cost_labor: Number(formData.task_cost_labor), // ✅ Ensure it's a number
-        task_cost_overhead: Number(formData.task_cost_overhead), // ✅ Ensure it's a number
+        task_cost_labor: Number(formData.task_cost_labor),
+        task_cost_overhead: Number(formData.task_cost_overhead)
       })
-    );
+    );    
 
     if (createSubcontractedWork.fulfilled.match(result)) {
-      navigate(`/project-details/${projectId}`); // ✅ Navigate back after success
+      navigate(`/project-details/${projectId}`);
     }
   };
 

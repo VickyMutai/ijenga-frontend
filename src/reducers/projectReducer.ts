@@ -182,7 +182,7 @@ const projectsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(createProject.fulfilled, (state, action) => {
-        state.projects.push(action.payload); // ✅ Add new project to list
+        state.projects.push(action.payload);
       })
       .addCase(createProject.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -191,7 +191,7 @@ const projectsSlice = createSlice({
       })
       .addCase(fetchProjectDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedProject = action.payload; // ✅ Store selected project
+        state.selectedProject = action.payload; 
       })
       .addCase(fetchProjectDetails.rejected, (state, action) => {
         state.loading = false;
@@ -202,7 +202,7 @@ const projectsSlice = createSlice({
       })
       .addCase(updateProject.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedProject = action.payload; // ✅ Update Redux with new project details
+        state.selectedProject = action.payload;
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.loading = false;

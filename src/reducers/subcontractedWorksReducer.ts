@@ -4,17 +4,17 @@ import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
 interface SubcontractedWork {
-    id: string;
-    projectId: string; // ✅ Make sure it matches the transformed API response
-    taskTitle: string;
-    taskDescription: string;
-    taskCostLabor: number;
-    taskCostOverhead: number;
-  }
+  id: string;
+  project: string;
+  task_title: string;
+  task_description: string;
+  task_cost_labor: number;
+  task_cost_overhead: number;
+}
   
 
 interface SubcontractedWorkState {
-  subcontractedWorks: SubcontractedWork[]; // ✅ Explicitly type the array
+  subcontractedWorks: SubcontractedWork[];
   loading: boolean;
   error: string | null;
 }
@@ -25,7 +25,6 @@ const initialState: SubcontractedWorkState = {
   error: null,
 };
 
-// ✅ Create Subcontracted Work
 export const createSubcontractedWork = createAsyncThunk(
   "subcontractedWork/create",
   async (workData: Omit<SubcontractedWork, "id">, { rejectWithValue }) => {
@@ -37,13 +36,14 @@ export const createSubcontractedWork = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data.data as SubcontractedWork; // ✅ Ensure correct type is returned
+      return response.data.data as SubcontractedWork; 
     } catch (error: any) {
-      console.error("Create Subcontracted Work Error:", error.response?.data || error.message);
+      console.error("❌ Create Subcontracted Work Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to create subcontracted work");
     }
   }
 );
+
 
 export const fetchSubcontractedWorks = createAsyncThunk(
     "subcontractedWork/fetchSubcontractedWorks",
@@ -54,17 +54,17 @@ export const fetchSubcontractedWorks = createAsyncThunk(
   
         const response = await api.get(`${constants.endpoints.subcontractor_works.get_subcontracted_works}`, {
           headers: { Authorization: `Bearer ${token}` },
-          params: { project_id: projectId }, // ✅ Correctly pass project_id
+          params: { project_id: projectId },
         });
   
         return response.data.data.map((work: any) => ({
-          id: work.id,  // ✅ Ensure ID is string
+          id: work.id, 
           project: work.project, 
-          taskTitle: work.task_title,  // ✅ Convert API snake_case to camelCase
+          taskTitle: work.task_title,
           taskDescription: work.task_description,
-          taskCostLabor: Number(work.task_cost_labor), // ✅ Ensure it's a number
+          taskCostLabor: Number(work.task_cost_labor),
           taskCostOverhead: Number(work.task_cost_overhead),
-        })) as SubcontractedWork[]; // ✅ Explicit type assertion
+        })) as SubcontractedWork[];
       } catch (error: any) {
         console.error("Fetch Subcontracted Works Error:", error.response?.data || error.message);
         return rejectWithValue(error.response?.data?.detail || "Failed to fetch subcontracted works");
@@ -82,26 +82,24 @@ const subcontractedWorkSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // ✅ Create Subcontracted Work
       .addCase(createSubcontractedWork.pending, (state) => {
         state.loading = true;
       })
       .addCase(createSubcontractedWork.fulfilled, (state, action: PayloadAction<SubcontractedWork>) => {
         state.loading = false;
-        state.subcontractedWorks.push(action.payload); // ✅ Add to state after success
+        state.subcontractedWorks.push(action.payload);
       })
       .addCase(createSubcontractedWork.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
 
-      // ✅ Fetch Subcontracted Works
       .addCase(fetchSubcontractedWorks.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchSubcontractedWorks.fulfilled, (state, action: PayloadAction<SubcontractedWork[]>) => {
         state.loading = false;
-        state.subcontractedWorks = action.payload; // ✅ Replace state with new data
+        state.subcontractedWorks = action.payload;
       })
       .addCase(fetchSubcontractedWorks.rejected, (state, action) => {
         state.loading = false;

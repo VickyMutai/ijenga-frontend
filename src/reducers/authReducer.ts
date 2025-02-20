@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
-import { resetProjects } from "./projectReducer"; // ✅ Import resetProjects action
+import { resetProjects } from "./projectReducer";
 
 
 interface User {
@@ -205,7 +205,7 @@ export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) =>
   localStorage.removeItem("authToken");
   localStorage.removeItem("refreshToken");
 
-  dispatch(resetProjects()); // ✅ Reset projects on logout
+  dispatch(resetProjects());
 
   return null;
 });
@@ -218,7 +218,7 @@ const authSlice = createSlice({
       state.user = null;
       state.permissions = null;
       state.token = null;
-      localStorage.removeItem("authToken"); // ✅ Clear token on logout
+      localStorage.removeItem("authToken");
     },
   },
   extraReducers: (builder) => {

@@ -16,10 +16,10 @@ interface SubcontractedWork {
 
 interface SubcontractedWorksTableProps {
   works: SubcontractedWork[];
-  projectId: string; // ✅ Ensure this prop is passed
+  projectId: string;
 }
 
-const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps) => { // ✅ Destructure projectId here
+const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -44,7 +44,7 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
         <h2 className="text-xl font-semibold text-blue mb-4">
           Subcontracted Works
         </h2>
-        {canAddSubcontractedWork && projectId && ( // ✅ Ensure projectId exists before using
+        {canAddSubcontractedWork && projectId && ( 
           <Link to={`/create-subcontracted-works/${projectId}`}>
             <CirclePlus className="text-blue cursor-pointer hover:scale-105" size={28} />
           </Link>
@@ -82,11 +82,12 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
                   {work.taskDescription}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
-                  Ksh.{work.taskCostLabor.toLocaleString()}
+                  Ksh. {work.taskCostLabor ? work.taskCostLabor.toLocaleString() : "0"}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700">
-                  Ksh.{work.taskCostOverhead.toLocaleString()}
+                  Ksh. {work.taskCostOverhead ? work.taskCostOverhead.toLocaleString() : "0"}
                 </td>
+
               </tr>
             ))}
           </tbody>
