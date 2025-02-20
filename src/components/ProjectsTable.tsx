@@ -25,13 +25,9 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-  }, [projects]); // ✅ Log projects when it updates
+  }, [projects]);
 
   const handleRowClick = (projectId: string | undefined) => {
-    if (!projectId) {
-      console.error("❌ Invalid project ID:", projectId);
-      return;
-    }
     navigate(`/project-details/${projectId}`);
   };
 

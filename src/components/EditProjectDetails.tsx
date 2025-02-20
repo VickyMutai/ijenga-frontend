@@ -6,16 +6,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import { updateProject } from "../reducers/projectReducer";
 import { fetchUsers } from "../reducers/authReducer";
+import { useParams } from "react-router-dom";
 
 export default function EditProjectDetails() {
   const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
+  const { projectId } = useParams<{ projectId: string }>();
 
-  // ✅ Get selected project details from Redux
   const { selectedProject } = useSelector((state: RootState) => state.projects);
   const { users } = useSelector((state: RootState) => state.auth);
 
-  // ✅ Local state for form fields
   const [formData, setFormData] = useState({
     project_name: "",
     project_location: "",
@@ -25,7 +25,6 @@ export default function EditProjectDetails() {
     subcontractor: "",
   });
 
-  // ✅ Populate form when project is selected
   useEffect(() => {
     if (selectedProject) {
       setFormData({
@@ -39,47 +38,37 @@ export default function EditProjectDetails() {
     }
   }, [selectedProject]);
 
-  // ✅ Fetch all users for assignment lists
   useEffect(() => {
     if (open) {
       dispatch(fetchUsers());
     }
   }, [open, dispatch]);
 
-  // ✅ Filter users by role
   const supervisorContractors = users.filter(user => user.role === "contractors-supervisor");
   const supervisorConsultants = users.filter(user => user.role === "consultants-supervisor");
 
-  // ✅ Handle form input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!selectedProject) return;
-
-    const updatedProject = {
-      projectId: String(selectedProject.id),
-      projectData: {
-        project_name: formData.project_name,
-        project_location: formData.project_location,
-        project_description: formData.project_description,
-        supervisor_contractor: formData.supervisor_contractor,
-        supervisor_consultant: formData.supervisor_consultant,
-        subcontractor: formData.subcontractor,
-      },
-    };
-
-    const resultAction = await dispatch(updateProject(updatedProject));
-
-    if (updateProject.fulfilled.match(resultAction)) {
-      setOpen(false); // ✅ Close modal on success
+  
+    if (!projectId) {
+      console.error("Project ID is missing!");
+      return;
     }
+  
+    const updatedProjectData = {
+      ...formData,
+      supervisor_contractor: formData.supervisor_contractor || null, 
+      supervisor_consultant: formData.supervisor_consultant || null,
+    };
+  
+    await dispatch(updateProject({ projectId, projectData: updatedProjectData }));
+    setOpen(false);
   };
-
+  
   return (
     <div>
       <button
@@ -106,12 +95,34 @@ export default function EditProjectDetails() {
                   <input type="text" disabled name="project_location" value={formData.project_location} className="project-modal-input bg-gray-100 cursor-not-allowed resize-none" />
                   <textarea name="project_description" disabled value={formData.project_description} rows={3} className="project-modal-input bg-gray-100 cursor-not-allowed resize-none"></textarea>
 
-                  <select name="supervisor_contractor" value={formData.supervisor_contractor} onChange={handleChange} className="project-modal-input pr-2">
-                    {supervisorContractors.map(user => <option key={user.user_id} value={user.user_id}>{user.first_name} {user.last_name}</option>)}
+                  <select
+                    name="supervisor_contractor"
+                    value={formData.supervisor_contractor || ""}
+                    onChange={handleChange}
+                    className="project-modal-input pr-2"
+                  >
+                    <option value="">Select Supervisor-Contractor</option>  {/* ✅ Prevent "Not Assigned" from being sent */}
+                    {supervisorContractors.map(user => (
+                      <option key={user.user_id} value={user.user_id}>
+                        {user.first_name} {user.last_name}
+                      </option>
+                    ))}
                   </select>
-                  <select name="supervisor_consultant" value={formData.supervisor_consultant} onChange={handleChange} className="project-modal-input pr-2">
-                    {supervisorConsultants.map(user => <option key={user.user_id} value={user.user_id}>{user.first_name} {user.last_name}</option>)}
+
+                  <select
+                    name="supervisor_consultant"
+                    value={formData.supervisor_consultant || ""}
+                    onChange={handleChange}
+                    className="project-modal-input pr-2"
+                  >
+                    <option value="">Select Supervisor-Consultant</option>  {/* ✅ Prevent "Not Assigned" from being sent */}
+                    {supervisorConsultants.map(user => (
+                      <option key={user.user_id} value={user.user_id}>
+                        {user.first_name} {user.last_name}
+                      </option>
+                    ))}
                   </select>
+
                   <button type="submit" className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-800 transition duration-300">Save Changes</button>
                 </form>
               </div>

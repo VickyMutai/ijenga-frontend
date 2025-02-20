@@ -2,6 +2,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
+import { resetProjects } from "./projectReducer";
+
 
 interface User {
   user_id: string;
@@ -86,11 +88,6 @@ export const registerUser = createAsyncThunk(
       
       // Extract user and token from response
       const { user, tokens } = response.data.data;
-
-      // Store the token securely
-      localStorage.setItem("authToken", tokens.access);
-      localStorage.setItem("refreshToken", tokens.refresh);
-
       return { user, token: tokens.access };
     } catch (error: unknown) {
       if (error instanceof Error) return rejectWithValue(error.message);
@@ -109,24 +106,24 @@ export const loginUser = createAsyncThunk(
       const response = await api.post(constants.endpoints.auth.login, credentials);
       const { tokens, user } = response.data.data;
 
-      if (!tokens?.access) {
+      if (tokens?.access) {
+        localStorage.setItem("authToken", tokens.access);
+        localStorage.setItem("refreshToken", tokens.refresh);
+      } else {
         return rejectWithValue("No token received from server");
       }
-
-      localStorage.setItem("authToken", tokens.access);
-      localStorage.setItem("refreshToken", tokens.refresh);
-
-
-      await dispatch(loadUser());
-
+      dispatch(loadUser());
       return { user, token: tokens.access };
-    } catch (error: unknown) {
-      console.error("Login error:", error);
-      return rejectWithValue("Login failed. Check your credentials.");
+    } catch (error: any) {
+      console.error("Login error:", error.response?.data || error.message);
+
+      const errorMessage =
+        error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
+
+      return rejectWithValue(errorMessage);
     }
   }
 );
-
 
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
@@ -204,6 +201,15 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("refreshToken");
+
+  dispatch(resetProjects());
+
+  return null;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -212,7 +218,7 @@ const authSlice = createSlice({
       state.user = null;
       state.permissions = null;
       state.token = null;
-      localStorage.removeItem("authToken"); // ✅ Clear token on logout
+      localStorage.removeItem("authToken");
     },
   },
   extraReducers: (builder) => {
@@ -248,11 +254,13 @@ const authSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.permissions = null;
+        state.token = null;
       });
   },
 });
 
-
-
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

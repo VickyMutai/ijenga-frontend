@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authReducer";
 import projectReducer from "./projectReducer";
-
+import subcontractedWorkReducer from "./subcontractedWorksReducer";
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    projects: projectReducer, // ✅ Add projects reducer
+    projects: projectReducer,
+    subcontractedWorks: subcontractedWorkReducer
   },
 });
 

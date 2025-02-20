@@ -15,27 +15,22 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // ✅ Get projects from Redux
   const { projects, loading: projectsLoading } = useSelector((state: RootState) => state.projects);
   
-  // ✅ Get user from Redux
   const { user, loading: userLoading } = useSelector((state: RootState) => state.auth);
 
-  // ✅ Fetch projects only if projects are empty
   useEffect(() => {
     if (projects.length === 0) {
       dispatch(fetchProjects());
     }
-  }, [dispatch, projects.length]); // ✅ Add projects.length to prevent infinite calls
+  }, [dispatch, projects.length]);
 
-  // ✅ Fetch user data only if user is null
   useEffect(() => {
     if (!user) {
       dispatch(fetchUserProfile());
     }
-  }, [dispatch, user]); // ✅ Add user dependency to prevent infinite calls
+  }, [dispatch, user]); 
 
-  // ✅ Prevent rendering while loading
   if (userLoading || projectsLoading) return <Loader />;
 
   if (!user) return <p>No user data found</p>;
@@ -68,7 +63,7 @@ export default function Home() {
           <LogOut />
         </div>
       </header>
-
+      {user.role === "main-contractor" && 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Wallet Balance Section */}
         {user.role === "main-contractor" && (
@@ -97,12 +92,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+      }
 
       {/* Projects Section */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-blue">Your Projects</h2>
-          <CreateProjectModal />
+          <h2 className="text-xl font-semibold text-blue">My Projects</h2>
+          {user.role === "main-contractor" && <CreateProjectModal />}
         </div>
         <div className="mt-4">
           <ProjectsTable projects={projects} />
