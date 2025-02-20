@@ -1,5 +1,3 @@
-import { FaEye, FaPencilAlt } from "react-icons/fa";
-import { FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 interface Project {
@@ -45,9 +43,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Subcontractor
             </th>
-            <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-              Actions
-            </th>
           </tr>
         </thead>
 
@@ -75,39 +70,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
                 {project.subcontractor}
-              </td>
-              <td className="px-6 py-4 text-sm">
-                <div className="flex space-x-4">
-                  {/* View Button */}
-                  <button
-                    className="text-secondary hover:text-green-600 transition duration-200 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleRowClick(project.id); 
-                    }}
-                  >
-                    <FaEye className="w-5 h-5" />
-                  </button>
-
-                  {/* Edit Button */}
-                  <button
-                    className="text-primary hover:text-blue-800 transition duration-200 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleRowClick(project.id); 
-                    }}
-                  >
-                    <FaPencilAlt className="w-5 h-5" />
-                  </button>
-
-                  {/* Delete Button */}
-                  <button
-                    className="text-primary hover:text-red-600 transition duration-200 cursor-pointer"
-                    onClick={() => {}}
-                  >
-                    <FaTrashCan className="w-5 h-5" />
-                  </button>
-                </div>
               </td>
             </tr>
           ))}
