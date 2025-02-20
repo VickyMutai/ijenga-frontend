@@ -1,15 +1,16 @@
+import { useEffect } from "react";
 import { FaEye, FaPencilAlt } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 interface Project {
-  id: number;
+  id: string; // ✅ Ensure ID is a string (UUID)
   projectName: string;
   projectLocation: string;
   projectDescription: string;
-  supervisorContractor: string;
-  supervisorConsultant: string;
-  subcontractor: string;
+  supervisorContractor?: string;
+  supervisorConsultant?: string;
+  subcontractor?: string;
 }
 
 interface ProjectsTableProps {
@@ -19,9 +20,18 @@ interface ProjectsTableProps {
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
 
-  const handleRowClick = (projectId: number) => {
-    navigate(`/project-details/${projectId}`); // Navigates to project details page
+  useEffect(() => {
+    console.log("✅ Projects Data in Table:", projects);
+  }, [projects]); // ✅ Log projects when it updates
+
+  const handleRowClick = (projectId: string | undefined) => {
+    if (!projectId) {
+      console.error("❌ Invalid project ID:", projectId);
+      return;
+    }
+    navigate(`/project-details/${projectId}`);
   };
+
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md mt-3">
       <table className="min-w-full divide-y divide-gray-200">
@@ -68,13 +78,13 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                 {project.projectDescription}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.supervisorContractor}
+                {project.supervisorContractor || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.supervisorConsultant}
+                {project.supervisorConsultant || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.subcontractor}
+                {project.subcontractor || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm">
                 <div className="flex space-x-4">
@@ -82,8 +92,8 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                   <button
                     className="text-secondary hover:text-green-600 transition duration-200 cursor-pointer"
                     onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleRowClick(project.id); 
+                      e.stopPropagation();
+                      handleRowClick(project.id);
                     }}
                   >
                     <FaEye className="w-5 h-5" />
@@ -93,8 +103,8 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                   <button
                     className="text-primary hover:text-blue-800 transition duration-200 cursor-pointer"
                     onClick={(e) => {
-                      e.stopPropagation(); 
-                      handleRowClick(project.id); 
+                      e.stopPropagation();
+                      handleRowClick(project.id);
                     }}
                   >
                     <FaPencilAlt className="w-5 h-5" />

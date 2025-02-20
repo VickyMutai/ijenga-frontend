@@ -4,7 +4,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { CirclePlus, X } from "lucide-react";
 import { AppDispatch, RootState } from "../reducers/store";
 import { createProject, fetchProjects } from "../reducers/projectReducer";
-import { fetchUsers } from "../reducers/authReducer"; // ✅ Fetch users from authReducer
+import { fetchUsers } from "../reducers/authReducer";
 
 export default function CreateProjectModal() {
   const dispatch = useDispatch<AppDispatch>();

@@ -1,52 +1,34 @@
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { FileText, MapPin } from "lucide-react";
 import { MdApartment, MdEngineering } from "react-icons/md";
 import { BiSupport } from "react-icons/bi";
 import EditProjectDetails from "../components/EditProjectDetails";
 import SubContractorsTable from "../components/SubContractorsTable";
+import { AppDispatch, RootState } from "../reducers/store";
+import { fetchProjectDetails } from "../reducers/projectReducer";
 
 export default function ProjectDetails() {
-  // Example project data (fetch this from the backend using the project ID)
-  const project = {
-    id: 1,
-    projectName: "Project Alpha",
-    projectLocation: "Nairobi",
-    projectDescription: "Construction of a commercial building",
-    supervisorContractor: "John Doe",
-    supervisorConsultant: "Jane Smith",
-    subcontractor: "ABC Construction",
-  };
-
-  // Example subcontracted works data (fetch this from the backend)
-  const subcontractedWorks = [
-    {
-      id: 1,
-      taskTitle: "Foundation Work",
-      taskDescription: "Excavation and concrete pouring for foundation",
-      taskCostLabor: 5000,
-      taskCostOverhead: 1000,
-      laborerName: "James Brown",
-      laborerIdNumber: "12345678",
-      laborerTitle: "Mason",
-      laborerDailyRate: 1500,
-      laborerWeeklyRate: 7500,
-      laborerMpesaNumber: "0712345678",
-    },
-    {
-      id: 2,
-      taskTitle: "Wall Construction",
-      taskDescription: "Brick laying and plastering",
-      taskCostLabor: 7500,
-      taskCostOverhead: 1500,
-      laborerName: "Mary Johnson",
-      laborerIdNumber: "87654321",
-      laborerTitle: "Casual",
-      laborerDailyRate: 1000,
-      laborerWeeklyRate: 5000,
-      laborerMpesaNumber: "0723456789",
-    },
-  ];
+  const { projectId } = useParams<{ projectId: string }>(); // ✅ Get project ID from URL
+  const dispatch = useDispatch<AppDispatch>();
 
 
+  // ✅ Get project details from Redux
+  const { selectedProject, loading } = useSelector((state: RootState) => state.projects);
+
+  console.log("🛠 Selected Project:", selectedProject);
+  
+  // ✅ Fetch project details when component mounts
+  useEffect(() => {
+    if (projectId) {
+      dispatch(fetchProjectDetails(projectId));
+    }
+  }, [dispatch, projectId]);
+
+  if (loading) return <p>Loading project details...</p>;
+
+  if (!selectedProject) return <p>Project not found</p>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -56,49 +38,41 @@ export default function ProjectDetails() {
 
       {/* Project Details Section */}
       <div className="mt-6 bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-blue mb-4">
-          {project.projectName}
-        </h2>
+        <h2 className="text-xl font-semibold text-blue mb-4">{selectedProject.projectName}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-center gap-2 mb-3">
             <MapPin size={26} />
             <div>
               <p className="text-sm text-gray-500">Project Location</p>
-              <p className="text-lg font-semibold">{project.projectLocation}</p>
+              <p className="text-lg font-semibold">{selectedProject.projectLocation}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <FileText size={26} />
             <div>
               <p className="text-sm text-gray-500">Project Description</p>
-              <p className="text-lg font-semibold">
-                {project.projectDescription}
-              </p>
+              <p className="text-lg font-semibold">{selectedProject.projectDescription || "No description available"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <MdEngineering size={27} />
             <div>
               <p className="text-sm text-gray-500">Supervisor Contractor</p>
-              <p className="text-lg font-semibold">
-                {project.supervisorContractor}
-              </p>
+              <p className="text-lg font-semibold">{selectedProject.supervisorContractor || "Not Assigned"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <BiSupport size={27} />
             <div>
               <p className="text-sm text-gray-500">Supervisor Consultant</p>
-              <p className="text-lg font-semibold">
-                {project.supervisorConsultant}
-              </p>
+              <p className="text-lg font-semibold">{selectedProject.supervisorConsultant || "Not Assigned"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <MdApartment size={27} />
             <div>
               <p className="text-sm text-gray-500">Sub-Contractor</p>
-              <p className="text-lg font-semibold">{project.subcontractor}</p>
+              <p className="text-lg font-semibold">{selectedProject.subcontractor || "Not Assigned"}</p>
             </div>
           </div>
         </div>
@@ -109,8 +83,8 @@ export default function ProjectDetails() {
         </div>
       </div>
 
-      {/* Subcontracted Works Section */}
-      <SubContractorsTable works={subcontractedWorks}/>
+      {/* Subcontracted Works Section (To be implemented later) */}
+      <SubContractorsTable works={[]} />
     </div>
   );
 }

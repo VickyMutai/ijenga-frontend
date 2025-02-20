@@ -15,6 +15,7 @@ interface Project {
 
 interface ProjectsState {
   projects: Project[];
+  selectedProject: Project | null;
   loading: boolean;
   error: string | null;
 }
@@ -22,6 +23,7 @@ interface ProjectsState {
 // Initial State
 const initialState: ProjectsState = {
   projects: [],
+  selectedProject: null,
   loading: false,
   error: null,
 };
@@ -31,32 +33,30 @@ export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
-
-      if (!token) {
-        return rejectWithValue("Unauthorized: No authentication token found.");
-      }
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
       const response = await api.get(constants.endpoints.projects.my_projects, {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
+        headers: { Authorization: `Bearer ${token}` },
       });
 
+      console.log("✅ Fetch Projects Response:", response.data);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedProjects: Project[] = response.data.data.map((proj: any) => ({
-        id: proj.id,
-        projectName: proj.project_name,
-        projectLocation: proj.project_location,
-        projectDescription: proj.project_description,
-        supervisorContractor: proj.supervisor_contractor,
-        supervisorConsultant: proj.supervisor_consultant,
-        subcontractor: proj.subcontractor,
+      // ✅ Ensure correct API field mapping
+      const formattedProjects = response.data.data.map((proj: any) => ({
+        id: proj.id || proj.project_id, // ✅ Ensure 'id' exists
+        projectName: proj.project_name || "Unnamed Project",
+        projectLocation: proj.project_location || "Unknown Location",
+        projectDescription: proj.project_description || "",
+        supervisorContractor: proj.supervisor_contractor || "",
+        supervisorConsultant: proj.supervisor_consultant || "",
+        subcontractor: proj.subcontractor || "",
       }));
 
       return formattedProjects;
-    } catch (error: any) {
-      console.error("❌ Fetch Projects Error:", error.response?.data || error.message); // ✅ Debugging
-      return rejectWithValue(error.response?.data?.detail || "Failed to fetch projects");
+    } catch (error) {
+      console.error("❌ Fetch Projects Error:", error);
+      return rejectWithValue("Failed to fetch projects");
     }
   }
 );
@@ -86,6 +86,36 @@ export const createProject = createAsyncThunk(
   }
 );
 
+export const fetchProjectDetails = createAsyncThunk(
+  "projects/fetchProjectDetails",
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      // ✅ Use correct API endpoint with `project_id`
+      const response = await api.get(`${constants.endpoints.projects.project_detail}?project_id=${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("✅ Fetch Project Details Response:", response.data);
+
+      return {
+        id: response.data.data.id,
+        projectName: response.data.data.project_name,
+        projectLocation: response.data.data.project_location,
+        projectDescription: response.data.data.project_description || "",
+        supervisorContractor: response.data.data.supervisor_contractor || "",
+        supervisorConsultant: response.data.data.supervisor_consultant || "",
+        subcontractor: response.data.data.subcontractor || "",
+      };
+    } catch (error) {
+      console.error("❌ Fetch Project Details Error:", error);
+      return rejectWithValue("Failed to fetch project details");
+    }
+  }
+);
+
 
 // Create the Projects Slice
 const projectsSlice = createSlice({
@@ -109,6 +139,16 @@ const projectsSlice = createSlice({
         state.projects.push(action.payload); // ✅ Add new project to list
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })      .addCase(fetchProjectDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProjectDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProject = action.payload; // ✅ Assign project details
+      })
+      .addCase(fetchProjectDetails.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload as string;
       });
   },
