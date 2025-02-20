@@ -1,13 +1,19 @@
+import { useEffect } from "react";
+import { FaEye, FaPencilAlt } from "react-icons/fa";
+import { FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { deleteProject } from "../reducers/projectReducer";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../reducers/store";
 
 interface Project {
-  id: number;
+  id: string;
   projectName: string;
   projectLocation: string;
   projectDescription: string;
-  supervisorContractor: string;
-  supervisorConsultant: string;
-  subcontractor: string;
+  supervisorContractor?: string;
+  supervisorConsultant?: string;
+  subcontractor?: string;
 }
 
 interface ProjectsTableProps {
@@ -16,10 +22,27 @@ interface ProjectsTableProps {
 
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const handleRowClick = (projectId: number) => {
-    navigate(`/project-details/${projectId}`); // Navigates to project details page
+  useEffect(() => {
+  }, [projects]); // ✅ Log projects when it updates
+
+  const handleRowClick = (projectId: string | undefined) => {
+    if (!projectId) {
+      console.error("❌ Invalid project ID:", projectId);
+      return;
+    }
+    navigate(`/project-details/${projectId}`);
   };
+
+  const handleDelete = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents navigating when clicking delete
+    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+    if (confirmDelete) {
+      await dispatch(deleteProject(projectId));
+    }
+  };
+
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow-md mt-3">
       <table className="min-w-full divide-y divide-gray-200">
@@ -63,13 +86,46 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                 {project.projectDescription}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.supervisorContractor}
+                {project.supervisorContractor || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.supervisorConsultant}
+                {project.supervisorConsultant || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
-                {project.subcontractor}
+                {project.subcontractor || "N/A"}
+              </td>
+              <td className="px-6 py-4 text-sm">
+                <div className="flex space-x-4">
+                  {/* View Button */}
+                  <button
+                    className="text-secondary hover:text-green-600 transition duration-200 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRowClick(project.id);
+                    }}
+                  >
+                    <FaEye className="w-5 h-5" />
+                  </button>
+
+                  {/* Edit Button */}
+                  <button
+                    className="text-primary hover:text-blue-800 transition duration-200 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRowClick(project.id);
+                    }}
+                  >
+                    <FaPencilAlt className="w-5 h-5" />
+                  </button>
+
+                  {/* Delete Button */}
+                  <button
+                    className="text-primary hover:text-red-600 transition duration-200 cursor-pointer"
+                    onClick={(e) => handleDelete(project.id, e)}
+                  >
+                    <FaTrashCan className="w-5 h-5" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

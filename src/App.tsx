@@ -44,7 +44,7 @@ const AppRoutes = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
           <Route path="/project-details" element={<Navigate to="/home" />} />
-          <Route path="/project-details/:id" element={<ProjectDetails />} />
+          <Route path="/project-details/:projectId" element={<ProjectDetails />} />
           <Route path="/subcontracted-works-details" element={<Navigate to="/home" />} />
           <Route path="/subcontracted-works-details/:id" element={<SubcontractedWorkDetails />} />
           <Route path="/create-subcontracted-works" element={<CreateSubContractedWorks />}/>

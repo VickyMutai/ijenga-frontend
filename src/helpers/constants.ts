@@ -19,6 +19,7 @@ export const constants = {
             my_projects: "/projects/my_projects/",
             project_detail: "/projects/my_projects",
             update_project: "/projects/?/edit_project/",
+            delete_project: "/projects/?/delete_project/",
             assign_contractor: "/projects/{{project_id}}/assign_contractor/",
             unassign_contractor: "/projects/{{project_id}}/unassign_contractor/",
             assign_supervisor_contractor: "/projects/{{project_id}}/assign_supervisor_contractor/",

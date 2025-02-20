@@ -1,10 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { X } from "lucide-react";
 import { FaPencilAlt } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../reducers/store";
+import { updateProject } from "../reducers/projectReducer";
+import { fetchUsers } from "../reducers/authReducer";
 
 export default function EditProjectDetails() {
+  const dispatch = useDispatch<AppDispatch>();
   const [open, setOpen] = useState(false);
+
+  // ✅ Get selected project details from Redux
+  const { selectedProject } = useSelector((state: RootState) => state.projects);
+  const { users } = useSelector((state: RootState) => state.auth);
+
+  // ✅ Local state for form fields
+  const [formData, setFormData] = useState({
+    project_name: "",
+    project_location: "",
+    project_description: "",
+    supervisor_contractor: "",
+    supervisor_consultant: "",
+    subcontractor: "",
+  });
+
+  // ✅ Populate form when project is selected
+  useEffect(() => {
+    if (selectedProject) {
+      setFormData({
+        project_name: selectedProject.projectName || "",
+        project_location: selectedProject.projectLocation || "",
+        project_description: selectedProject.projectDescription || "",
+        supervisor_contractor: selectedProject.supervisorContractor || "",
+        supervisor_consultant: selectedProject.supervisorConsultant || "",
+        subcontractor: selectedProject.subcontractor || "",
+      });
+    }
+  }, [selectedProject]);
+
+  // ✅ Fetch all users for assignment lists
+  useEffect(() => {
+    if (open) {
+      dispatch(fetchUsers());
+    }
+  }, [open, dispatch]);
+
+  // ✅ Filter users by role
+  const supervisorContractors = users.filter(user => user.role === "contractors-supervisor");
+  const supervisorConsultants = users.filter(user => user.role === "consultants-supervisor");
+
+  // ✅ Handle form input changes
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // ✅ Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedProject) return;
+
+    const updatedProject = {
+      projectId: String(selectedProject.id),
+      projectData: {
+        project_name: formData.project_name,
+        project_location: formData.project_location,
+        project_description: formData.project_description,
+        supervisor_contractor: formData.supervisor_contractor,
+        supervisor_consultant: formData.supervisor_consultant,
+        subcontractor: formData.subcontractor,
+      },
+    };
+
+    const resultAction = await dispatch(updateProject(updatedProject));
+
+    if (updateProject.fulfilled.match(resultAction)) {
+      setOpen(false); // ✅ Close modal on success
+    }
+  };
 
   return (
     <div>
@@ -15,138 +89,31 @@ export default function EditProjectDetails() {
         <FaPencilAlt className="mr-2" /> Edit Project Details
       </button>
       <Dialog open={open} onClose={() => {}} className="relative z-10">
-        <DialogBackdrop
-          transition
-          className="fixed inset-0 bg-gray-500/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-        />
+        <DialogBackdrop className="fixed inset-0 bg-gray-500/75 transition-opacity" />
 
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <DialogPanel
-              transition
-              className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
-            >
+            <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 sm:w-full sm:max-w-lg">
               <div className="flex justify-between items-center gap-7 mt-4 px-4">
-                <h2 className="text-xl md:text-2xl font-bold text-blue">
-                  Edit Project Details
-                </h2>
-                <button
-                  onClick={() => setOpen(false)}
-                  className="rounded-full bg-gray-100 p-2 hover:bg-gray-200"
-                >
+                <h2 className="text-xl md:text-2xl font-bold text-blue">Edit Project Details</h2>
+                <button onClick={() => setOpen(false)} className="rounded-full bg-gray-100 p-2 hover:bg-gray-200">
                   <X className="h-5 w-5 text-blue cursor-pointer" />
                 </button>
               </div>
               <div className="bg-white px-4 pt-3 pb-4 sm:p-6 sm:pb-4">
-                <div>
-                  <form className="space-y-2.5">
-                    <div>
-                      <label
-                        htmlFor="project-name"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Project Name
-                      </label>
-                      <input
-                        type="text"
-                        id="project-name"
-                        className="project-modal-input"
-                      />
-                    </div>
+                <form onSubmit={handleSubmit} className="space-y-2.5">
+                  <input type="text" disabled name="project_name" value={formData.project_name} className="project-modal-input bg-gray-100 cursor-not-allowed" />
+                  <input type="text" disabled name="project_location" value={formData.project_location} className="project-modal-input bg-gray-100 cursor-not-allowed resize-none" />
+                  <textarea name="project_description" disabled value={formData.project_description} rows={3} className="project-modal-input bg-gray-100 cursor-not-allowed resize-none"></textarea>
 
-                    <div>
-                      <label
-                        htmlFor="project-location"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Project Location
-                      </label>
-                      <input
-                        type="text"
-                        id="project-location"
-                        className="project-modal-input"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="project-description"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Project Description
-                      </label>
-                      <textarea
-                        id="project-description"
-                        rows={3}
-                        className="project-modal-input"
-                      ></textarea>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="supervisor-contractor"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Assign Supervisor-Contractor
-                      </label>
-                      <select
-                        id="supervisor-contractor"
-                        className="project-modal-input pr-2"
-                      >
-                        <option value=""></option>
-                        <option value="person1">Person 1</option>
-                        <option value="person2">Person 2</option>
-                        <option value="person3">Person 3</option>
-                        <option value="person4">Person 4</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="supervisor-consultant"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Assign Supervisor-Consultant
-                      </label>
-                      <select
-                        id="supervisor-consultant"
-                        className="project-modal-input pr-2"
-                      >
-                        <option value=""></option>
-                        <option value="person1">Person 1</option>
-                        <option value="person2">Person 2</option>
-                        <option value="person3">Person 3</option>
-                        <option value="person4">Person 4</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="supervisor-consultant"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Assign Sub-Contractor
-                      </label>
-                      <select
-                        id="supervisor-consultant"
-                        className="project-modal-input pr-2"
-                      >
-                        <option value=""></option>
-                        <option value="person1">Person 1</option>
-                        <option value="person2">Person 2</option>
-                        <option value="person3">Person 3</option>
-                        <option value="person4">Person 4</option>
-                      </select>
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full cursor-pointer bg-[#2ECC71] text-white p-2 rounded-lg hover:bg-green-800 transition duration-300"
-                    >
-                      Submit
-                    </button>
-                  </form>
-                </div>
+                  <select name="supervisor_contractor" value={formData.supervisor_contractor} onChange={handleChange} className="project-modal-input pr-2">
+                    {supervisorContractors.map(user => <option key={user.user_id} value={user.user_id}>{user.first_name} {user.last_name}</option>)}
+                  </select>
+                  <select name="supervisor_consultant" value={formData.supervisor_consultant} onChange={handleChange} className="project-modal-input pr-2">
+                    {supervisorConsultants.map(user => <option key={user.user_id} value={user.user_id}>{user.first_name} {user.last_name}</option>)}
+                  </select>
+                  <button type="submit" className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-800 transition duration-300">Save Changes</button>
+                </form>
               </div>
             </DialogPanel>
           </div>

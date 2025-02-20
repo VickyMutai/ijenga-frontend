@@ -4,7 +4,7 @@ import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
 interface Project {
-  id: number;
+  id: string;
   projectName: string;
   projectLocation: string;
   projectDescription: string;
@@ -15,48 +15,44 @@ interface Project {
 
 interface ProjectsState {
   projects: Project[];
+  selectedProject: Project | null;
   loading: boolean;
   error: string | null;
 }
 
-// Initial State
 const initialState: ProjectsState = {
   projects: [],
+  selectedProject: null,
   loading: false,
   error: null,
 };
 
-// ✅ Fetch Projects (GET /projects/my_projects/)
 export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
-
-      if (!token) {
-        return rejectWithValue("Unauthorized: No authentication token found.");
-      }
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
       const response = await api.get(constants.endpoints.projects.my_projects, {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
+        headers: { Authorization: `Bearer ${token}` },
       });
 
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formattedProjects: Project[] = response.data.data.map((proj: any) => ({
-        id: proj.id,
-        projectName: proj.project_name,
-        projectLocation: proj.project_location,
-        projectDescription: proj.project_description,
-        supervisorContractor: proj.supervisor_contractor,
-        supervisorConsultant: proj.supervisor_consultant,
-        subcontractor: proj.subcontractor,
+      const formattedProjects = response.data.data.map((proj: any) => ({
+        id: proj.id || proj.project_id,
+        projectName: proj.project_name || "Unnamed Project",
+        projectLocation: proj.project_location || "Unknown Location",
+        projectDescription: proj.project_description || "",
+        supervisorContractor: proj.supervisor_contractor || "",
+        supervisorConsultant: proj.supervisor_consultant || "",
+        subcontractor: proj.subcontractor || "",
       }));
 
       return formattedProjects;
-    } catch (error: any) {
-      console.error("❌ Fetch Projects Error:", error.response?.data || error.message); // ✅ Debugging
-      return rejectWithValue(error.response?.data?.detail || "Failed to fetch projects");
+    } catch (error) {
+      console.error("Fetch Projects Error:", error);
+      return rejectWithValue("Failed to fetch projects");
     }
   }
 );
@@ -86,8 +82,84 @@ export const createProject = createAsyncThunk(
   }
 );
 
+export const updateProject = createAsyncThunk(
+  "projects/updateProject",
+  async ({ projectId, projectData }: { projectId: string; projectData: Partial<Project> }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
-// Create the Projects Slice
+      const url = `/projects/${projectId}/edit_project/`;
+
+      const response = await api.put(url, projectData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data;
+    } catch (error) {
+      console.error("Update Project Error:", error);
+      return rejectWithValue("Failed to update project");
+    }
+  }
+);
+
+export const fetchProjectDetails = createAsyncThunk(
+  "projects/fetchProjectDetails",
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const url = `${constants.endpoints.projects.project_detail}?project_id=${projectId}`;
+
+      const response = await api.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const projectsArray = response.data.data;
+      if (!projectsArray || projectsArray.length === 0) return rejectWithValue("Project not found");
+
+      const projectData = projectsArray[0];
+
+      return {
+        id: projectData.project_id || "Unknown ID",
+        projectName: projectData.project_name || "Unnamed Project",
+        projectLocation: projectData.project_location || "Unknown Location",
+        projectDescription: projectData.project_description || "",
+        supervisorContractor: projectData.supervisor_contractor || "Not Assigned",
+        supervisorConsultant: projectData.supervisor_consultant || "Not Assigned",
+        subcontractor: projectData.subcontractors.length > 0 ? projectData.subcontractors[0] : "Not Assigned",
+      };
+    } catch (error) {
+      console.error("Fetch Project Details Error:", error);
+      return rejectWithValue("Failed to fetch project details");
+    }
+  }
+);
+
+export const deleteProject = createAsyncThunk<
+  string, // Returning only projectId
+  string, // Accepts projectId
+  { rejectValue: string }
+>("projects/deleteProject", async (projectId, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+    const url = constants.endpoints.projects.delete_project.replace("?", projectId);
+
+    await api.delete(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    console.log(`✅ Project Deleted: ${projectId}`);
+    return projectId;
+  } catch (error: unknown) {
+    console.error("❌ Delete Project Error:", error);
+    return rejectWithValue("Failed to delete project");
+  }
+});
+
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
@@ -109,6 +181,33 @@ const projectsSlice = createSlice({
         state.projects.push(action.payload); // ✅ Add new project to list
       })
       .addCase(createProject.rejected, (state, action) => {
+        state.error = action.payload as string;
+      })      .addCase(fetchProjectDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchProjectDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProject = action.payload; // ✅ Store selected project
+      })
+      .addCase(fetchProjectDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProject = action.payload; // ✅ Update Redux with new project details
+      })
+      .addCase(updateProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.projects = state.projects.filter((project) => project.id !== action.payload);
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },

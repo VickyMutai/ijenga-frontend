@@ -4,7 +4,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { CirclePlus, X } from "lucide-react";
 import { AppDispatch, RootState } from "../reducers/store";
 import { createProject, fetchProjects } from "../reducers/projectReducer";
-import { fetchUsers } from "../reducers/authReducer"; // ✅ Fetch users from authReducer
+import { fetchUsers } from "../reducers/authReducer";
 
 export default function CreateProjectModal() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,8 +25,13 @@ export default function CreateProjectModal() {
 
   const { users, loading } = useSelector((state: RootState) => state.auth);
 
-  const supervisorContractors = users.filter(user => user.role === "supervisor-contractor");
-  const supervisorConsultants = users.filter(user => user.role === "supervisor-consultant");
+  const supervisorContractors = Array.isArray(users)
+  ? users.filter(user => user.role?.trim().toLowerCase() === "contractors-supervisor")
+  : [];
+
+  const supervisorConsultants = Array.isArray(users)
+    ? users.filter(user => user.role?.trim().toLowerCase() === "consultants-supervisor")
+    : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

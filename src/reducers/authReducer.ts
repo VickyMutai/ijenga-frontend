@@ -40,9 +40,9 @@ export const fetchUsers = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data.data as User[]; // ✅ Fix: Ensure correct return type
+      return Array.isArray(response.data.data.users) ? response.data.data.users : [];
     } catch (error: any) {
-      console.error("❌ Fetch Users Error:", error.response?.data || error.message);
+      console.error("Fetch Users Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to fetch users");
     }
   }
@@ -52,14 +52,14 @@ export const fetchUserProfile = createAsyncThunk(
   "auth/fetchUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
+      const token = localStorage.getItem("authToken");
 
       if (!token) {
         return rejectWithValue("Unauthorized: No authentication token found.");
       }
 
       const response = await api.get(constants.endpoints.auth.user, {
-        headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
+        headers: { Authorization: `Bearer ${token}` },
       });
       const { user, permissions } = response.data.data;
       return { user, permissions };
@@ -236,6 +236,16 @@ const authSlice = createSlice({
         state.permissions = action.payload.permissions;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        if (JSON.stringify(state.users) !== JSON.stringify(action.payload)) {
+          state.users = action.payload;
+        }
+        state.loading = false;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
