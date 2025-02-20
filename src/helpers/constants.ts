@@ -10,6 +10,7 @@ export const constants = {
             password_reset: "/users/reset_password/",
             logout: "/auth/logout/",
             user: "/users/profile/",
+            all_users: "/users/all/",
             is_logged_in: "auth/is_logged_in/"
         },
         projects: {

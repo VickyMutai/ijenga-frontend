@@ -2,8 +2,18 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
+interface User {
+  user_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+}
+
 interface AuthState {
-  user: Record<string, unknown> | null;
+  user: User | null;
+  users: User[];
   permissions: Record<string, boolean> | null;
   token: string | null;
   loading: boolean;
@@ -12,11 +22,38 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
+  users: User[];
   permissions: null,
   token: localStorage.getItem("authToken") || null,
   loading: false,
   error: null,
 };
+
+export const fetchUserProfile = createAsyncThunk(
+  "auth/fetchUserProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
+
+      if (!token) {
+        console.error("❌ No auth token found in localStorage");
+        return rejectWithValue("Unauthorized: No authentication token found.");
+      }
+
+      const response = await api.get(constants.endpoints.auth.user, {
+        headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
+      });
+
+      console.log("✅ Fetch User Profile Response:", response.data); // ✅ Debugging
+
+      const { user, permissions } = response.data.data;
+      return { user, permissions };
+    } catch (error: any) {
+      console.error("❌ Fetch User Profile Error:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch user profile");
+    }
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -174,6 +211,18 @@ const authSlice = createSlice({
         state.user = null;
         state.permissions = null;
         state.token = null;
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.permissions = action.payload.permissions;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
