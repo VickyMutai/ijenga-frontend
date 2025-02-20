@@ -66,7 +66,7 @@ const Signup = () => {
     const result = await dispatch(registerUser(userData));
   
     if (registerUser.fulfilled.match(result)) {
-      navigate("/home");
+      navigate("/login");
     }
   };
   
@@ -142,8 +142,8 @@ const Signup = () => {
             >
               <option value="">Select Role</option>
               <option value="Main Contractor">Main Contractor</option>
-              <option value="Supervisor Contractor">Supervisor Contractor</option>
-              <option value="Supervisor Consultant">Supervisor Consultant</option>
+              <option value="contractors supervisor">Supervisor Contractor</option>
+              <option value="consultants supervisor">Supervisor Consultant</option>
               <option value="Subcontractor">Subcontractor</option>
             </select>
           </div>

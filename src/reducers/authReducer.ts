@@ -120,7 +120,6 @@ export const loginUser = createAsyncThunk(
     } catch (error: any) {
       console.error("Login error:", error.response?.data || error.message);
 
-      // ✅ Extracts the first error message from `non_field_errors`
       const errorMessage =
         error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
 
