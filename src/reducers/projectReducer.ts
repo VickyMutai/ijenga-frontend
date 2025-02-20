@@ -34,7 +34,6 @@ export const fetchProjects = createAsyncThunk(
       const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
 
       if (!token) {
-        console.error("❌ No auth token found in localStorage");
         return rejectWithValue("Unauthorized: No authentication token found.");
       }
 
@@ -42,7 +41,6 @@ export const fetchProjects = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
       });
 
-      console.log("✅ Fetch Projects Response:", response.data); // ✅ Debugging
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const formattedProjects: Project[] = response.data.data.map((proj: any) => ({
@@ -80,10 +78,9 @@ export const createProject = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Project Created:", response.data);
       return response.data.data; // Return new project
     } catch (error: any) {
-      console.error("❌ Create Project Error:", error.response?.data || error.message);
+      console.error("Create Project Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to create project");
     }
   }

@@ -40,7 +40,6 @@ export const fetchUsers = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Fetched Users:", response.data);
       return response.data.data as User[]; // ✅ Fix: Ensure correct return type
     } catch (error: any) {
       console.error("❌ Fetch Users Error:", error.response?.data || error.message);
@@ -56,20 +55,16 @@ export const fetchUserProfile = createAsyncThunk(
       const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
 
       if (!token) {
-        console.error("❌ No auth token found in localStorage");
         return rejectWithValue("Unauthorized: No authentication token found.");
       }
 
       const response = await api.get(constants.endpoints.auth.user, {
         headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
       });
-
-      console.log("✅ Fetch User Profile Response:", response.data); // ✅ Debugging
-
       const { user, permissions } = response.data.data;
       return { user, permissions };
     } catch (error: any) {
-      console.error("❌ Fetch User Profile Error:", error.response?.data || error.message);
+      console.error("Fetch User Profile Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to fetch user profile");
     }
   }
@@ -109,26 +104,29 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.login, credentials);
       const { tokens, user } = response.data.data;
 
-      if (tokens?.access) {
-        localStorage.setItem("authToken", tokens.access);
-        localStorage.setItem("refreshToken", tokens.refresh);
-      } else {
-        console.error("No access token received from API");
+      if (!tokens?.access) {
         return rejectWithValue("No token received from server");
       }
 
+      localStorage.setItem("authToken", tokens.access);
+      localStorage.setItem("refreshToken", tokens.refresh);
+
+
+      await dispatch(loadUser());
+
       return { user, token: tokens.access };
     } catch (error: unknown) {
-      console.error("Login error:", error); // Debugging
+      console.error("Login error:", error);
       return rejectWithValue("Login failed. Check your credentials.");
     }
   }
 );
+
 
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
@@ -171,8 +169,6 @@ export const forgotPassword = createAsyncThunk(
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.forgot_password, { email });
-
-      console.log("📩 Forgot Password response:", response.data);
       return response.data.message || "Password reset link sent! Check your email.";
     } catch (error: unknown) {
       console.error("Forgot Password error:", error);
@@ -200,7 +196,6 @@ export const resetPassword = createAsyncThunk(
         re_enter_password,
       });
 
-      console.log("🔑 Reset Password response:", response.data);
       return response.data.message || "Password successfully reset!";
     } catch (error: unknown) {
       console.error("Reset Password error:", error);
