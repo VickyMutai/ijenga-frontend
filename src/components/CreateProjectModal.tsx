@@ -86,7 +86,7 @@ export default function CreateProjectModal() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Assign Supervisor-Contractor</label>
                     <select name="supervisor_contractor" value={formData.supervisor_contractor} onChange={handleChange} className="project-modal-input pr-2">
                       <option value="">Select Supervisor-Contractor</option>
-                      {loading ? <option>Loading...</option> : supervisorContractors.map((user) => (
+                      {loading ? <option><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div></option> : supervisorContractors.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                           {user.first_name} {user.last_name}
                         </option>
@@ -98,7 +98,7 @@ export default function CreateProjectModal() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Assign Supervisor-Consultant</label>
                     <select name="supervisor_consultant" value={formData.supervisor_consultant} onChange={handleChange} className="project-modal-input pr-2">
                       <option value="">Select Supervisor-Consultant</option>
-                      {loading ? <option>Loading...</option> : supervisorConsultants.map((user) => (
+                      {loading ? <option><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div></option> : supervisorConsultants.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                           {user.first_name} {user.last_name}
                         </option>
