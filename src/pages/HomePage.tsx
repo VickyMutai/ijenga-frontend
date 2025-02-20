@@ -9,6 +9,7 @@ import ProjectsTable from "../components/ProjectsTable";
 import { fetchUserProfile, logout } from "../reducers/authReducer";
 import { fetchProjects } from "../reducers/projectReducer";
 import { useNavigate } from "react-router-dom";
+import Loader from "../components/Loader";
 
 export default function Home() {
   const dispatch = useAppDispatch();
@@ -35,7 +36,7 @@ export default function Home() {
   }, [dispatch, user]); // ✅ Add user dependency to prevent infinite calls
 
   // ✅ Prevent rendering while loading
-  if (userLoading || projectsLoading) return <p>Loading...</p>;
+  if (userLoading || projectsLoading) return <Loader />;
 
   if (!user) return <p>No user data found</p>;
 

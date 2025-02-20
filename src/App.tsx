@@ -14,6 +14,7 @@ import Home from "./pages/HomePage";
 import ProjectDetails from "./pages/ProjectDetails";
 import CreateSubContractedWorks from "./pages/CreateSubContractedWorks";
 import SubcontractedWorkDetails from "./pages/SubcontractedWorksDetails";
+import Loader from "./components/Loader";
 
 const AppRoutes = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +26,7 @@ const AppRoutes = () => {
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading app...</div>
+    return <Loader />
   }
 
 

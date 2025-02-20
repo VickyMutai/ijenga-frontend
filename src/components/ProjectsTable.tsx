@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../reducers/store";
 
 interface Project {
-  id: string; // ✅ Ensure ID is a string (UUID)
+  id: string;
   projectName: string;
   projectLocation: string;
   projectDescription: string;
@@ -65,9 +65,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
             </th>
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Subcontractor
-            </th>
-            <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-              Actions
             </th>
           </tr>
         </thead>
