@@ -15,27 +15,22 @@ export default function Home() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // ✅ Get projects from Redux
   const { projects, loading: projectsLoading } = useSelector((state: RootState) => state.projects);
   
-  // ✅ Get user from Redux
   const { user, loading: userLoading } = useSelector((state: RootState) => state.auth);
 
-  // ✅ Fetch projects only if projects are empty
   useEffect(() => {
     if (projects.length === 0) {
       dispatch(fetchProjects());
     }
-  }, [dispatch, projects.length]); // ✅ Add projects.length to prevent infinite calls
+  }, [dispatch, projects.length]);
 
-  // ✅ Fetch user data only if user is null
   useEffect(() => {
     if (!user) {
       dispatch(fetchUserProfile());
     }
-  }, [dispatch, user]); // ✅ Add user dependency to prevent infinite calls
+  }, [dispatch, user]); 
 
-  // ✅ Prevent rendering while loading
   if (userLoading || projectsLoading) return <Loader />;
 
   if (!user) return <p>No user data found</p>;
@@ -47,7 +42,6 @@ export default function Home() {
     navigate("/");
   };
 
-  // Example wallet balance
   const walletBalance = 2500.75;
 
   return (
