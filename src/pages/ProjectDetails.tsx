@@ -9,15 +9,15 @@ import EditProjectDetails from "../components/EditProjectDetails";
 import SubContractorsTable from "../components/SubContractorsTable";
 import { AppDispatch, RootState } from "../reducers/store";
 import { fetchProjectDetails } from "../reducers/projectReducer";
-import { fetchUsers } from "../reducers/authReducer";
+import { fetchUsers, fetchUserProfile } from "../reducers/authReducer";
 
 export default function ProjectDetails() {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
   const { selectedProject, loading } = useSelector((state: RootState) => state.projects);
-  const { user, users } = useSelector((state: RootState) => state.auth);
-
+  const { users } = useSelector((state: RootState) => state.auth);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (projectId) {
@@ -25,19 +25,24 @@ export default function ProjectDetails() {
     }
     dispatch(fetchUsers());
   }, [dispatch, projectId]);
-  
-  useEffect(() => {
-  }, [selectedProject]);
-  
+
+    useEffect(() => {
+      if (!user) {
+        dispatch(fetchUserProfile());
+      }
+    }, [dispatch, user]); 
+
   const getSupervisorName = (uuid: string | null) => {
     if (!uuid) return "Not Assigned";
     const supervisor = users.find(user => user.user_id === uuid);
     return supervisor ? `${supervisor.first_name} ${supervisor.last_name}` : "Not Assigned";
   };
 
-  if (loading) return <Loader />  ;
-
+  if (loading) return <Loader />;
   if (!selectedProject) return <p>Project not found</p>;
+
+
+  const canEditProject = user?.role === "main-contractor" || user?.role === "contractors-supervisor" || user?.role === "subcontractor";
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -45,7 +50,6 @@ export default function ProjectDetails() {
         <h1 className="text-2xl font-bold">Project Details</h1>
       </header>
 
-      {/* Project Details Section */}
       <div className="mt-6 bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-blue mb-4">{selectedProject.projectName}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -67,14 +71,14 @@ export default function ProjectDetails() {
             <MdEngineering size={27} />
             <div>
               <p className="text-sm text-gray-500">Supervisor Contractor</p>
-              <p className="text-lg font-semibold">{getSupervisorName(selectedProject.supervisorContractor) || "Not Assigned"}</p>
+              <p className="text-lg font-semibold">{getSupervisorName(selectedProject.supervisorContractor)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <BiSupport size={27} />
             <div>
               <p className="text-sm text-gray-500">Supervisor Consultant</p>
-              <p className="text-lg font-semibold">{getSupervisorName(selectedProject.supervisorConsultant) || "Not Assigned"}</p>
+              <p className="text-lg font-semibold">{getSupervisorName(selectedProject.supervisorConsultant)}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
@@ -86,19 +90,15 @@ export default function ProjectDetails() {
           </div>
         </div>
 
-        {/* Edit Project Button */}
-        <div className="mt-6 flex space-x-4">
-          {(user?.role === "main-contractor" || user?.role === "supervisor-contractor" || user?.role === "subcontractor") && (
-              <EditProjectDetails />
-            )}
-        </div>
+        {canEditProject && (
+          <div className="mt-6 flex space-x-4">
+            <EditProjectDetails />
+          </div>
+        )}
       </div>
+
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-blue">Subcontracted Works</h2>
-
-        {(user?.role === "supervisor-contractor" || user?.role === "subcontractor") && (
-          <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">+ Add Subcontracted Work</button>
-        )}
 
         <SubContractorsTable works={[]} />
       </div>

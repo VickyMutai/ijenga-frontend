@@ -42,6 +42,7 @@ export default function Home() {
     navigate("/");
   };
 
+  // Example wallet balance
   const walletBalance = 2500.75;
 
   return (
@@ -96,7 +97,7 @@ export default function Home() {
       {/* Projects Section */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-blue">Your Projects</h2>
+          <h2 className="text-xl font-semibold text-blue">My Projects</h2>
           {user.role === "main-contractor" && <CreateProjectModal />}
         </div>
         <div className="mt-4">
