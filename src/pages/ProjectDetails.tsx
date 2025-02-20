@@ -10,21 +10,20 @@ import { AppDispatch, RootState } from "../reducers/store";
 import { fetchProjectDetails } from "../reducers/projectReducer";
 
 export default function ProjectDetails() {
-  const { projectId } = useParams<{ projectId: string }>(); // ✅ Get project ID from URL
+  const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useDispatch<AppDispatch>();
 
-
-  // ✅ Get project details from Redux
   const { selectedProject, loading } = useSelector((state: RootState) => state.projects);
 
-  console.log("🛠 Selected Project:", selectedProject);
-  
-  // ✅ Fetch project details when component mounts
   useEffect(() => {
     if (projectId) {
       dispatch(fetchProjectDetails(projectId));
     }
   }, [dispatch, projectId]);
+  
+  useEffect(() => {
+  }, [selectedProject]);
+  
 
   if (loading) return <p>Loading project details...</p>;
 
@@ -44,7 +43,7 @@ export default function ProjectDetails() {
             <MapPin size={26} />
             <div>
               <p className="text-sm text-gray-500">Project Location</p>
-              <p className="text-lg font-semibold">{selectedProject.projectLocation}</p>
+              <p className="text-lg font-semibold">{selectedProject.projectLocation || "No description available"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 mb-3">

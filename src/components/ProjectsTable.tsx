@@ -21,7 +21,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("✅ Projects Data in Table:", projects);
   }, [projects]); // ✅ Log projects when it updates
 
   const handleRowClick = (projectId: string | undefined) => {

@@ -20,7 +20,6 @@ interface ProjectsState {
   error: string | null;
 }
 
-// Initial State
 const initialState: ProjectsState = {
   projects: [],
   selectedProject: null,
@@ -28,7 +27,6 @@ const initialState: ProjectsState = {
   error: null,
 };
 
-// ✅ Fetch Projects (GET /projects/my_projects/)
 export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
   async (_, { rejectWithValue }) => {
@@ -40,11 +38,9 @@ export const fetchProjects = createAsyncThunk(
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Fetch Projects Response:", response.data);
 
-      // ✅ Ensure correct API field mapping
       const formattedProjects = response.data.data.map((proj: any) => ({
-        id: proj.id || proj.project_id, // ✅ Ensure 'id' exists
+        id: proj.id || proj.project_id,
         projectName: proj.project_name || "Unnamed Project",
         projectLocation: proj.project_location || "Unknown Location",
         projectDescription: proj.project_description || "",
@@ -55,7 +51,7 @@ export const fetchProjects = createAsyncThunk(
 
       return formattedProjects;
     } catch (error) {
-      console.error("❌ Fetch Projects Error:", error);
+      console.error("Fetch Projects Error:", error);
       return rejectWithValue("Failed to fetch projects");
     }
   }
@@ -93,31 +89,33 @@ export const fetchProjectDetails = createAsyncThunk(
       const token = localStorage.getItem("authToken");
       if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
-      // ✅ Use correct API endpoint with `project_id`
-      const response = await api.get(`${constants.endpoints.projects.project_detail}?project_id=${projectId}`, {
+      const url = `${constants.endpoints.projects.project_detail}?project_id=${projectId}`;
+
+      const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("✅ Fetch Project Details Response:", response.data);
+      const projectsArray = response.data.data;
+      if (!projectsArray || projectsArray.length === 0) return rejectWithValue("Project not found");
+
+      const projectData = projectsArray[0];
 
       return {
-        id: response.data.data.id,
-        projectName: response.data.data.project_name,
-        projectLocation: response.data.data.project_location,
-        projectDescription: response.data.data.project_description || "",
-        supervisorContractor: response.data.data.supervisor_contractor || "",
-        supervisorConsultant: response.data.data.supervisor_consultant || "",
-        subcontractor: response.data.data.subcontractor || "",
+        id: projectData.project_id || "Unknown ID",
+        projectName: projectData.project_name || "Unnamed Project",
+        projectLocation: projectData.project_location || "Unknown Location",
+        projectDescription: projectData.project_description || "",
+        supervisorContractor: projectData.supervisor_contractor || "Not Assigned",
+        supervisorConsultant: projectData.supervisor_consultant || "Not Assigned",
+        subcontractor: projectData.subcontractors.length > 0 ? projectData.subcontractors[0] : "Not Assigned",
       };
     } catch (error) {
-      console.error("❌ Fetch Project Details Error:", error);
+      console.error("Fetch Project Details Error:", error);
       return rejectWithValue("Failed to fetch project details");
     }
   }
 );
 
-
-// Create the Projects Slice
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
@@ -145,7 +143,7 @@ const projectsSlice = createSlice({
       })
       .addCase(fetchProjectDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedProject = action.payload; // ✅ Assign project details
+        state.selectedProject = action.payload; // ✅ Store selected project
       })
       .addCase(fetchProjectDetails.rejected, (state, action) => {
         state.loading = false;
