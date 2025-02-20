@@ -151,11 +151,9 @@ export const deleteProject = createAsyncThunk<
     await api.delete(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
-
-    console.log(`✅ Project Deleted: ${projectId}`);
     return projectId;
   } catch (error: unknown) {
-    console.error("❌ Delete Project Error:", error);
+    console.error("Delete Project Error:", error);
     return rejectWithValue("Failed to delete project");
   }
 });
@@ -163,7 +161,13 @@ export const deleteProject = createAsyncThunk<
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
-  reducers: {},
+  reducers: {
+    resetProjects: (state) => {
+      state.projects = [];
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProjects.pending, (state) => {
@@ -209,8 +213,9 @@ const projectsSlice = createSlice({
       })
       .addCase(deleteProject.rejected, (state, action) => {
         state.error = action.payload as string;
-      });
+      })
   },
 });
 
+export const { resetProjects } = projectsSlice.actions;
 export default projectsSlice.reducer;

@@ -2,6 +2,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
+import { resetProjects } from "./projectReducer"; // ✅ Import resetProjects action
+
 
 interface User {
   user_id: string;
@@ -86,11 +88,6 @@ export const registerUser = createAsyncThunk(
       
       // Extract user and token from response
       const { user, tokens } = response.data.data;
-
-      // Store the token securely
-      localStorage.setItem("authToken", tokens.access);
-      localStorage.setItem("refreshToken", tokens.refresh);
-
       return { user, token: tokens.access };
     } catch (error: unknown) {
       if (error instanceof Error) return rejectWithValue(error.message);
@@ -204,6 +201,15 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("refreshToken");
+
+  dispatch(resetProjects()); // ✅ Reset projects on logout
+
+  return null;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -248,11 +254,13 @@ const authSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.permissions = null;
+        state.token = null;
       });
   },
 });
 
-
-
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

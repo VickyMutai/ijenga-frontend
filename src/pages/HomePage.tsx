@@ -68,7 +68,7 @@ export default function Home() {
           <LogOut />
         </div>
       </header>
-
+      {user.role === "main-contractor" && 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Wallet Balance Section */}
         {user.role === "main-contractor" && (
@@ -97,12 +97,13 @@ export default function Home() {
           </div>
         </div>
       </div>
+      }
 
       {/* Projects Section */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-blue">Your Projects</h2>
-          <CreateProjectModal />
+          {user.role === "main-contractor" && <CreateProjectModal />}
         </div>
         <div className="mt-4">
           <ProjectsTable projects={projects} />
