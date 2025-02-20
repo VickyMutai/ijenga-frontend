@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { FileText, MapPin } from "lucide-react";
 import { MdApartment, MdEngineering } from "react-icons/md";
 import { BiSupport } from "react-icons/bi";
+import Loader from "../components/Loader";
 import EditProjectDetails from "../components/EditProjectDetails";
 import SubContractorsTable from "../components/SubContractorsTable";
 import { AppDispatch, RootState } from "../reducers/store";
@@ -25,7 +26,7 @@ export default function ProjectDetails() {
   }, [selectedProject]);
   
 
-  if (loading) return <p>Loading project details...</p>;
+  if (loading) return <Loader />  ;
 
   if (!selectedProject) return <p>Project not found</p>;
 
