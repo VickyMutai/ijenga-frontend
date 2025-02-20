@@ -26,7 +26,7 @@ const LandingPage = () => {
 
             {/* 🔥 Show "Go to Home" if user is logged in */}
             {token ? (
-              <div className="flex justify-center">
+              <div className="flex justify-center lg:justify-start ">
                 <button
                   onClick={() => navigate("/home")}
                   className="flex gap-1.5 items-center px-[16px] md:px-6 py-3 bg-[#2ECC71] text-white rounded-full hover:bg-[#2ECC71]/90 transition-all duration-300 transform hover:scale-105 cursor-pointer"
