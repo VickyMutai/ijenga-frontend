@@ -26,5 +26,11 @@ export const constants = {
             unassign_supervisor_contractor: "/projects/{{project_id}}/unassign_supervisor_contractor/",
             assign_supervisor_consultant: "/projects/{{project_id}}/assign_supervisor_consultant/",
             unassign_supervisor_consultant: "/projects/{{project_id}}/unassign_supervisor_consultant/",
+        },
+        subcontractor_works:{
+            create_subcontracted_work: "/subcontracted-works/create_work/",
+            edit_subcontracted_work: "/subcontracted-works/?/edit_work/",
+            delete_subcontracted_work: "/subcontracted-works/?/delete_work/",
+            get_subcontracted_works: "/subcontracted-works/project_works/?",
         }
     }}

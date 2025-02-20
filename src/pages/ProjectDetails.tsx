@@ -99,9 +99,8 @@ export default function ProjectDetails() {
 
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-blue">Subcontracted Works</h2>
-
-        <SubContractorsTable works={[]} />
-      </div>
+        <SubContractorsTable works={[]} projectId={projectId!} />
+        </div>
     </div>
   );
 }

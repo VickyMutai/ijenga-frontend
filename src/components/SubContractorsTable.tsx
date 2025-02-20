@@ -7,45 +7,46 @@ import { fetchUserProfile } from "../reducers/authReducer";
 import { useEffect } from "react";
 
 interface SubcontractedWork {
-    id: number;
-    taskTitle: string;
-    taskDescription: string;
-    taskCostLabor: number;
-    taskCostOverhead: number;
-  }
+  id: number;
+  taskTitle: string;
+  taskDescription: string;
+  taskCostLabor: number;
+  taskCostOverhead: number;
+}
 
-  interface SubcontractedWorksTableProps {
-    works: SubcontractedWork[];
-  }
-const SubContractorsTable = ({works}: SubcontractedWorksTableProps) => {
+interface SubcontractedWorksTableProps {
+  works: SubcontractedWork[];
+  projectId: string; // ✅ Ensure this prop is passed
+}
+
+const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps) => { // ✅ Destructure projectId here
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const { user } = useSelector((state: RootState) => state.auth);
+
   useEffect(() => {
     if (!user) {
       dispatch(fetchUserProfile());
     }
-  }, [dispatch, user]); 
+  }, [dispatch, user]);
 
-  const canAddSubcontractedWork = user?.role === "contractors-supervisor" || user?.role === "subcontractor";
+  const canAddSubcontractedWork =
+    user?.role === "contractors-supervisor" || user?.role === "subcontractor";
 
   const handleRowClick = (workId: number) => {
     navigate(`/subcontracted-works-details/${workId}`);
   };
-  
+
   return (
     <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-blue mb-4">
           Subcontracted Works
         </h2>
-        {canAddSubcontractedWork && (
-          <Link to="/create-subcontracted-works">
-            <CirclePlus
-              className="text-blue cursor-pointer hover:scale-105"
-              size={28}
-            />
+        {canAddSubcontractedWork && projectId && ( // ✅ Ensure projectId exists before using
+          <Link to={`/create-subcontracted-works/${projectId}`}>
+            <CirclePlus className="text-blue cursor-pointer hover:scale-105" size={28} />
           </Link>
         )}
       </div>
