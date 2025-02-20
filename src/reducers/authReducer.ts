@@ -104,7 +104,7 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.login, credentials);
       const { tokens, user } = response.data.data;
@@ -115,7 +115,7 @@ export const loginUser = createAsyncThunk(
       } else {
         return rejectWithValue("No token received from server");
       }
-
+      dispatch(loadUser());
       return { user, token: tokens.access };
     } catch (error: any) {
       console.error("Login error:", error.response?.data || error.message);
