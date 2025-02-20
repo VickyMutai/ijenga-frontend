@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { CirclePlus, X } from "lucide-react";
 import { AppDispatch, RootState } from "../reducers/store";
-import { createProject } from "../reducers/projectReducer";
+import { createProject, fetchProjects } from "../reducers/projectReducer";
 import { fetchUsers } from "../reducers/authReducer"; // ✅ Fetch users from authReducer
 
 export default function CreateProjectModal() {
@@ -17,17 +17,14 @@ export default function CreateProjectModal() {
     supervisor_consultant: "",
   });
 
-  // ✅ Fetch all users when modal opens
   useEffect(() => {
     if (open) {
       dispatch(fetchUsers());
     }
   }, [open, dispatch]);
 
-  // ✅ Get users from Redux (from auth state)
   const { users, loading } = useSelector((state: RootState) => state.auth);
 
-  // ✅ Filter users by role
   const supervisorContractors = users.filter(user => user.role === "supervisor-contractor");
   const supervisorConsultants = users.filter(user => user.role === "supervisor-consultant");
 
@@ -37,9 +34,16 @@ export default function CreateProjectModal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(createProject(formData));
-    setOpen(false); // Close modal after successful submission
+  
+    const resultAction = await dispatch(createProject(formData));
+  
+    if (createProject.fulfilled.match(resultAction)) {
+      dispatch(fetchProjects()); 
+    }
+  
+    setOpen(false);
   };
+  
 
   return (
     <div>
