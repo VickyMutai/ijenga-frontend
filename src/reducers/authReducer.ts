@@ -1,9 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
+interface User {
+  user_id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+}
 interface AuthState {
-  user: Record<string, unknown> | null;
+  user: User | null;
+  users: User[];
   permissions: Record<string, boolean> | null;
   token: string | null;
   loading: boolean;
@@ -12,11 +22,53 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
+  users: [],
   permissions: null,
   token: localStorage.getItem("authToken") || null,
   loading: false,
   error: null,
 };
+
+export const fetchUsers = createAsyncThunk(
+  "auth/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const response = await api.get(constants.endpoints.auth.all_users, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data as User[]; // ✅ Fix: Ensure correct return type
+    } catch (error: any) {
+      console.error("❌ Fetch Users Error:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch users");
+    }
+  }
+);
+
+export const fetchUserProfile = createAsyncThunk(
+  "auth/fetchUserProfile",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken"); // ✅ Retrieve token manually
+
+      if (!token) {
+        return rejectWithValue("Unauthorized: No authentication token found.");
+      }
+
+      const response = await api.get(constants.endpoints.auth.user, {
+        headers: { Authorization: `Bearer ${token}` }, // ✅ Attach token manually
+      });
+      const { user, permissions } = response.data.data;
+      return { user, permissions };
+    } catch (error: any) {
+      console.error("Fetch User Profile Error:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch user profile");
+    }
+  }
+);
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -52,26 +104,29 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { dispatch, rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.login, credentials);
       const { tokens, user } = response.data.data;
 
-      if (tokens?.access) {
-        localStorage.setItem("authToken", tokens.access);
-        localStorage.setItem("refreshToken", tokens.refresh);
-      } else {
-        console.error("No access token received from API");
+      if (!tokens?.access) {
         return rejectWithValue("No token received from server");
       }
 
+      localStorage.setItem("authToken", tokens.access);
+      localStorage.setItem("refreshToken", tokens.refresh);
+
+
+      await dispatch(loadUser());
+
       return { user, token: tokens.access };
     } catch (error: unknown) {
-      console.error("Login error:", error); // Debugging
+      console.error("Login error:", error);
       return rejectWithValue("Login failed. Check your credentials.");
     }
   }
 );
+
 
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
@@ -114,8 +169,6 @@ export const forgotPassword = createAsyncThunk(
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.forgot_password, { email });
-
-      console.log("📩 Forgot Password response:", response.data);
       return response.data.message || "Password reset link sent! Check your email.";
     } catch (error: unknown) {
       console.error("Forgot Password error:", error);
@@ -143,7 +196,6 @@ export const resetPassword = createAsyncThunk(
         re_enter_password,
       });
 
-      console.log("🔑 Reset Password response:", response.data);
       return response.data.message || "Password successfully reset!";
     } catch (error: unknown) {
       console.error("Reset Password error:", error);
@@ -174,6 +226,18 @@ const authSlice = createSlice({
         state.user = null;
         state.permissions = null;
         state.token = null;
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.permissions = action.payload.permissions;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });

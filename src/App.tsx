@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "./reducers/store";
 import { loadUser } from "./reducers/authReducer";
 import ProtectedRoute from "./protectedRoutes";
+import PublicRoute from "./publicRoute";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -32,8 +33,10 @@ const AppRoutes = () => {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
