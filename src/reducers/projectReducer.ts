@@ -82,6 +82,27 @@ export const createProject = createAsyncThunk(
   }
 );
 
+export const updateProject = createAsyncThunk(
+  "projects/updateProject",
+  async ({ projectId, projectData }: { projectId: string; projectData: Partial<Project> }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const url = `/projects/${projectId}/edit_project/`;
+
+      const response = await api.put(url, projectData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data;
+    } catch (error) {
+      console.error("Update Project Error:", error);
+      return rejectWithValue("Failed to update project");
+    }
+  }
+);
+
 export const fetchProjectDetails = createAsyncThunk(
   "projects/fetchProjectDetails",
   async (projectId: string, { rejectWithValue }) => {
@@ -146,6 +167,17 @@ const projectsSlice = createSlice({
         state.selectedProject = action.payload; // ✅ Store selected project
       })
       .addCase(fetchProjectDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProject = action.payload; // ✅ Update Redux with new project details
+      })
+      .addCase(updateProject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

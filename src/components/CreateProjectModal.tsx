@@ -25,8 +25,13 @@ export default function CreateProjectModal() {
 
   const { users, loading } = useSelector((state: RootState) => state.auth);
 
-  const supervisorContractors = users.filter(user => user.role === "supervisor-contractor");
-  const supervisorConsultants = users.filter(user => user.role === "supervisor-consultant");
+  const supervisorContractors = Array.isArray(users)
+  ? users.filter(user => user.role?.trim().toLowerCase() === "contractors-supervisor")
+  : [];
+
+  const supervisorConsultants = Array.isArray(users)
+    ? users.filter(user => user.role?.trim().toLowerCase() === "consultants-supervisor")
+    : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -85,7 +90,7 @@ export default function CreateProjectModal() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Assign Supervisor-Contractor</label>
                     <select name="supervisor_contractor" value={formData.supervisor_contractor} onChange={handleChange} className="project-modal-input pr-2">
-                      <option value="">Select Supervisor-Contractor</option>
+                      <option value="">Select</option>
                       {loading ? <option>Loading...</option> : supervisorContractors.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                           {user.first_name} {user.last_name}
@@ -97,7 +102,7 @@ export default function CreateProjectModal() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Assign Supervisor-Consultant</label>
                     <select name="supervisor_consultant" value={formData.supervisor_consultant} onChange={handleChange} className="project-modal-input pr-2">
-                      <option value="">Select Supervisor-Consultant</option>
+                      <option value="">Select</option>
                       {loading ? <option>Loading...</option> : supervisorConsultants.map((user) => (
                         <option key={user.user_id} value={user.user_id}>
                           {user.first_name} {user.last_name}
