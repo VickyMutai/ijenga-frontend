@@ -4,7 +4,7 @@ import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
 interface Project {
-  id: number;
+  id: string;
   projectName: string;
   projectLocation: string;
   projectDescription: string;
@@ -137,6 +137,29 @@ export const fetchProjectDetails = createAsyncThunk(
   }
 );
 
+export const deleteProject = createAsyncThunk<
+  string, // Returning only projectId
+  string, // Accepts projectId
+  { rejectValue: string }
+>("projects/deleteProject", async (projectId, { rejectWithValue }) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+    const url = constants.endpoints.projects.delete_project.replace("?", projectId);
+
+    await api.delete(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    console.log(`✅ Project Deleted: ${projectId}`);
+    return projectId;
+  } catch (error: unknown) {
+    console.error("❌ Delete Project Error:", error);
+    return rejectWithValue("Failed to delete project");
+  }
+});
+
 const projectsSlice = createSlice({
   name: "projects",
   initialState,
@@ -179,6 +202,12 @@ const projectsSlice = createSlice({
       })
       .addCase(updateProject.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.projects = state.projects.filter((project) => project.id !== action.payload);
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },

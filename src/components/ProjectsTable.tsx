@@ -2,6 +2,9 @@ import { useEffect } from "react";
 import { FaEye, FaPencilAlt } from "react-icons/fa";
 import { FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+import { deleteProject } from "../reducers/projectReducer";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../reducers/store";
 
 interface Project {
   id: string; // ✅ Ensure ID is a string (UUID)
@@ -19,6 +22,7 @@ interface ProjectsTableProps {
 
 export default function ProjectsTable({ projects }: ProjectsTableProps) {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
   }, [projects]); // ✅ Log projects when it updates
@@ -29,6 +33,14 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
       return;
     }
     navigate(`/project-details/${projectId}`);
+  };
+
+  const handleDelete = async (projectId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevents navigating when clicking delete
+    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+    if (confirmDelete) {
+      await dispatch(deleteProject(projectId));
+    }
   };
 
   return (
@@ -112,7 +124,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
                   {/* Delete Button */}
                   <button
                     className="text-primary hover:text-red-600 transition duration-200 cursor-pointer"
-                    onClick={() => {}}
+                    onClick={(e) => handleDelete(project.id, e)}
                   >
                     <FaTrashCan className="w-5 h-5" />
                   </button>
