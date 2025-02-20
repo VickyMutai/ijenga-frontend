@@ -104,29 +104,30 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials: { email: string; password: string }, { dispatch, rejectWithValue }) => {
+  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await api.post(constants.endpoints.auth.login, credentials);
       const { tokens, user } = response.data.data;
 
-      if (!tokens?.access) {
+      if (tokens?.access) {
+        localStorage.setItem("authToken", tokens.access);
+        localStorage.setItem("refreshToken", tokens.refresh);
+      } else {
         return rejectWithValue("No token received from server");
       }
 
-      localStorage.setItem("authToken", tokens.access);
-      localStorage.setItem("refreshToken", tokens.refresh);
-
-
-      await dispatch(loadUser());
-
       return { user, token: tokens.access };
-    } catch (error: unknown) {
-      console.error("Login error:", error);
-      return rejectWithValue("Login failed. Check your credentials.");
+    } catch (error: any) {
+      console.error("Login error:", error.response?.data || error.message);
+
+      // ✅ Extracts the first error message from `non_field_errors`
+      const errorMessage =
+        error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
+
+      return rejectWithValue(errorMessage);
     }
   }
 );
-
 
 export const loadUser = createAsyncThunk(
   "auth/loadUser",
