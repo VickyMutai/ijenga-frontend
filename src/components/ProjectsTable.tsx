@@ -28,10 +28,6 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
   }, [projects]); // ✅ Log projects when it updates
 
   const handleRowClick = (projectId: string | undefined) => {
-    if (!projectId) {
-      console.error("❌ Invalid project ID:", projectId);
-      return;
-    }
     navigate(`/project-details/${projectId}`);
   };
 

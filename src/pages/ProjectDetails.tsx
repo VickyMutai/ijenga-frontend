@@ -10,10 +10,13 @@ import SubContractorsTable from "../components/SubContractorsTable";
 import { AppDispatch, RootState } from "../reducers/store";
 import { fetchProjectDetails } from "../reducers/projectReducer";
 import { fetchUsers, fetchUserProfile } from "../reducers/authReducer";
+import { fetchSubcontractedWorks } from "../reducers/subcontractedWorksReducer";
+
 
 export default function ProjectDetails() {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const { subcontractedWorks } = useSelector((state: RootState) => state.subcontractedWorks);
 
   const { selectedProject, loading } = useSelector((state: RootState) => state.projects);
   const { users } = useSelector((state: RootState) => state.auth);
@@ -22,6 +25,7 @@ export default function ProjectDetails() {
   useEffect(() => {
     if (projectId) {
       dispatch(fetchProjectDetails(projectId));
+      dispatch(fetchSubcontractedWorks(projectId));
     }
     dispatch(fetchUsers());
   }, [dispatch, projectId]);
@@ -31,6 +35,9 @@ export default function ProjectDetails() {
         dispatch(fetchUserProfile());
       }
     }, [dispatch, user]); 
+
+    useEffect(() => {
+    }, [subcontractedWorks]);    
 
   const getSupervisorName = (uuid: string | null) => {
     if (!uuid) return "Not Assigned";
@@ -99,7 +106,7 @@ export default function ProjectDetails() {
 
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-blue">Subcontracted Works</h2>
-        <SubContractorsTable works={[]} projectId={projectId!} />
+        <SubContractorsTable works={subcontractedWorks} projectId={projectId!} />
         </div>
     </div>
   );

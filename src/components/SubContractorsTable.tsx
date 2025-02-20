@@ -7,7 +7,7 @@ import { fetchUserProfile } from "../reducers/authReducer";
 import { useEffect } from "react";
 
 interface SubcontractedWork {
-  id: number;
+  id: string;
   taskTitle: string;
   taskDescription: string;
   taskCostLabor: number;
@@ -34,7 +34,7 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
   const canAddSubcontractedWork =
     user?.role === "contractors-supervisor" || user?.role === "subcontractor";
 
-  const handleRowClick = (workId: number) => {
+  const handleRowClick = (workId: string) => {
     navigate(`/subcontracted-works-details/${workId}`);
   };
 
