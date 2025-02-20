@@ -41,7 +41,7 @@ const ParticlesComponent = (props: ParticlesComponentProps) => {
           },
           onHover: {
             enable: true,
-            mode: '',
+            mode: 'grab',
           },
         },
         modes: {
