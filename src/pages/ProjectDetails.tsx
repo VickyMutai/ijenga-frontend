@@ -16,14 +16,14 @@ export default function ProjectDetails() {
   const dispatch = useDispatch<AppDispatch>();
 
   const { selectedProject, loading } = useSelector((state: RootState) => state.projects);
-  const { user, users } = useSelector((state: RootState) => state.auth); // ✅ Get users from auth
+  const { user, users } = useSelector((state: RootState) => state.auth);
 
 
   useEffect(() => {
     if (projectId) {
       dispatch(fetchProjectDetails(projectId));
     }
-    dispatch(fetchUsers()); // ✅ Fetch all users for name lookup
+    dispatch(fetchUsers());
   }, [dispatch, projectId]);
   
   useEffect(() => {
@@ -96,12 +96,10 @@ export default function ProjectDetails() {
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold text-blue">Subcontracted Works</h2>
 
-        {/* ✅ Supervisor Contractor and Subcontractor can Create/Edit Subcontracted Works */}
         {(user?.role === "supervisor-contractor" || user?.role === "subcontractor") && (
           <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg">+ Add Subcontracted Work</button>
         )}
 
-        {/* ✅ All roles can view subcontracted works */}
         <SubContractorsTable works={[]} />
       </div>
     </div>
