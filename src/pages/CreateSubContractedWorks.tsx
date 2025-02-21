@@ -13,6 +13,7 @@ const CreateSubContractedWorks = () => {
   const [formData, setFormData] = useState({
     task_title: "",
     task_description: "",
+    task_category: "",
     task_cost_labor: "",
     task_cost_overhead: "",
   });
@@ -34,6 +35,7 @@ const CreateSubContractedWorks = () => {
         project: projectId,
         task_title: formData.task_title,
         task_description: formData.task_description,
+        task_category: formData.task_category,
         task_cost_labor: Number(formData.task_cost_labor),
         task_cost_overhead: Number(formData.task_cost_overhead)
       })
