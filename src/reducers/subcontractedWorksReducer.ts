@@ -15,12 +15,14 @@ interface SubcontractedWork {
 
 interface SubcontractedWorkState {
   subcontractedWorks: SubcontractedWork[];
+  selectedWork: SubcontractedWork | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: SubcontractedWorkState = {
   subcontractedWorks: [],
+  selectedWork: null,
   loading: false,
   error: null,
 };
@@ -73,15 +75,12 @@ export const fetchSubcontractedWorks = createAsyncThunk(
 
       if (!projectId) return rejectWithValue("Project ID is missing before API call.");
 
-      console.log("📡 Fetching subcontracted works for project:", projectId);
       const response = await api.get(
         `${constants.endpoints.subcontractor_works.get_subcontracted_works}${projectId}`, 
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("Subcontracted Works API Response:", response.data);
 
       return response.data.data.map((work: any) => ({
         id: work.work_id, 
@@ -99,6 +98,30 @@ export const fetchSubcontractedWorks = createAsyncThunk(
     }
   }
 );
+
+export const fetchSubcontractedWorkDetails = createAsyncThunk(
+  "subcontractedWork/fetchDetails",
+  async ({ projectId, workId }: { projectId: string; workId: string }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const url = `${constants.endpoints.subcontractor_works.get_subcontracted_works}?project_id=${projectId}&work_id=${workId}`;
+      console.log("🔍 Attempting API call to:", url);
+
+      const response = await api.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log("✅ API Response:", response.data);
+      return response.data.data;
+    } catch (error: any) {
+      console.error("❌ API Request Failed:", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data?.detail || "Failed to fetch work details");
+    }
+  }
+);
+
 
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
@@ -128,6 +151,20 @@ const subcontractedWorkSlice = createSlice({
       .addCase(fetchSubcontractedWorks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchSubcontractedWorkDetails.pending, (state) => {
+        console.log("⏳ Fetching subcontracted work...");
+        state.loading = true;
+      })
+      .addCase(fetchSubcontractedWorkDetails.fulfilled, (state, action) => {
+        console.log("✅ Redux Received Work Details:", action.payload);
+        state.selectedWork = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchSubcontractedWorkDetails.rejected, (state, action) => {
+        console.error("❌ Fetch Subcontracted Work Failed:", action.payload);
+        state.error = action.payload as string;
+        state.loading = false;
       });
   },
 });

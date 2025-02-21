@@ -1,27 +1,39 @@
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../reducers/store";
+import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
+import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
 import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
-//import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
 
 export default function SubcontractedWorkDetails() {
-  // Example subcontracted work data (fetch this from the backend using the ID)
-  const subcontractedWork = [
-    {
-      id: 1,
-      taskTitle: "Foundation Work",
-      taskDescription: "Excavation and concrete pouring for foundation",
-      taskCostLabor: 5000,
-      taskCostOverhead: 1000,
-      laborerName: "James Brown",
-      laborerIdNumber: "12345678",
-      laborerTitle: "Mason",
-      laborerDailyRate: 1500,
-      laborerWeeklyRate: 7500,
-      laborerMpesaNumber: "0712345678",
-      contractorReview: "Work was completed on time and to a high standard.",
-      consultantReview: "No major issues were observed during inspection.",
-    },
-  ];
+  const params = useParams();
+  console.log("🔍 Params from URL:", params);
+
+  const { projectId, id: workId } = params as { projectId: string; id: string };
+  const dispatch = useDispatch<AppDispatch>();
+  const { selectedWork, loading } = useSelector((state: RootState) => state.subcontractedWorks);
+
+  useEffect(() => {
+    
+    console.log("🔄 useEffect triggered");
+    if (projectId && workId) {
+      console.log("📡 Fetching Work Details: Project ID =", projectId, "Work ID =", workId);
+      dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+    } else {
+      console.error("❌ Missing Project ID or Work ID");
+    }
+  }, [dispatch, projectId, workId]);
+
+  useEffect(() => {
+    console.log("📌 Selected Work Details in Redux:", selectedWork);
+  }, [selectedWork]);
+
+  if (loading) return <Loader />;
+  if (!selectedWork) return <p>❌ Subcontracted work not found</p>;
+
 
   // Handle remove laborer
   const handleRemoveLaborer = () => {
@@ -52,20 +64,19 @@ export default function SubcontractedWorkDetails() {
       <div className="mt-6">
         <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4 mb-10">
           <header className="border-b pb-4">
-            <h2 className="text-xl text-blue font-semibold">Foundation Work</h2>
-            <p className="text-sm mt-2">
-              Excavation and concrete pouring for foundation
-            </p>
+            <h2 className="text-xl text-blue font-semibold">{selectedWork.task_title}</h2>
+            <p className="text-sm mt-2">{selectedWork.task_description}</p>
+            <p className="text-sm mt-2">Task Category: {selectedWork.task_category}</p>
           </header>
 
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Labor)</span>
-              <span className="font-medium">Ksh. 5000</span>
+              <span className="font-medium">Ksh. {selectedWork.task_cost_labor}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Overhead)</span>
-              <span className="font-medium">Ksh. 1000</span>
+              <span className="font-medium">Ksh. {selectedWork.task_cost_overhead}</span>
             </div>
           </section>
 
@@ -99,28 +110,26 @@ export default function SubcontractedWorkDetails() {
               </thead>
 
               <tbody className="divide-y divide-gray-200">
-                {subcontractedWork.map((work) => (
                   <tr
-                    key={work.id}
                     className="hover:bg-gray-100 transition duration-200 cursor-pointer"
                   >
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerName}
+                      laborer name
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerIdNumber}
+                      laborer id
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerTitle}
+                      laborer title
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerDailyRate}
+                      laborer daily rate
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerWeeklyRate}
+                      laborer weekly rate
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-700">
-                      {work.laborerMpesaNumber}
+                      laborer mpesa number
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <div className="flex gap-7">
@@ -134,7 +143,6 @@ export default function SubcontractedWorkDetails() {
                       </div>
                     </td>
                   </tr>
-                ))}
               </tbody>
             </table>
           </section>

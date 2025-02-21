@@ -31,8 +31,14 @@ export const constants = {
             create_subcontracted_work: "/subcontracted-works/create_work/",
             edit_subcontracted_work: "/subcontracted-works/?/edit_work/",
             delete_subcontracted_work: "/subcontracted-works/?/delete_work/",
-            get_subcontracted_works: "/subcontracted-works/project_works/?project_id=",
-        }
+            get_subcontracted_works: "/subcontracted-works/project_works/",
+        },
+        labourers: {
+            create_labourers: "/labourers/create_labourer/",
+            edit_labourers: "/labourers/?/edit_labourer/",
+            get_labourers: "/labourers/my_labourers/",
+            get_labourers_by_id: "/labourers/my_labourers/?labourer_id={{labourer_id}}"
+        },
     }}
 
 export const TASK_CATEGORIES = [

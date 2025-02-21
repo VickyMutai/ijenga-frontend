@@ -35,9 +35,9 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
   const canAddSubcontractedWork =
     user?.role === "contractors-supervisor" || user?.role === "subcontractor";
 
-  const handleRowClick = (workId: string) => {
-    navigate(`/subcontracted-works-details/${workId}`);
-  };
+    const handleRowClick = (projectId: string, workId: string) => {
+      navigate(`/subcontracted-works-details/${projectId}/${workId}`);
+    };    
 
   return (
     <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
@@ -68,8 +68,8 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
                 <tr
                   key={work.id}
                   className="hover:bg-gray-100 transition duration-200 cursor-pointer"
-                  onClick={() => handleRowClick(work.id)}
-                >
+                  onClick={() => handleRowClick(work.project, work.id)}
+                  >
                   <td className="px-6 py-4 text-sm text-gray-700">{work.task_title || "N/A"}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{work.task_description || "N/A"}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">
