@@ -1,14 +1,15 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
 import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
-import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
+import { BadgeCheck, CircleCheck, CircleDollarSign, ArrowLeft } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
 
 export default function SubcontractedWorkDetails() {
+  const navigate = useNavigate();
   const params = useParams();
   console.log("🔍 Params from URL:", params);
 
@@ -57,8 +58,15 @@ export default function SubcontractedWorkDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <header className="py-4 px-6 flex justify-between items-center">
+      <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
         <h1 className=" text-xl md:text-2xl font-bold">Subcontracted Work Details</h1>
+        <button
+          onClick={() => navigate(-1)} // Navigates back to the previous page
+          className="flex items-center w-[200px] space-x-2 blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer"
+        >
+          <ArrowLeft size={20} />
+          <span>Back</span>
+        </button>
       </header>
 
       <div className="mt-6">
