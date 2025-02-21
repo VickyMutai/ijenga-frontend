@@ -1,19 +1,20 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "../reducers/store";
-import { LogOut } from "lucide-react";
+// import { LogOut } from "lucide-react";
 import { IoWallet } from "react-icons/io5";
 import Avatar from "../components/Avatar";
 import CreateProjectModal from "../components/CreateProjectModal";
 import ProjectsTable from "../components/ProjectsTable";
-import { fetchUserProfile, logout } from "../reducers/authReducer";
+import { fetchUserProfile } from "../reducers/authReducer";
 import { fetchProjects } from "../reducers/projectReducer";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import Sidebar from "../components/Sidebar";
 
 export default function Home() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const { projects, loading: projectsLoading } = useSelector((state: RootState) => state.projects);
   
@@ -37,10 +38,10 @@ export default function Home() {
 
   const fullName = `${user.first_name} ${user.last_name}`;
 
-  const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
-  };
+  // const handleLogout = () => {
+  //   dispatch(logout());
+  //   navigate("/");
+  // };
 
   // Example wallet balance
   const walletBalance = 2500.75;
@@ -48,20 +49,25 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="text-blue py-4 md:px-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+          {/* <Sidebar /> */}
+          <div className="flex items-center gap-2">
           <Avatar name={fullName} size={12} />
           <div className="text-left">
             <p className="text-lg font-semibold">Welcome, {fullName}</p>
             <p className="text-sm text-gray-500 capitalize">{user.role.replace("-", " ")}</p>
           </div>
-        </div>
-        <div
+          </div>
+          <div>
+            <Sidebar />
+          </div>
+          
+        {/* <div
           onClick={handleLogout}
           className="bg-gray-300 rounded-full md:px-4 p-3 flex gap-2 cursor-pointer hover:bg-gray-400 transition-colors"
         >
           <p className="text-blue font-semibold hidden md:block">Logout</p>
           <LogOut />
-        </div>
+        </div> */}
       </header>
       {user.role === "main-contractor" && 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
