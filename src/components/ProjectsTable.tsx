@@ -62,6 +62,9 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Subcontractor
             </th>
+            <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Actions
+            </th>
           </tr>
         </thead>
 
