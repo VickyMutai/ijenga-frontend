@@ -72,7 +72,9 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
                 >
                   <td className="px-6 py-4 text-sm text-gray-700">{work.task_title || "N/A"}</td>
                   <td className="px-6 py-4 text-sm text-gray-700">{work.task_description || "N/A"}</td>
-                  <td className="px-6 py-4 text-sm text-gray-700">{work.task_category || "N/A"}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    {work.task_category.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     Ksh. {work.task_cost_labor ? work.task_cost_labor.toLocaleString() : "0"}
                   </td>

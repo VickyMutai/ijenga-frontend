@@ -6,7 +6,6 @@ import { constants } from "../helpers/constants";
 interface SubcontractedWork {
   id: string;
   project: string;
-  assigned_subcontractor: string;
   task_title: string;
   task_description: string;
   task_category: string;
