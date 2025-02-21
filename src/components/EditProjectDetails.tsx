@@ -164,8 +164,8 @@ export default function EditProjectDetails() {
                     onChange={handleChange}
                     className="project-modal-input mt-2"
                   >
-                    <option value="">Select Supervisor-Contractor</option>
-                    {supervisorContractors.map((user) => (
+                    <option value="">Select Supervisor-Contractor</option> 
+                    {supervisorContractors.map(user => (
                       <option key={user.user_id} value={user.user_id}>
                         {user.first_name} {user.last_name}
                       </option>
@@ -178,9 +178,8 @@ export default function EditProjectDetails() {
                     onChange={handleChange}
                     className="project-modal-input mt-2"
                   >
-                    <option value="">Select Supervisor-Consultant</option>{" "}
-                    {/* ✅ Prevent "Not Assigned" from being sent */}
-                    {supervisorConsultants.map((user) => (
+                    <option value="">Select Supervisor-Consultant</option>
+                    {supervisorConsultants.map(user => (
                       <option key={user.user_id} value={user.user_id}>
                         {user.first_name} {user.last_name}
                       </option>
