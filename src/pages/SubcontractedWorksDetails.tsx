@@ -1,25 +1,27 @@
-import { FaTrash } from "react-icons/fa";
-import { BadgeCheck, CircleCheck, CircleDollarSign, UserRound } from "lucide-react";
-import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
+import { FaTrashCan } from "react-icons/fa6";
+import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
+import EditLaborerDetails from "../components/EditLaborerDetails";
+//import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
 
 export default function SubcontractedWorkDetails() {
-
   // Example subcontracted work data (fetch this from the backend using the ID)
-  const subcontractedWork = {
-    id: 1,
-    taskTitle: "Foundation Work",
-    taskDescription: "Excavation and concrete pouring for foundation",
-    taskCostLabor: 5000,
-    taskCostOverhead: 1000,
-    laborerName: "James Brown",
-    laborerIdNumber: "12345678",
-    laborerTitle: "Mason",
-    laborerDailyRate: 1500,
-    laborerWeeklyRate: 7500,
-    laborerMpesaNumber: "0712345678",
-    contractorReview: "Work was completed on time and to a high standard.",
-    consultantReview: "No major issues were observed during inspection.",
-  };
+  const subcontractedWork = [
+    {
+      id: 1,
+      taskTitle: "Foundation Work",
+      taskDescription: "Excavation and concrete pouring for foundation",
+      taskCostLabor: 5000,
+      taskCostOverhead: 1000,
+      laborerName: "James Brown",
+      laborerIdNumber: "12345678",
+      laborerTitle: "Mason",
+      laborerDailyRate: 1500,
+      laborerWeeklyRate: 7500,
+      laborerMpesaNumber: "0712345678",
+      contractorReview: "Work was completed on time and to a high standard.",
+      consultantReview: "No major issues were observed during inspection.",
+    },
+  ];
 
   // Handle remove laborer
   const handleRemoveLaborer = () => {
@@ -44,89 +46,107 @@ export default function SubcontractedWorkDetails() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Subcontracted Work Details</h1>
+        <h1 className=" text-xl md:text-2xl font-bold">Subcontracted Work Details</h1>
       </header>
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white lg:h-[460px] rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4">
+      <div className="mt-6">
+        <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4 mb-10">
           <header className="border-b pb-4">
-            <h2 className="text-xl text-blue font-semibold">
-              {subcontractedWork.taskTitle}
-            </h2>
-            <p className="text-sm mt-2">{subcontractedWork.taskDescription}</p>
+            <h2 className="text-xl text-blue font-semibold">Foundation Work</h2>
+            <p className="text-sm mt-2">
+              Excavation and concrete pouring for foundation
+            </p>
           </header>
 
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Labor)</span>
-              <span className="font-medium">
-                Ksh. {subcontractedWork.taskCostLabor.toLocaleString()}
-              </span>
+              <span className="font-medium">Ksh. 5000</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Overhead)</span>
-              <span className="font-medium">
-                Ksh. {subcontractedWork.taskCostOverhead.toLocaleString()}
-              </span>
+              <span className="font-medium">Ksh. 1000</span>
             </div>
           </section>
 
-          <section className="bg-gray-50 p-4 rounded-lg space-y-3">
-            <div className="flex items-center space-x-3">
-              <UserRound />
-              <div>
-                <h3 className="font-medium">{subcontractedWork.laborerName}</h3>
-                <p className="text-sm">{subcontractedWork.laborerTitle}</p>
-              </div>
-            </div>
+          {/* Laborer details table */}
+          <section className="overflow-x-auto rounded-lg shadow-md mt-3">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="blue text-white">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Laborer Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    ID Number
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Title
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Daily Rate
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Weekly Rate
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Mpesa No.
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
 
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <p className="text-gray-600">ID Number</p>
-                <p className="font-medium">
-                  {subcontractedWork.laborerIdNumber}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-600">M-Pesa Number</p>
-                <p className="font-medium">
-                  {subcontractedWork.laborerMpesaNumber}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-600">Daily Rate</p>
-                <p className="font-medium">
-                  Ksh. {subcontractedWork.laborerDailyRate.toLocaleString()}
-                </p>
-              </div>
-              <div>
-                <p className="text-gray-600">Weekly Rate</p>
-                <p className="font-medium">
-                  Ksh. {subcontractedWork.laborerWeeklyRate.toLocaleString()}
-                </p>
-              </div>
-            </div>
+              <tbody className="divide-y divide-gray-200">
+                {subcontractedWork.map((work) => (
+                  <tr
+                    key={work.id}
+                    className="hover:bg-gray-100 transition duration-200 cursor-pointer"
+                  >
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerName}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerIdNumber}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerTitle}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerDailyRate}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerWeeklyRate}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700">
+                      {work.laborerMpesaNumber}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex gap-7">
+                        {/* Edit Button */}
+                        <EditLaborerDetails />
+
+                        {/* Delete Button */}
+                        <button className="hover:text-red-600 transition duration-200 cursor-pointer" onClick={handleRemoveLaborer}>
+                          <FaTrashCan className="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </section>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-            <EditSubcontractedWorks />
-            <button
-              className="flex-1 border border-red-500 hover:bg-red-50 text-red-500 cursor-pointer py-2 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-              onClick={handleRemoveLaborer}
-            >
-              <FaTrash />
-              <span>Remove Labourer</span>
-            </button>
-          </div>
         </div>
 
-        <div>
-          <div className="bg-white p-6 lg:h-[460px] rounded-xl shadow-lg">
-            <h2 className="text-xl font-semibold text-primary mb-4">
+        <div className="flex flex-col md:flex-row gap-10">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full md:w-1/2">
+            <h2 className="text-xl text-center font-semibold text-blue mb-4">
               Proof of Work Done
             </h2>
 
-            <div className="flex items-center justify-center w-full">
+            <div className="flex flex-col items-center justify-center w-full">
               <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <svg
@@ -154,56 +174,65 @@ export default function SubcontractedWorkDetails() {
                 </div>
                 <input id="dropzone-file" type="file" className="hidden" />
               </label>
+              <button className="w-full md:w-[200px] mt-8 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
+                Submit
+              </button>
+            </div>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
+            <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
+            <div className="flex flex-col gap-8">
+              <div>
+                <form>
+                  <label
+                    htmlFor="supervisor-review"
+                    className="block text-sm font-medium text-gray-800 mb-1"
+                  >
+                    Contractor's Supervisor Review
+                  </label>
+
+                  <textarea
+                    id="supervisor-review"
+                    rows={3}
+                    className="project-modal-input"
+                  ></textarea>
+                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
+                    Submit
+                  </button>
+                </form>
+              </div>
+              <div>
+                <form>
+                  <label
+                    htmlFor="supervisor-review"
+                    className="block text-sm font-medium text-gray-800 mb-1"
+                  >
+                    Consultant's Supervisor Review
+                  </label>
+
+                  <textarea
+                    id="supervisor-review"
+                    rows={3}
+                    className="project-modal-input"
+                  ></textarea>
+                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
+                    Submit
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Reviews Section */}
-      <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <form>
-              <label
-                htmlFor="supervisor-review"
-                className="block text-sm font-medium text-gray-800 mb-1"
-              >
-                Contractor's Supervisor Review
-              </label>
-
-              <textarea
-                id="supervisor-review"
-                rows={3}
-                className="project-modal-input"
-              ></textarea>
-              <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">Submit</button>
-            </form>
-          </div>
-          <div>
-            <form>
-            <label
-              htmlFor="supervisor-review"
-              className="block text-sm font-medium text-gray-800 mb-1"
-            >
-              Consultant's Supervisor Review
-            </label>
-
-            <textarea
-              id="supervisor-review"
-              rows={3}
-              className="project-modal-input"
-            ></textarea>
-            <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">Submit</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
       {/* Approval Buttons */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold text-blue mb-4">Approval Section</h2>
-          <div className="flex flex-col md:flex-row flex-wrap gap-4">
+      <div className="mt-14 flex flex-col items-center">
+        <h2 className="text-xl font-semibold text-blue mb-4">
+          Approval Section
+        </h2>
+        <div className="flex flex-col md:flex-row flex-wrap gap-4">
           <button
             className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
             onClick={handleApproveWorks}
@@ -222,8 +251,8 @@ export default function SubcontractedWorkDetails() {
           >
             <CircleDollarSign className="mr-2" /> Approve Payment
           </button>
-          </div>
         </div>
+      </div>
     </div>
   );
 }
