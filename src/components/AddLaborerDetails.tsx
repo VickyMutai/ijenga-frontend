@@ -1,18 +1,17 @@
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { X } from "lucide-react";
-import { FaPencilAlt } from "react-icons/fa";
+import { CirclePlus ,X } from "lucide-react";
 
 const AddLaborerDetails = () => {
   const [open, setOpen] = useState(false);
   return (
     <div>
-      <button
-        className="hover:text-blue-600 transition duration-200 cursor-pointer"
+      <CirclePlus
+        type="button"
         onClick={() => setOpen(true)}
-      >
-        <FaPencilAlt className="w-6 h-6"/>
-      </button>
+        className="text-blue cursor-pointer hover:scale-105"
+        size={28}
+      />
       <Dialog open={open} onClose={() => {}} className="relative z-10">
         <DialogBackdrop
           transition

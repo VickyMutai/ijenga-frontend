@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
+import AddLaborerDetails from "../components/AddLaborerDetails";
 import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
 import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
@@ -79,6 +80,8 @@ export default function SubcontractedWorkDetails() {
               <span className="font-medium">Ksh. {selectedWork.task_cost_overhead}</span>
             </div>
           </section>
+          
+          <AddLaborerDetails />
 
           {/* Laborer details table */}
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
