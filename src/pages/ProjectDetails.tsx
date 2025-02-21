@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FileText, MapPin, ArrowLeft } from "lucide-react";
+import { FileText, MapPin } from "lucide-react";
 import { MdApartment, MdEngineering } from "react-icons/md";
 import { BiSupport } from "react-icons/bi";
 import Loader from "../components/Loader";
@@ -11,11 +11,11 @@ import { AppDispatch, RootState } from "../reducers/store";
 import { fetchProjectDetails } from "../reducers/projectReducer";
 import { fetchUsers, fetchUserProfile } from "../reducers/authReducer";
 import { fetchSubcontractedWorks } from "../reducers/subcontractedWorksReducer";
+import Sidebar from "../components/Sidebar";
 
 export default function ProjectDetails() {
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
   const { subcontractedWorks } = useSelector(
     (state: RootState) => state.subcontractedWorks
   );
@@ -61,15 +61,8 @@ export default function ProjectDetails() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
-      <h1 className="text-2xl font-bold">Project Details</h1>
-        <button
-          onClick={() => navigate(-1)} // Navigates back to the previous page
-          className="flex items-center w-[200px] space-x-2 blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300 cursor-pointer"
-        >
-          <ArrowLeft size={20} />
-          <span>Back to Projects</span>
-        </button>
-        
+        <h1 className="text-2xl font-bold">Project Details</h1>
+        <Sidebar />  
       </header>
 
       <div className="mt-6 bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-md">
