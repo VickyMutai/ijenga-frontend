@@ -53,7 +53,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Project Description
             </th>
-            <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+            {/* <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Supervisor Contractor
             </th>
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
@@ -61,6 +61,9 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
             </th>
             <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
               Subcontractor
+            </th> */}
+            <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Actions
             </th>
           </tr>
         </thead>
@@ -81,7 +84,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
               <td className="px-6 py-4 text-sm text-gray-700">
                 {project.projectDescription}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-700">
+              {/* <td className="px-6 py-4 text-sm text-gray-700">
                 {project.supervisorContractor || "N/A"}
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
@@ -89,7 +92,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
                 {project.subcontractor || "N/A"}
-              </td>
+              </td> */}
               <td className="px-6 py-4 text-sm">
                 <div className="flex space-x-4">
                   {/* View Button */}
