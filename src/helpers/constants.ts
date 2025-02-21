@@ -31,7 +31,8 @@ export const constants = {
             create_subcontracted_work: "/subcontracted-works/create_work/",
             edit_subcontracted_work: "/subcontracted-works/?/edit_work/",
             delete_subcontracted_work: "/subcontracted-works/?/delete_work/",
-            get_subcontracted_works: "/subcontracted-works/project_works/",
+            get_subcontracted_works: "/subcontracted-works/project_works/?project_id=",
+            get_subcontracted_works_details: "/subcontracted-works/project_works/",
         },
         labourers: {
             create_labourers: "/labourers/create_labourer/",

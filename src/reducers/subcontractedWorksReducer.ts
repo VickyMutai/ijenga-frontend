@@ -106,7 +106,7 @@ export const fetchSubcontractedWorkDetails = createAsyncThunk(
       const token = localStorage.getItem("authToken");
       if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
-      const url = `${constants.endpoints.subcontractor_works.get_subcontracted_works}?project_id=${projectId}&work_id=${workId}`;
+      const url = `${constants.endpoints.subcontractor_works.get_subcontracted_works_details}?project_id=${projectId}&work_id=${workId}`;
       console.log("🔍 Attempting API call to:", url);
 
       const response = await api.get(url, {
