@@ -17,7 +17,7 @@ export default function Home() {
   //const navigate = useNavigate();
 
   const { projects, loading: projectsLoading } = useSelector((state: RootState) => state.projects);
-  
+
   const { user, loading: userLoading } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
