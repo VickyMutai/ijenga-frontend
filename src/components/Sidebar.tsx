@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Menu, BrickWall, Building, HomeIcon, LogOut, X} from "lucide-react";
+import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound} from "lucide-react";
 import { useAppDispatch } from "../reducers/store";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../reducers/authReducer";
 import { Link } from "react-router-dom";
-import ProfileModal from "./ProfileModal";
 
 export default function Sidebar() {
   const dispatch = useAppDispatch();
@@ -62,7 +61,12 @@ export default function Sidebar() {
                 <span className="ml-2 font-semibold text-blue">Subcontracted Works</span>
                 </Link>
               </li>
-              <ProfileModal />
+              <li>
+                <Link to="/profile" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
+                <UserRound className="text-blue"/>
+                <span className="ml-2 font-semibold text-blue">Profile</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
