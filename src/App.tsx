@@ -15,6 +15,7 @@ import ProjectDetails from "./pages/ProjectDetails";
 import CreateSubContractedWorks from "./pages/CreateSubContractedWorks";
 import SubcontractedWorkDetails from "./pages/SubcontractedWorksDetails";
 import Loader from "./components/Loader";
+import UserProfile from "./pages/UserProfile";
 
 const AppRoutes = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,6 +44,7 @@ const AppRoutes = () => {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
+          <Route path="/profile" element={<UserProfile />}/>
           <Route path="/project-details" element={<Navigate to="/home" />} />
           <Route path="/project-details/:projectId" element={<ProjectDetails />} />
           <Route path="/subcontracted-works-details" element={<Navigate to="/home" />} />

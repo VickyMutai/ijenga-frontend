@@ -17,7 +17,7 @@ const LandingPage = () => {
           {/* Left section */}
           <div className="text-center lg:text-left lg:w-1/2 px-4">
             <h2 className="text-[44px] md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight animate-gradient">
-              Welcome to <span className="text-[#2ECC71]">WIMPS</span> Portal
+              Welcome to <span className="text-[#2ECC71]">WIPMS</span> Portal
             </h2>
             <p className="text-gray-300 text-lg md:text-xl lg:text-xl mb-8">
               Your gateway to simplify project workflows for construction

@@ -9,6 +9,7 @@ import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
 import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
+import Sidebar from "../components/Sidebar";
 
 export default function SubcontractedWorkDetails() {
   const params = useParams();
@@ -58,8 +59,9 @@ export default function SubcontractedWorkDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <header className="py-4 px-6 flex justify-between items-center">
+      <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
         <h1 className=" text-xl md:text-2xl font-bold">Subcontracted Work Details</h1>
+        <Sidebar />
       </header>
 
       <div className="mt-6">
