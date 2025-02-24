@@ -37,8 +37,6 @@ export const createSubcontractedWork = createAsyncThunk(
       const token = localStorage.getItem("authToken");
       if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
-      console.log("🛠 Creating Subcontracted Work:", workData);
-
       const response = await api.post(
         constants.endpoints.subcontractor_works.create_subcontracted_work, 
         workData, 
@@ -46,8 +44,6 @@ export const createSubcontractedWork = createAsyncThunk(
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("Created Subcontracted Work API Response:", response.data);
 
       return {
         id: response.data.data.work_id,
@@ -107,13 +103,10 @@ export const fetchSubcontractedWorkDetails = createAsyncThunk(
       if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
       const url = `${constants.endpoints.subcontractor_works.get_subcontracted_works_details}?project_id=${projectId}&work_id=${workId}`;
-      console.log("🔍 Attempting API call to:", url);
 
       const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log("✅ API Response:", response.data);
       return response.data.data;
     } catch (error: any) {
       console.error("❌ API Request Failed:", error.response?.data || error.message);
@@ -153,11 +146,9 @@ const subcontractedWorkSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(fetchSubcontractedWorkDetails.pending, (state) => {
-        console.log("⏳ Fetching subcontracted work...");
         state.loading = true;
       })
       .addCase(fetchSubcontractedWorkDetails.fulfilled, (state, action) => {
-        console.log("✅ Redux Received Work Details:", action.payload);
         state.selectedWork = action.payload;
         state.loading = false;
       })

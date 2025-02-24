@@ -37,7 +37,8 @@ export const constants = {
         labourers: {
             create_labourers: "/labourers/create_labourer/",
             edit_labourers: "/labourers/?/edit_labourer/",
-            get_labourers: "/labourers/my_labourers/",
+            get_labourers: "/labourers/work_labourers/",
+            get_labourers_by_works: "/subcontracted-works/?/assigned_labourers/",
             get_labourers_by_id: "/labourers/my_labourers/?labourer_id={{labourer_id}}"
         },
     }}

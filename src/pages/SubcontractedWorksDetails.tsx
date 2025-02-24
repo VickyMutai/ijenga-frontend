@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
+import { fetchLabourers } from "../reducers/labourerReducer";
 import AddLaborerDetails from "../components/AddLaborerDetails";
 import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
@@ -11,32 +12,31 @@ import EditLaborerDetails from "../components/EditLaborerDetails";
 
 export default function SubcontractedWorkDetails() {
   const params = useParams();
-  console.log("🔍 Params from URL:", params);
-
   const { projectId, id: workId } = params as { projectId: string; id: string };
   const dispatch = useDispatch<AppDispatch>();
   const { selectedWork, loading } = useSelector((state: RootState) => state.subcontractedWorks);
+  const { labourers = [] } = useSelector((state: RootState) => state.labourers)
 
   useEffect(() => {
-    
-    console.log("🔄 useEffect triggered");
+    dispatch(fetchLabourers(workId));
+  }, [dispatch, workId]);
+  
+
+  useEffect(() => {
     if (projectId && workId) {
-      console.log("📡 Fetching Work Details: Project ID =", projectId, "Work ID =", workId);
       dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
     } else {
-      console.error("❌ Missing Project ID or Work ID");
+      console.error("Missing Project ID or Work ID");
     }
   }, [dispatch, projectId, workId]);
 
   useEffect(() => {
-    console.log("📌 Selected Work Details in Redux:", selectedWork);
+    console.log("Selected Work Details in Redux:", selectedWork);
   }, [selectedWork]);
 
   if (loading) return <Loader />;
-  if (!selectedWork) return <p>❌ Subcontracted work not found</p>;
-
-
-  // Handle remove laborer
+  if (!selectedWork) return <p>Subcontracted work not found</p>;
+  
   const handleRemoveLaborer = () => {
     console.log("Remove laborer clicked");
   };
@@ -111,42 +111,33 @@ export default function SubcontractedWorkDetails() {
                   </th>
                 </tr>
               </thead>
-
               <tbody className="divide-y divide-gray-200">
-                  <tr
-                    className="hover:bg-gray-100 transition duration-200 cursor-pointer"
-                  >
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer name
+                {labourers.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-4 text-gray-600">
+                      No labourers available
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer id
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer title
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer daily rate
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer weekly rate
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      laborer mpesa number
-                    </td>
-                    <td className="px-6 py-4 text-sm">
+                  </tr>
+                ) : (
+                  labourers.map((labourer) => (
+                    <tr key={labourer.labourer_id} className="hover:bg-gray-100 transition duration-200">
+                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_name}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.national_id_number}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_title}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">Ksh. {labourer.labourer_daily_rate.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm">
                       <div className="flex gap-7">
-                        {/* Edit Button */}
                         <EditLaborerDetails />
-
-                        {/* Delete Button */}
                         <button className="hover:text-red-600 transition duration-200 cursor-pointer" onClick={handleRemoveLaborer}>
                           <FaTrashCan className="w-6 h-6" />
                         </button>
                       </div>
                     </td>
-                  </tr>
-              </tbody>
+                    </tr>
+                  ))
+                )}
+</tbody>
+
             </table>
           </section>
         </div>
