@@ -37,7 +37,6 @@ const AddLaborerDetails = () => {
     labourer_title: "",
     labourer_mpesa_number: "",
     labourer_daily_rate: "",
-    number_of_days_worked: 1,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -53,9 +52,9 @@ const AddLaborerDetails = () => {
     }
 
     const labourerData = {
+      workId, // ✅ Pass correct Work ID
       ...formData,
       labourer_daily_rate: Number(formData.labourer_daily_rate),
-      subcontracted_works: [workId], // Assign to the correct work
     };
 
     const result = await dispatch(createLabourer(labourerData));
@@ -80,9 +79,7 @@ const AddLaborerDetails = () => {
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
               <div className="flex justify-between items-center gap-7 mt-4 px-4">
-                <h2 className="text-xl md:text-2xl font-bold text-blue">
-                  Add Labourer
-                </h2>
+                <h2 className="text-xl md:text-2xl font-bold text-blue">Add Labourer</h2>
                 <button
                   onClick={() => setOpen(false)}
                   className="rounded-full bg-gray-100 p-2 hover:bg-gray-200"
@@ -92,8 +89,22 @@ const AddLaborerDetails = () => {
               </div>
               <div className="bg-white px-4 pt-3 pb-4 sm:p-6 sm:pb-4">
                 <form className="space-y-2" onSubmit={handleSubmit}>
-                  <input type="text" name="labourer_name" placeholder="Labourer Name" className="project-modal-input" onChange={handleChange} required />
-                  <input type="text" name="national_id_number" placeholder="ID Number" className="project-modal-input" onChange={handleChange} required />
+                  <input
+                    type="text"
+                    name="labourer_name"
+                    placeholder="Labourer Name"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="national_id_number"
+                    placeholder="ID Number"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />
                   <select name="labourer_title" className="project-modal-input" onChange={handleChange} required>
                     <option value="">Select Title</option>
                     {LABOURER_TITLES.map((title) => (
@@ -102,9 +113,26 @@ const AddLaborerDetails = () => {
                       </option>
                     ))}
                   </select>
-                  <input type="text" name="labourer_mpesa_number" placeholder="Mpesa Number" className="project-modal-input" onChange={handleChange} required />
-                  <input type="number" name="labourer_daily_rate" placeholder="Daily Rate" className="project-modal-input" onChange={handleChange} required />
-                  <button type="submit" className="w-full bg-[#2ECC71] text-white p-2 rounded-lg hover:bg-green-900 transition duration-300">
+                  <input
+                    type="text"
+                    name="labourer_mpesa_number"
+                    placeholder="Mpesa Number"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    type="number"
+                    name="labourer_daily_rate"
+                    placeholder="Daily Rate"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="w-full bg-[#2ECC71] text-white p-2 rounded-lg hover:bg-green-900 transition duration-300"
+                  >
                     Submit
                   </button>
                 </form>

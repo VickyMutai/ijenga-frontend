@@ -26,7 +26,7 @@ export default function SubcontractedWorkDetails() {
   useEffect(() => {
     dispatch(fetchLabourers(workId));
     dispatch(fetchProofOfWorks(workId));
-  }, [dispatch, workId]);
+  }, [dispatch, workId, projectId]);
   
   useEffect(() => {
     if (projectId && workId) {
@@ -108,9 +108,6 @@ export default function SubcontractedWorkDetails() {
                     Daily Rate
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
-                    Weekly Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Mpesa No.
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
@@ -132,6 +129,7 @@ export default function SubcontractedWorkDetails() {
                       <td className="px-6 py-4 text-sm text-gray-700">{labourer.national_id_number}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_title}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">Ksh. {labourer.labourer_daily_rate}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_mpesa_number}</td>
                       <td className="px-6 py-4 text-sm">
                       <div className="flex gap-7">
                         <EditLaborerDetails />
