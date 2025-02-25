@@ -58,7 +58,7 @@ export const createLabourer = createAsyncThunk<
       const token = localStorage.getItem("authToken");
       if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
 
-      const url = constants.endpoints.labourers.create_labourers;
+      const url = constants.endpoints.labourers.create_and_assign_labourers;
       const response = await api.post(url, labourerData, {
         headers: { Authorization: `Bearer ${token}` },
       });
