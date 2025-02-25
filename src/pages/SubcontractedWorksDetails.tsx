@@ -126,7 +126,7 @@ export default function SubcontractedWorkDetails() {
                       <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_name}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{labourer.national_id_number}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_title}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">Ksh. {labourer.labourer_daily_rate.toLocaleString()}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">Ksh. {labourer.labourer_daily_rate}</td>
                       <td className="px-6 py-4 text-sm">
                       <div className="flex gap-7">
                         <EditLaborerDetails />
