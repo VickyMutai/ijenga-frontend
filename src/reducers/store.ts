@@ -3,12 +3,14 @@ import authReducer from "./authReducer";
 import projectReducer from "./projectReducer";
 import subcontractedWorkReducer from "./subcontractedWorksReducer";
 import labourersReducer from "./labourerReducer";
+import proofofworkReducer from "./proofOfWorksReducer"
 const store = configureStore({
   reducer: {
     auth: authReducer,
     projects: projectReducer,
     subcontractedWorks: subcontractedWorkReducer,
     labourers: labourersReducer,
+    proofOfWorks: proofofworkReducer
   },
 });
 

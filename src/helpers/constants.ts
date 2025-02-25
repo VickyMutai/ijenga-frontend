@@ -33,9 +33,12 @@ export const constants = {
             delete_subcontracted_work: "/subcontracted-works/?/delete_work/",
             get_subcontracted_works: "/subcontracted-works/project_works/?project_id=",
             get_subcontracted_works_details: "/subcontracted-works/project_works/",
+            proof_of_works: "/subcontracted-works/?/add_image/",
+            get_proof_of_works: "/subcontracted-works/?/fetch_all_images/"
         },
         labourers: {
             create_labourers: "/labourers/create_labourer/",
+            create_and_assign_labourers: "/subcontracted-works/?/create_and_assign_labourer/",
             edit_labourers: "/labourers/?/edit_labourer/",
             get_labourers: "/labourers/work_labourers/",
             get_labourers_by_works: "/subcontracted-works/?/assigned_labourers/",
