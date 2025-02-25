@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import Select from "react-select";
+import Select, {MultiValue} from "react-select";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { X } from "lucide-react";
 import { FaPencilAlt } from "react-icons/fa";
@@ -18,31 +18,19 @@ export default function EditProjectDetails() {
   const { selectedProject } = useSelector((state: RootState) => state.projects);
   const { users } = useSelector((state: RootState) => state.auth);
 
+  interface SubcontractorOption {
+    value: string;
+    label: string;
+  }
+
   const [formData, setFormData] = useState({
     project_name: "",
     project_location: "",
     project_description: "",
     supervisor_contractor: "",
     supervisor_consultant: "",
-    subcontractor: "",
+    subcontractor: [] as string[],
   });
-
-   // Dummy list of subcontractors
-  const dummySubcontractors = [
-    { id: 1, name: "Alpha Builders" },
-    { id: 2, name: "Beta Contractors" },
-    { id: 3, name: "Gamma Engineers" },
-    { id: 4, name: "Delta Constructions" },
-    { id: 5, name: "Epsilon Works" },
-    { id: 6, name: "Amanda" },
-    { id: 7, name: "Belkasoft" },
-    { id: 8, name: "Gate Engineers" },
-    { id: 9, name: "Destitue Constructions" },
-    { id: 10, name: "Erickson Works" },
-  ];
-  const [selectedSubcontractors, setSelectedSubcontractors] = useState([]);
-  console.log("Selected Subcontractors:", selectedSubcontractors);
-  //end of dummy list of subcontractors
 
   useEffect(() => {
     if (selectedProject) {
@@ -52,7 +40,11 @@ export default function EditProjectDetails() {
         project_description: selectedProject.projectDescription || "",
         supervisor_contractor: selectedProject.supervisorContractor || "",
         supervisor_consultant: selectedProject.supervisorConsultant || "",
-        subcontractor: selectedProject.subcontractor || "",
+        subcontractor: Array.isArray(selectedProject.subcontractor) 
+          ? selectedProject.subcontractor 
+          : selectedProject.subcontractor 
+            ? [selectedProject.subcontractor] // Convert to array if it's a string
+            : [], // Default to empty array
       });
     }
   }, [selectedProject]);
@@ -68,6 +60,9 @@ export default function EditProjectDetails() {
   );
   const supervisorConsultants = users.filter(
     (user) => user.role === "consultants-supervisor"
+  );
+  const subcontractors = users.filter(
+    (user) => user.role === "subcontractor"
   );
 
   const handleChange = (
@@ -90,6 +85,9 @@ export default function EditProjectDetails() {
       ...formData,
       supervisor_contractor: formData.supervisor_contractor || null,
       supervisor_consultant: formData.supervisor_consultant || null,
+      subcontractor: formData.subcontractor.length > 0 
+      ? formData.subcontractor.join(",") // Convert array to comma-separated string
+      : "", // Default to empty string
     };
 
     await dispatch(
@@ -150,14 +148,29 @@ export default function EditProjectDetails() {
                   <label>Select Subcontractors</label>
                   <Select
                     isMulti
-                    options={dummySubcontractors.map((sub) => ({
-                      value: sub.id,
-                      label: sub.name,
-                    })) as any}
-                    value={selectedSubcontractors}
-                    onChange={(newValue) => setSelectedSubcontractors(newValue as any)}
+                    options={subcontractors.map((sub) => ({
+                      value: sub.user_id,
+                      label: `${sub.first_name} ${sub.last_name}`,
+                    })) as SubcontractorOption[]}
+
+                    value={formData.subcontractor.map((id) => {
+                      const sub = subcontractors.find((s) => s.user_id === id);
+                      return {
+                        value: id,
+                        label: sub ? `${sub.first_name} ${sub.last_name}` : "Unknown",
+                      };
+                    }) as SubcontractorOption[]}
+
+                    onChange={(selected: MultiValue<SubcontractorOption>) =>
+                      setFormData({
+                        ...formData,
+                        subcontractor: selected.map((s) => s.value) as string[], // Ensure it's an array
+                      })
+                    }
+
                     placeholder="Search and select subcontractors..."
                   />
+
 
                   <select
                     name="supervisor_contractor"
