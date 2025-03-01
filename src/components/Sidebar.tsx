@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound} from "lucide-react";
+import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound, BriefcaseBusiness} from "lucide-react";
 import { useAppDispatch } from "../reducers/store";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../reducers/authReducer";
@@ -59,6 +59,12 @@ export default function Sidebar() {
                 <Link to="/subcontracted-works-details/:projectId/:id" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
                 <BrickWall className="text-blue"/>
                 <span className="ml-2 font-semibold text-blue">Subcontracted Works</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/subcontracted-works-details/:projectId/:id" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
+                <BriefcaseBusiness className="text-blue"/>
+                <span className="ml-2 font-semibold text-blue">Manage Subcontractors</span>
                 </Link>
               </li>
               <li>
