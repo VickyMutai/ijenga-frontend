@@ -103,7 +103,7 @@ export default function SubcontractedWorkDetails() {
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Title
-                  </th>
+                  </th> 
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Daily Rate
                   </th>
