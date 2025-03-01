@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound, BriefcaseBusiness} from "lucide-react";
+import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound, BriefcaseBusiness, BriefcaseConveyorBelt} from "lucide-react";
 import { useAppDispatch } from "../reducers/store";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../reducers/authReducer";
@@ -62,9 +62,15 @@ export default function Sidebar() {
                 </Link>
               </li>
               <li>
-                <Link to="/subcontracted-works-details/:projectId/:id" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
+                <Link to="/manage-subcontractors" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
                 <BriefcaseBusiness className="text-blue"/>
                 <span className="ml-2 font-semibold text-blue">Manage Subcontractors</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/manage-laborers" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
+                <BriefcaseConveyorBelt className="text-blue"/>
+                <span className="ml-2 font-semibold text-blue">Manage Laborers</span>
                 </Link>
               </li>
               <li>

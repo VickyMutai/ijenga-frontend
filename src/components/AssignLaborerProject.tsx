@@ -4,15 +4,15 @@ import { X } from "lucide-react";
 import { MdAdd } from "react-icons/md";
 import Select from "react-select";
 
-interface AssignSubcontractorProjectProps {
+interface AssignLaborerProjectProps {
   onClose: () => void;
   onSave: (selectedProjects: number[]) => void;
 }
 
-const AssignSubcontractorProject = ({
+const AssignLaborerProject = ({
   onClose,
   onSave,
-}: AssignSubcontractorProjectProps) => {
+}: AssignLaborerProjectProps) => {
   const [open, setOpen] = useState(false);
   const dummyProjects = [
     { id: 1, name: "Alpha Builders" },
@@ -112,4 +112,4 @@ const AssignSubcontractorProject = ({
   );
 };
 
-export default AssignSubcontractorProject;
+export default AssignLaborerProject;
