@@ -16,6 +16,7 @@ import CreateSubContractedWorks from "./pages/CreateSubContractedWorks";
 import SubcontractedWorkDetails from "./pages/SubcontractedWorksDetails";
 import Loader from "./components/Loader";
 import UserProfile from "./pages/UserProfile";
+import ManageLabourers from "./pages/ManageSubcontractors";
 
 const AppRoutes = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,6 +42,7 @@ const AppRoutes = () => {
         </Route>
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/manage-labourers" element={<ManageLabourers />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
