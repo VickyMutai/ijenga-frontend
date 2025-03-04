@@ -115,7 +115,6 @@ export const loginUser = createAsyncThunk(
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
-
       return rejectWithValue(errorMessage);
     }
   }
@@ -216,6 +215,9 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem("authToken");
     },
+    clearError: (state) => {
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -255,8 +257,13 @@ const authSlice = createSlice({
         state.user = null;
         state.permissions = null;
         state.token = null;
-      });
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });      
   },
 });
 
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;
