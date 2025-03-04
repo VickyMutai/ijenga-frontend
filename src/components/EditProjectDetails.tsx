@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { FaPencilAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
-import { updateProject } from "../reducers/projectReducer";
+import { fetchProjectDetails, updateProject } from "../reducers/projectReducer";
 import { fetchUsers } from "../reducers/authReducer";
 import { useParams } from "react-router-dom";
 
@@ -39,10 +39,10 @@ export default function EditProjectDetails() {
         project_description: selectedProject.projectDescription || "",
         supervisor_contractor: selectedProject.supervisorContractor || "",
         supervisor_consultant: selectedProject.supervisorConsultant || "",
-        subcontractor: Array.isArray(selectedProject.subcontractor) 
-          ? selectedProject.subcontractor 
-          : selectedProject.subcontractor 
-            ? [selectedProject.subcontractor] // Convert to array if it's a string
+        subcontractor: Array.isArray(selectedProject.subcontractors) 
+          ? selectedProject.subcontractors 
+          : selectedProject.subcontractors 
+            ? [selectedProject.subcontractors] // Convert to array if it's a string
             : [], // Default to empty array
       });
     }
@@ -74,26 +74,26 @@ export default function EditProjectDetails() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!projectId) {
       return;
     }
-
+  
     const updatedProjectData = {
       ...formData,
       supervisor_contractor: formData.supervisor_contractor || null,
       supervisor_consultant: formData.supervisor_consultant || null,
-      subcontractor: formData.subcontractor.length > 0 
-      ? formData.subcontractor.join(",") // Convert array to comma-separated string
-      : "", // Default to empty string
+      subcontractors: formData.subcontractor.length > 0 ? formData.subcontractor : [], // ✅ Ensure it's an array
     };
+    const result = await dispatch(updateProject({ projectId, projectData: updatedProjectData }));
 
-    await dispatch(
-      updateProject({ projectId, projectData: updatedProjectData })
-    );
+    if (updateProject.fulfilled.match(result)) {
+      dispatch(fetchProjectDetails(projectId));
+    }
+
     setOpen(false);
   };
-
+  
   return (
     <div>
       <button
@@ -168,6 +168,7 @@ export default function EditProjectDetails() {
 
                     placeholder="Search and select subcontractors..."
                   />
+
 
 
                   <select
