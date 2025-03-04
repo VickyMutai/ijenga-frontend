@@ -87,8 +87,8 @@ export const TASK_CATEGORIES = [
 
 export const ROLES = {
     MAIN_CONTRACTOR: "main-contractor",
-    SUPERVISOR_CONSULTANT: "supervisor-consultant",
-    SUPERVISOR_CONTRACTOR: "supervisor-contractor",
+    SUPERVISOR_CONSULTANT: "consultants-supervisor",
+    SUPERVISOR_CONTRACTOR: "contractors-supervisor",
     SUBCONTRACTOR: "subcontractor",
     };
       

@@ -156,7 +156,6 @@ export default function SubcontractedWorkDetails() {
 
         <div className="flex flex-col md:flex-row gap-10">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full md:w-1/2">
-          <h2 className="text-xl font-semibold text-blue mb-4">Proof of Work Done</h2>
           {(userRole === ROLES.SUPERVISOR_CONSULTANT || userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
             <div>
               <h2 className="text-xl font-semibold text-blue mb-4">Proof of Work Done</h2>
@@ -190,48 +189,54 @@ export default function SubcontractedWorkDetails() {
 
         </div>
         <ProofOfWorkModal workId={workId} isOpen={isProofModalOpen} onClose={() => setIsProofModalOpen(false)} />
-          {/* Reviews Section */}
           <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
             <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
             <div className="flex flex-col gap-8">
-              <div>
-                <form>
-                  <label
-                    htmlFor="supervisor-review"
-                    className="block text-sm font-medium text-gray-800 mb-1"
-                  >
+            {userRole !== ROLES.SUBCONTRACTOR && (
+              <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
+                <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
+                
+                {/* Contractor Supervisor Review - Hide form for Main Contractor */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-800 mb-1">
                     Contractor's Supervisor Review
                   </label>
-
-                  <textarea
-                    id="supervisor-review"
-                    rows={3}
-                    className="project-modal-input"
-                  ></textarea>
-                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
-                    Submit
-                  </button>
-                </form>
-              </div>
-              <div>
-                <form>
-                  <label
-                    htmlFor="supervisor-review"
-                    className="block text-sm font-medium text-gray-800 mb-1"
-                  >
+                  {userRole === ROLES.MAIN_CONTRACTOR ? (
+                    <p className="bg-gray-100 p-3 rounded-lg">{"No review yet."}</p>
+                  ) : (
+                    <textarea
+                      id="contractor-review"
+                      rows={3}
+                      className="project-modal-input"
+                    ></textarea>
+                  )}
+                  {userRole !== ROLES.MAIN_CONTRACTOR || userRole !== ROLES.SUPERVISOR_CONSULTANT && (
+                    <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
+                      Submit
+                    </button>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-800 mb-1">
                     Consultant's Supervisor Review
                   </label>
-
-                  <textarea
-                    id="supervisor-review"
-                    rows={3}
-                    className="project-modal-input"
-                  ></textarea>
-                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
-                    Submit
-                  </button>
-                </form>
+                  {userRole === ROLES.MAIN_CONTRACTOR || userRole !== ROLES.SUPERVISOR_CONTRACTOR ? (
+                    <p className="bg-gray-100 p-3 rounded-lg">{"No review yet."}</p>
+                  ) : (
+                    <textarea
+                      id="consultant-review"
+                      rows={3}
+                      className="project-modal-input"
+                    ></textarea>
+                  )}
+                  {userRole !== ROLES.MAIN_CONTRACTOR && (
+                    <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
+                      Submit
+                    </button>
+                  )}
+                </div>
               </div>
+            )}
             </div>
           </div>
         </div>
