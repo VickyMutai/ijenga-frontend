@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import Select, {MultiValue} from "react-select";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
