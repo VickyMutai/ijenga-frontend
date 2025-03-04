@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
-import { loginUser } from "../reducers/authReducer";
+import { loginUser, clearError } from "../reducers/authReducer";
 import { useNavigate } from "react-router-dom";
 import { LockKeyhole, Mail, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -13,12 +13,10 @@ const Login = () => {
   const { loading, error } = useSelector((state: RootState) => state.auth);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -28,6 +26,15 @@ const Login = () => {
       navigate("/home");
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, dispatch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#1D3557] to-[#1D3557]/90 flex flex-col items-center justify-center">
@@ -62,7 +69,11 @@ const Login = () => {
             />
           </div>
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative text-center" role="alert">
+              <span className="block sm:inline ml-2">{error}</span>
+            </div>
+          )}
 
           <button
             type="submit"

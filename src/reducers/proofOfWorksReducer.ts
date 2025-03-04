@@ -31,7 +31,6 @@ export const fetchProofOfWorks = createAsyncThunk(
       const response = await api.get(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(response.data.data);
       return response.data.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -55,7 +54,6 @@ export const uploadProofOfWork = createAsyncThunk(
       },
       });
 
-      console.log(response.data)
     
       return response.data;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

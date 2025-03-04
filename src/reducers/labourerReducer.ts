@@ -9,6 +9,7 @@ interface Labourer {
   national_id_number: string;
   labourer_title: string;
   labourer_daily_rate: number;
+  labourer_mpesa_number: string;
 }
 
 interface LabourerState {
@@ -39,7 +40,7 @@ export const fetchLabourers = createAsyncThunk<
     });
 
     
-    return Array.isArray(response.data) ? response.data : [];
+    return response.data.data;
     
   } catch (error: any) {
     return rejectWithValue(error.response?.data || error.message);
@@ -48,23 +49,39 @@ export const fetchLabourers = createAsyncThunk<
 
 export const createLabourer = createAsyncThunk<
   Labourer,
-  { labourer_name: string; labourer_title: string; labourer_daily_rate: number; labourer_mpesa_number: string; national_id_number: string; subcontracted_works: string[] },
+  {
+    workId: string;
+    labourer_name: string;
+    national_id_number: string;
+    labourer_title: string;
+    labourer_mpesa_number: string;
+    labourer_daily_rate: number;
+  },
   { rejectValue: string }
 >(
   "labourers/createLabourer",
-  async (labourerData, { rejectWithValue }) => {
+  async ({ workId, ...labourerData }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token) {
+        return rejectWithValue("Unauthorized: No authentication token found.");
+      }
 
-      const url = constants.endpoints.labourers.create_and_assign_labourers;
-      const response = await api.post(url, labourerData, {
+      const url = constants.endpoints.labourers.create_and_assign_labourers.replace("?", workId);
+
+      // Ensure workId is included in subcontracted_works array
+      const payload = {
+        ...labourerData,
+        subcontracted_works: [workId], // ✅ Ensure workId is sent
+      };
+
+      const response = await api.post(url, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || "Error creating laborer");
     }
   }
 );
