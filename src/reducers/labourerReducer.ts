@@ -42,7 +42,6 @@ export const fetchLabourers = createAsyncThunk<
     return Array.isArray(response.data) ? response.data : [];
     
   } catch (error: any) {
-    console.error("Fetch Labourers Error:", error.response?.data || error.message);
     return rejectWithValue(error.response?.data || error.message);
   }
 });

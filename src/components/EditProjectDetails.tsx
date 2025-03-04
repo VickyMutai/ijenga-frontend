@@ -77,7 +77,6 @@ export default function EditProjectDetails() {
     e.preventDefault();
 
     if (!projectId) {
-      console.error("Project ID is missing!");
       return;
     }
 

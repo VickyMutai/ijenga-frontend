@@ -56,7 +56,6 @@ export const createSubcontractedWork = createAsyncThunk(
         task_cost_overhead: parseFloat(response.data.data.task_cost_overhead),
       };
     } catch (error: any) {
-      console.error("❌ Create Subcontracted Work Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to create subcontracted work");
     }
   }
@@ -89,7 +88,6 @@ export const fetchSubcontractedWorks = createAsyncThunk(
         task_cost_overhead: parseFloat(work.task_cost_overhead),
       }));
     } catch (error: any) {
-      console.error("Fetch Subcontracted Works Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.message || "Failed to fetch subcontracted works");
     }
   }
@@ -109,7 +107,6 @@ export const fetchSubcontractedWorkDetails = createAsyncThunk(
       });
       return response.data.data;
     } catch (error: any) {
-      console.error("❌ API Request Failed:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to fetch work details");
     }
   }
@@ -153,7 +150,6 @@ const subcontractedWorkSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchSubcontractedWorkDetails.rejected, (state, action) => {
-        console.error("❌ Fetch Subcontracted Work Failed:", action.payload);
         state.error = action.payload as string;
         state.loading = false;
       });

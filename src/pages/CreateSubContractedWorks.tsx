@@ -20,7 +20,6 @@ const CreateSubContractedWorks = () => {
   });
 
   if (!projectId) {
-    console.error("No projectId found in URL");
     return <p>Project ID is required</p>;
   }
 

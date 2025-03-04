@@ -44,7 +44,6 @@ export const fetchUsers = createAsyncThunk(
 
       return Array.isArray(response.data.data.users) ? response.data.data.users : [];
     } catch (error: any) {
-      console.error("Fetch Users Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to fetch users");
     }
   }
@@ -66,7 +65,6 @@ export const fetchUserProfile = createAsyncThunk(
       const { user, permissions } = response.data.data;
       return { user, permissions };
     } catch (error: any) {
-      console.error("Fetch User Profile Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to fetch user profile");
     }
   }
@@ -115,8 +113,6 @@ export const loginUser = createAsyncThunk(
       dispatch(loadUser());
       return { user, token: tokens.access };
     } catch (error: any) {
-      console.error("Login error:", error.response?.data || error.message);
-
       const errorMessage =
         error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
 
@@ -154,8 +150,8 @@ export const loadUser = createAsyncThunk(
       } else {
         return rejectWithValue("User not logged in");
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
-      console.error("Auto-login error:", error);
       return rejectWithValue("Failed to load user");
     }
   }
@@ -167,8 +163,8 @@ export const forgotPassword = createAsyncThunk(
     try {
       const response = await api.post(constants.endpoints.auth.forgot_password, { email });
       return response.data.message || "Password reset link sent! Check your email.";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
-      console.error("Forgot Password error:", error);
       return rejectWithValue("Failed to send password reset link. Please try again.");
     }
   }
@@ -194,8 +190,8 @@ export const resetPassword = createAsyncThunk(
       });
 
       return response.data.message || "Password successfully reset!";
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
-      console.error("Reset Password error:", error);
       return rejectWithValue("Failed to reset password. Please try again.");
     }
   }

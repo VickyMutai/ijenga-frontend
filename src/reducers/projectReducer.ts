@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
@@ -50,8 +51,8 @@ export const fetchProjects = createAsyncThunk(
       }));
 
       return formattedProjects;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Fetch Projects Error:", error);
       return rejectWithValue("Failed to fetch projects");
     }
   }
@@ -76,7 +77,6 @@ export const createProject = createAsyncThunk(
 
       return response.data.data; // Return new project
     } catch (error: any) {
-      console.error("Create Project Error:", error.response?.data || error.message);
       return rejectWithValue(error.response?.data?.detail || "Failed to create project");
     }
   }
@@ -96,8 +96,8 @@ export const updateProject = createAsyncThunk(
       });
 
       return response.data.data;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Update Project Error:", error);
       return rejectWithValue("Failed to update project");
     }
   }
@@ -130,8 +130,8 @@ export const fetchProjectDetails = createAsyncThunk(
         supervisorConsultant: projectData.supervisor_consultant || "Not Assigned",
         subcontractor: projectData.subcontractors.length > 0 ? projectData.subcontractors[0] : "Not Assigned",
       };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("Fetch Project Details Error:", error);
       return rejectWithValue("Failed to fetch project details");
     }
   }
@@ -153,7 +153,6 @@ export const deleteProject = createAsyncThunk<
     });
     return projectId;
   } catch (error: unknown) {
-    console.error("Delete Project Error:", error);
     return rejectWithValue("Failed to delete project");
   }
 });

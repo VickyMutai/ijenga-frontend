@@ -48,7 +48,6 @@ const AddLaborerDetails = () => {
     e.preventDefault();
 
     if (!workId) {
-      console.error("Missing Work ID");
       return;
     }
 
