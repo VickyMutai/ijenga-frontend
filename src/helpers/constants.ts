@@ -84,5 +84,12 @@ export const TASK_CATEGORIES = [
     "concrete_work",
     "other",
     ] as const;
-    
+
+export const ROLES = {
+    MAIN_CONTRACTOR: "main-contractor",
+    SUPERVISOR_CONSULTANT: "supervisor-consultant",
+    SUPERVISOR_CONTRACTOR: "supervisor-contractor",
+    SUBCONTRACTOR: "subcontractor",
+    };
+      
 export type TaskCategory = (typeof TASK_CATEGORIES)[number];

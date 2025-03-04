@@ -12,7 +12,7 @@ import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
 import Sidebar from "../components/Sidebar";
 import ProofOfWorkModal from "../components/proofOfWorkModal";
-import { constants  } from "../helpers/constants";
+import { constants, ROLES  } from "../helpers/constants";
 
 export default function SubcontractedWorkDetails() {
   const params = useParams();
@@ -22,6 +22,7 @@ export default function SubcontractedWorkDetails() {
   const { labourers = [] } = useSelector((state: RootState) => state.labourers)
   const proofOfWorks = useSelector((state: RootState) => state.proofOfWorks.proofOfWorks || []);
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+  const userRole = useSelector((state: RootState) => state.auth.user?.role);
 
   useEffect(() => {
     dispatch(fetchLabourers(workId));
@@ -88,9 +89,15 @@ export default function SubcontractedWorkDetails() {
             </div>
           </section>
           
-          <AddLaborerDetails />
+          {userRole === ROLES.SUBCONTRACTOR && (
+            <>
+              <AddLaborerDetails />
+              <button className="hover:text-red-600 transition duration-200 cursor-pointer" onClick={handleRemoveLaborer}>
+                <FaTrashCan className="w-6 h-6" />
+              </button>
+            </>
+          )}
 
-          {/* Laborer details table */}
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="blue text-white">
@@ -150,13 +157,18 @@ export default function SubcontractedWorkDetails() {
         <div className="flex flex-col md:flex-row gap-10">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full md:w-1/2">
           <h2 className="text-xl font-semibold text-blue mb-4">Proof of Work Done</h2>
-          <button
-            onClick={() => setIsProofModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
-          >
-            Upload Proof of Work
-          </button>
-          {/* Display Uploaded Proofs */}
+          {(userRole === ROLES.SUPERVISOR_CONSULTANT || userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
+            <div>
+              <h2 className="text-xl font-semibold text-blue mb-4">Proof of Work Done</h2>
+              <button
+                onClick={() => setIsProofModalOpen(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
+              >
+                Upload Proof of Work
+              </button>
+              <ProofOfWorkModal workId={workId} isOpen={isProofModalOpen} onClose={() => setIsProofModalOpen(false)} />
+            </div>
+          )}
           <div className="mt-6 space-y-4">
             {proofOfWorks.length === 0 ? (
               <p className="text-gray-600">No proof of work uploaded yet.</p>
@@ -164,7 +176,7 @@ export default function SubcontractedWorkDetails() {
               proofOfWorks.map((proof) => (
                 <div key={proof.image_id} className="border p-4 rounded-lg flex gap-4">
                   <img
-                    src={`${constants.BASE_URL}${proof.image_file}`} // ✅ Correct string interpolation
+                    src={`${constants.BASE_URL}${proof.image_file}`}
                     alt="Proof of Work"
                     className="w-24 h-24 object-cover rounded-lg"
                   />
@@ -225,30 +237,38 @@ export default function SubcontractedWorkDetails() {
         </div>
       </div>
 
-      {/* Approval Buttons */}
       <div className="mt-14 flex flex-col items-center">
         <h2 className="text-xl font-semibold text-blue mb-4">
           Approval Section
         </h2>
         <div className="flex flex-col md:flex-row flex-wrap gap-4">
-          <button
-            className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
-            onClick={handleApproveWorks}
-          >
-            <CircleCheck className="mr-2" /> Approve Works
-          </button>
-          <button
-            className="w-full md:w-[300px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
-            onClick={handleApproveWorksAndPayment}
-          >
-            <BadgeCheck className="mr-2" /> Approve Works & Payment
-          </button>
+          {(userRole === ROLES.SUPERVISOR_CONSULTANT || userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
+            <button
+              className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+              onClick={handleApproveWorks}
+            >
+              <CircleCheck className="mr-2" /> Approve Works
+            </button>
+          )}
+          {userRole === ROLES.SUPERVISOR_CONTRACTOR && (
+            <button
+              className="w-full md:w-[300px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+              onClick={handleApproveWorksAndPayment}
+            >
+              <BadgeCheck className="mr-2" /> Approve Works & Payment
+            </button>
+          )}
+
+          {userRole === ROLES.MAIN_CONTRACTOR && (
           <button
             className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
             onClick={handleApprovePayment}
           >
             <CircleDollarSign className="mr-2" /> Approve Payment
           </button>
+            )}
+
+
         </div>
       </div>
     </div>
