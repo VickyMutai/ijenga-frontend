@@ -189,9 +189,6 @@ export default function SubcontractedWorkDetails() {
 
         </div>
         <ProofOfWorkModal workId={workId} isOpen={isProofModalOpen} onClose={() => setIsProofModalOpen(false)} />
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
-            <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
-            <div className="flex flex-col gap-8">
             {userRole !== ROLES.SUBCONTRACTOR && (
               <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
                 <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
@@ -239,8 +236,6 @@ export default function SubcontractedWorkDetails() {
             )}
             </div>
           </div>
-        </div>
-      </div>
 
       <div className="mt-14 flex flex-col items-center">
         <h2 className="text-xl font-semibold text-blue mb-4">

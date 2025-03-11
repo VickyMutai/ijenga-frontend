@@ -42,7 +42,6 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
   return (
     <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold text-blue mb-4">Subcontracted Works</h2>
         {canAddSubcontractedWork && projectId && (
           <Link to={`/create-subcontracted-works/${projectId}`}>
             <CirclePlus className="text-blue cursor-pointer hover:scale-105" size={28} />
