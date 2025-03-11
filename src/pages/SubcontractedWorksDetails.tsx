@@ -54,11 +54,11 @@ export default function SubcontractedWorkDetails() {
   if (loading) return <Loader />;
   if (!selectedWork) return <p>Subcontracted work not found</p>;
 
-  const handleSubmitContractorReview = () => {
+  const handleSubmitContractorReview = async () => {
     if (!contractorReview.trim()) return;
-    dispatch(addContractorComment({ workId, comment: contractorReview })).then(
-      () => setContractorReview("")
-    );
+    await dispatch(addContractorComment({ workId, comment: contractorReview }));
+    setContractorReview("");
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
   const handleSubmitConsultantReview = () => {
@@ -66,6 +66,7 @@ export default function SubcontractedWorkDetails() {
     dispatch(addConsultantComment({ workId, comment: consultantReview })).then(
       () => setConsultantReview("")
     );
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
   const handleRemoveLaborer = () => {
@@ -258,6 +259,7 @@ export default function SubcontractedWorkDetails() {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
               <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
 
+              {/* Contractor's Supervisor Review */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-800 mb-1">
                   Contractor's Supervisor Review
@@ -268,27 +270,24 @@ export default function SubcontractedWorkDetails() {
                   )}
                 </p>
 
-                {userRole === ROLES.SUPERVISOR_CONTRACTOR && (
-                  <>
-                    {selectedWork.consultant_supervisor_comments || (
-                      <>
-                        <textarea
-                          rows={3}
-                          value={contractorReview}
-                          onChange={(e) => setContractorReview(e.target.value)}
-                          className="w-full p-2 border rounded-lg mt-2"
-                          placeholder="Write a review..."
-                        ></textarea>
-                        <button
-                          onClick={handleSubmitContractorReview}
-                          className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
-                        >
-                          Submit
-                        </button>
-                      </>
-                    )}
-                  </>
-                )}
+                {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+                  !selectedWork.contractor_supervisor_comments && (
+                    <>
+                      <textarea
+                        rows={3}
+                        value={contractorReview}
+                        onChange={(e) => setContractorReview(e.target.value)}
+                        className="w-full p-2 border rounded-lg mt-2"
+                        placeholder="Write a review..."
+                      ></textarea>
+                      <button
+                        onClick={handleSubmitContractorReview}
+                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
               </div>
 
               {/* Consultant's Supervisor Review */}
@@ -302,27 +301,24 @@ export default function SubcontractedWorkDetails() {
                   )}
                 </p>
 
-                {userRole === ROLES.SUPERVISOR_CONSULTANT && (
-                  <>
-                    {selectedWork.consultant_supervisor_comments || (
-                      <>
-                        <textarea
-                          rows={3}
-                          value={consultantReview}
-                          onChange={(e) => setConsultantReview(e.target.value)}
-                          className="w-full p-2 border rounded-lg mt-2"
-                          placeholder="Write a review..."
-                        ></textarea>
-                        <button
-                          onClick={handleSubmitConsultantReview}
-                          className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
-                        >
-                          Submit
-                        </button>
-                      </>
-                    )}
-                  </>
-                )}
+                {userRole === ROLES.SUPERVISOR_CONSULTANT &&
+                  !selectedWork.consultant_supervisor_comments && (
+                    <>
+                      <textarea
+                        rows={3}
+                        value={consultantReview}
+                        onChange={(e) => setConsultantReview(e.target.value)}
+                        className="w-full p-2 border rounded-lg mt-2"
+                        placeholder="Write a review..."
+                      ></textarea>
+                      <button
+                        onClick={handleSubmitConsultantReview}
+                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
               </div>
             </div>
           )}

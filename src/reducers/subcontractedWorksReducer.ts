@@ -171,7 +171,7 @@ export const addConsultantComment = createAsyncThunk(
 
       const response = await api.post(
         `${constants.endpoints.subcontractor_works.add_consultant_comment.replace(
-          "{work_id}",
+          "?",
           workId
         )}`,
         { comment },
