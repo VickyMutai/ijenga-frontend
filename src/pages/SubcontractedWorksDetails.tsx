@@ -6,6 +6,9 @@ import {
   fetchSubcontractedWorkDetails,
   addContractorComment,
   addConsultantComment,
+  approveConsultant,
+  approveContractorSupervisor,
+  approveMainContractor,
 } from "../reducers/subcontractedWorksReducer";
 import { fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
@@ -69,23 +72,36 @@ export default function SubcontractedWorkDetails() {
     dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
+  const handleApproveContractorSupervisor = async () => {
+    if (!selectedWork.consultant_approval) {
+      alert("Consultant must approve first before the supervisor can approve.");
+      return;
+    }
+    await dispatch(approveContractorSupervisor(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+  };
+
+  const handleApproveConsultant = async () => {
+    await dispatch(approveConsultant(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+  };
+
+  const handleApproveMainContractor = async () => {
+    if (
+      !selectedWork.contractor_supervisor_approval ||
+      !selectedWork.consultant_approval
+    ) {
+      alert(
+        "Supervisor and Consultant must approve before the main contractor can approve."
+      );
+      return;
+    }
+    await dispatch(approveMainContractor(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+  };
+
   const handleRemoveLaborer = () => {
     console.log("Remove laborer clicked");
-  };
-
-  // Handle approve works
-  const handleApproveWorks = () => {
-    console.log("Approve works clicked");
-  };
-
-  // Handle approve works and payment
-  const handleApproveWorksAndPayment = () => {
-    console.log("Approve works and payment clicked");
-  };
-
-  // Handle approve payment
-  const handleApprovePayment = () => {
-    console.log("Approve payment clicked");
   };
 
   return (
@@ -330,31 +346,70 @@ export default function SubcontractedWorkDetails() {
           Approval Section
         </h2>
         <div className="flex flex-col md:flex-row flex-wrap gap-4">
-          {(userRole === ROLES.SUPERVISOR_CONSULTANT ||
-            userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
-            <button
-              className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
-              onClick={handleApproveWorks}
-            >
-              <CircleCheck className="mr-2" /> Approve Works
-            </button>
-          )}
-          {userRole === ROLES.SUPERVISOR_CONTRACTOR && (
-            <button
-              className="w-full md:w-[300px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
-              onClick={handleApproveWorksAndPayment}
-            >
-              <BadgeCheck className="mr-2" /> Approve Works & Payment
-            </button>
+          {/* Consultant Approval */}
+          {userRole === ROLES.SUPERVISOR_CONSULTANT &&
+            !selectedWork.consultant_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                onClick={handleApproveConsultant}
+              >
+                <BadgeCheck className="mr-2" /> Approve as Consultant
+              </button>
+            )}
+          {selectedWork.consultant_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Approved by Consultant
+            </p>
           )}
 
-          {userRole === ROLES.MAIN_CONTRACTOR && (
-            <button
-              className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
-              onClick={handleApprovePayment}
-            >
-              <CircleDollarSign className="mr-2" /> Approve Payment
-            </button>
+          {/* Supervisor Approval (Only if Consultant has approved) */}
+          {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+            selectedWork.consultant_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                onClick={handleApproveContractorSupervisor}
+              >
+                <CircleCheck className="mr-2" /> Approve as Supervisor
+              </button>
+            )}
+          {selectedWork.contractor_supervisor_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Approved by Supervisor
+            </p>
+          )}
+
+          {/* Supervisor Approval for Work & Payment (Only if Consultant has approved) */}
+          {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+            selectedWork.consultant_approval &&
+            !selectedWork.contractor_supervisor_payment_approval && (
+              <button
+                className="w-full md:w-[300px] flex items-center justify-center bg-green-800 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                onClick={handleApproveContractorSupervisor}
+              >
+                <BadgeCheck className="mr-2" /> Approve Work & Payment
+              </button>
+            )}
+          {selectedWork.contractor_supervisor_payment_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Supervisor Approved Work & Payment
+            </p>
+          )}
+
+          {userRole === ROLES.MAIN_CONTRACTOR &&
+            selectedWork.contractor_supervisor_approval &&
+            selectedWork.consultant_approval &&
+            !selectedWork.main_contractor_cost_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                onClick={handleApproveMainContractor}
+              >
+                <CircleDollarSign className="mr-2" /> Approve as Main Contractor
+              </button>
+            )}
+          {selectedWork.main_contractor_cost_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Approved by Main Contractor
+            </p>
           )}
         </div>
       </div>

@@ -15,6 +15,12 @@ interface SubcontractedWork {
   consultant_review?: string;
   contractor_supervisor_comments?: string;
   consultant_supervisor_comments?: string;
+  contractor_supervisor_approval?: boolean;
+  contractor_supervisor_payment_approval?: boolean;
+  contractor_supervisor_attendance_approval?: boolean;
+  consultant_approval?: boolean;
+  main_contractor_cost_approval?: boolean;
+  main_contractor_payment_approval?: boolean;
 }
 
 interface SubcontractedWorkState {
@@ -187,6 +193,106 @@ export const addConsultantComment = createAsyncThunk(
     }
   }
 );
+export const approveContractorSupervisor = createAsyncThunk(
+  "subcontractedWork/approveContractorSupervisor",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
+
+      // Approve the work first
+      await api.post(
+        constants.endpoints.subcontractor_works.approve_contractor_supervisor.replace(
+          "?",
+          workId
+        ),
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Approve payment under contractor supervisor
+      await api.post(
+        constants.endpoints.subcontractor_works.approve_payment.replace(
+          "?",
+          workId
+        ),
+        { approval_type: "contractor_supervisor" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return workId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail ||
+          "Failed to approve work and payment (Contractor Supervisor)"
+      );
+    }
+  }
+);
+
+export const approveConsultant = createAsyncThunk(
+  "subcontractedWork/approveConsultant",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
+
+      await api.post(
+        constants.endpoints.subcontractor_works.approve_consultant.replace(
+          "?",
+          workId
+        ),
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return workId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to approve work (consultant)"
+      );
+    }
+  }
+);
+
+export const approveMainContractor = createAsyncThunk(
+  "subcontractedWork/approveMainContractor",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
+
+      // Approve payment under main contractor
+      await api.post(
+        constants.endpoints.subcontractor_works.approve_payment.replace(
+          "?",
+          workId
+        ),
+        { approval_type: "main_contractor" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return workId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail ||
+          "Failed to approve work and payment (Main Contractor)"
+      );
+    }
+  }
+);
+
 
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
@@ -250,6 +356,50 @@ const subcontractedWorkSlice = createSlice({
         if (state.selectedWork) {
           state.selectedWork.consultant_review = action.payload;
         }
+      })
+      .addCase(approveContractorSupervisor.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveContractorSupervisor.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.selectedWork && state.selectedWork.id === action.payload) {
+          state.selectedWork.contractor_supervisor_approval = true;
+          state.selectedWork.contractor_supervisor_payment_approval = true;
+        }
+      })
+      .addCase(approveContractorSupervisor.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // Consultant Approval
+      .addCase(approveConsultant.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveConsultant.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.selectedWork && state.selectedWork.id === action.payload) {
+          state.selectedWork.consultant_approval = true;
+        }
+      })
+      .addCase(approveConsultant.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // Main Contractor Approval
+      .addCase(approveMainContractor.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveMainContractor.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.selectedWork && state.selectedWork.id === action.payload) {
+          state.selectedWork.main_contractor_cost_approval = true;
+        }
+      })
+      .addCase(approveMainContractor.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
