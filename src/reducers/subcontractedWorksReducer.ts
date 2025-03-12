@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
@@ -15,7 +14,7 @@ interface SubcontractedWork {
   contractor_review?: string;
   consultant_review?: string;
   contractor_supervisor_comments?: string;
-  consultant_supervisor_comments?:string;
+  consultant_supervisor_comments?: string;
 }
 
 interface SubcontractedWorkState {
@@ -138,7 +137,7 @@ export const addContractorComment = createAsyncThunk(
       if (!token)
         return rejectWithValue("Unauthorized: No authentication token found.");
 
-      const response = await api.post(
+      await api.post(
         `${constants.endpoints.subcontractor_works.add_contractor_comment.replace(
           "?",
           workId
@@ -169,7 +168,7 @@ export const addConsultantComment = createAsyncThunk(
       if (!token)
         return rejectWithValue("Unauthorized: No authentication token found.");
 
-      const response = await api.post(
+      await api.post(
         `${constants.endpoints.subcontractor_works.add_consultant_comment.replace(
           "?",
           workId
@@ -188,7 +187,6 @@ export const addConsultantComment = createAsyncThunk(
     }
   }
 );
-
 
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
@@ -253,7 +251,6 @@ const subcontractedWorkSlice = createSlice({
           state.selectedWork.consultant_review = action.payload;
         }
       });
-
   },
 });
 
