@@ -24,6 +24,10 @@ interface SubcontractedWork {
   main_contractor_payment_approval?: boolean;
   assigned_subcontractor?: string;
   payment_status?: string;
+  retention_money?: string;
+  retention_money_paid?: boolean;
+  retention_money_payment_approved?: boolean;
+  retention_money_payment_requested?: boolean;
 }
 
 interface SubcontractedWorkState {
@@ -401,6 +405,70 @@ export const approveAttendance = createAsyncThunk(
   }
 );
 
+export const requestRetentionMoney = createAsyncThunk(
+  "subcontractedWork/requestRetentionMoney",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        return rejectWithValue("Unauthorized: No authentication token found.");
+      }
+
+      const url =
+        constants.endpoints.subcontractor_works.request_retention.replace(
+          "?",
+          workId
+        );
+
+      const response = await api.post(
+        url,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return response.data.message; // Success message from API
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to request retention money"
+      );
+    }
+  }
+);
+
+export const approveRetentionMoney = createAsyncThunk(
+  "subcontractedWork/approveRetentionMoney",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        return rejectWithValue("Unauthorized: No authentication token found.");
+      }
+
+      const url =
+        constants.endpoints.subcontractor_works.approve_retention.replace(
+          "?",
+          workId
+        );
+
+      const response = await api.post(
+        url,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return response.data.message; // Success message from API
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to approve retention money"
+      );
+    }
+  }
+);
+
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
   initialState,
@@ -541,6 +609,29 @@ const subcontractedWorkSlice = createSlice({
         }
       })
       .addCase(approveAttendance.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+    builder
+      .addCase(requestRetentionMoney.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(requestRetentionMoney.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("Retention Money Request Successful:", action.payload);
+      })
+      .addCase(requestRetentionMoney.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(approveRetentionMoney.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveRetentionMoney.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("Retention Money Approval Successful:", action.payload);
+      })
+      .addCase(approveRetentionMoney.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

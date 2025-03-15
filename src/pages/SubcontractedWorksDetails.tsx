@@ -11,6 +11,8 @@ import {
   approveMainContractor,
   approveMainContractorCost,
   approveAttendance,
+  requestRetentionMoney,
+  approveRetentionMoney,
 } from "../reducers/subcontractedWorksReducer";
 import { deleteLabourer, fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
@@ -131,6 +133,25 @@ export default function SubcontractedWorkDetails() {
   const handleRemoveLaborer = (labourerId: string) => {
     dispatch(deleteLabourer(labourerId));
   };
+
+  const handleRequestRetention = async () => {
+    try {
+      await dispatch(requestRetentionMoney(workId));
+      alert("Retention money request submitted successfully.");
+    } catch (error) {
+      console.error("Error requesting retention money:", error);
+    }
+  };
+  const handleApproveRetention = async () => {
+    try {
+      await dispatch(approveRetentionMoney(workId));
+      alert("Retention money approved successfully.");
+      dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // Refresh data
+    } catch (error) {
+      console.error("Error approving retention money:", error);
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -462,6 +483,26 @@ export default function SubcontractedWorkDetails() {
             </p>
           )}
 
+          {userRole === ROLES.SUBCONTRACTOR &&
+            selectedWork.contractor_supervisor_approval &&
+            selectedWork.consultant_approval &&
+            selectedWork.main_contractor_cost_approval &&
+            selectedWork.main_contractor_payment_approval &&
+            !selectedWork.retention_money_payment_requested && (
+              <button
+                className="w-full md:w-[250px] flex items-center justify-center bg-yellow-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-yellow-800 transition duration-200"
+                onClick={handleRequestRetention}
+              >
+                <CircleDollarSign className="mr-2" /> Request Retention Money
+              </button>
+            )}
+
+          {selectedWork.retention_money_payment_requested && (
+            <p className="text-green-700 font-semibold">
+              ✅ Requested Retention Money
+            </p>
+          )}
+
           {userRole === ROLES.MAIN_CONTRACTOR &&
             selectedWork.contractor_supervisor_approval &&
             selectedWork.consultant_approval &&
@@ -479,6 +520,15 @@ export default function SubcontractedWorkDetails() {
             <p className="text-green-700 font-semibold">
               ✅ Approved by Main Contractor
             </p>
+          )}
+          {userRole === ROLES.MAIN_CONTRACTOR &&
+          !selectedWork.retention_money_payment_approved && (
+            <button
+              className="w-full md:w-[250px] flex items-center justify-center bg-green-700 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+              onClick={handleApproveRetention}
+            >
+              <CircleDollarSign className="mr-2" /> Approve Retention Money
+            </button>
           )}
         </div>
       </div>

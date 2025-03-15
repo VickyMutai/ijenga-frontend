@@ -17,6 +17,7 @@ interface Project {
 interface ProjectsState {
   projects: Project[];
   selectedProject: Project | null;
+  walletBalance: number;
   loading: boolean;
   error: string | null;
 }
@@ -24,6 +25,7 @@ interface ProjectsState {
 const initialState: ProjectsState = {
   projects: [],
   selectedProject: null,
+  walletBalance: 0,
   loading: false,
   error: null,
 };
@@ -33,12 +35,12 @@ export const fetchProjects = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
 
       const response = await api.get(constants.endpoints.projects.my_projects, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
 
       const formattedProjects = response.data.data.map((proj: any) => ({
         id: proj.id || proj.project_id,
@@ -50,7 +52,10 @@ export const fetchProjects = createAsyncThunk(
         subcontractor: proj.subcontractor || "",
       }));
 
-      return formattedProjects;
+      const walletBalance =
+        parseFloat(response.data.data[0]?.project_wallet_balance) || 0; // ✅ Extract wallet balance
+
+      return { projects: formattedProjects, walletBalance };
     } catch (error) {
       return rejectWithValue("Failed to fetch projects");
     }
@@ -180,7 +185,8 @@ const projectsSlice = createSlice({
       })
       .addCase(fetchProjects.fulfilled, (state, action) => {
         state.loading = false;
-        state.projects = action.payload;
+        state.projects = action.payload.projects;
+        state.walletBalance = action.payload.walletBalance;
       })
       .addCase(fetchProjects.rejected, (state, action) => {
         state.loading = false;

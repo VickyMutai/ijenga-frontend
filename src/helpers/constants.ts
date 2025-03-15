@@ -49,6 +49,8 @@ export const constants = {
       approve_payment: "subcontracted-works/?/approve_payment/",
       approve_cost: "subcontracted-works/?/approve_cost/",
       approve_attendance: "/subcontracted-works/?/approve_attendance/",
+      request_retention: "/subcontracted-works/?/request_retention_money/",
+      approve_retention: "/subcontracted-works/?/approve_retention_money/",
     },
     labourers: {
       create_labourers: "/labourers/create_labourer/",

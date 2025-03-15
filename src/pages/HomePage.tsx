@@ -16,7 +16,11 @@ export default function Home() {
   const dispatch = useAppDispatch();
   //const navigate = useNavigate();
 
-  const { projects, loading: projectsLoading } = useSelector((state: RootState) => state.projects);
+const {
+  projects,
+  loading: projectsLoading,
+  walletBalance,
+} = useSelector((state: RootState) => state.projects);
 
   const { user, loading: userLoading } = useSelector((state: RootState) => state.auth);
 
@@ -38,14 +42,6 @@ export default function Home() {
 
   const fullName = `${user.first_name} ${user.last_name}`;
 
-  // const handleLogout = () => {
-  //   dispatch(logout());
-  //   navigate("/");
-  // };
-
-  // Example wallet balance
-  const walletBalance = 2500.75;
-
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="text-blue py-4 md:px-6 flex items-center justify-between">
@@ -60,14 +56,6 @@ export default function Home() {
           <div>
             <Sidebar />
           </div>
-          
-        {/* <div
-          onClick={handleLogout}
-          className="bg-gray-300 rounded-full md:px-4 p-3 flex gap-2 cursor-pointer hover:bg-gray-400 transition-colors"
-        >
-          <p className="text-blue font-semibold hidden md:block">Logout</p>
-          <LogOut />
-        </div> */}
       </header>
       {user.role === "main-contractor" && 
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
