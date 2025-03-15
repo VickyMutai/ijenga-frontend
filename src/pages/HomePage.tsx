@@ -45,48 +45,38 @@ const {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="text-blue py-4 md:px-6 flex items-center justify-between">
-          {/* <Sidebar /> */}
-          <div className="flex items-center gap-2">
+        {/* <Sidebar /> */}
+        <div className="flex items-center gap-2">
           <Avatar name={fullName} size={12} />
           <div className="text-left">
             <p className="text-lg font-semibold">Welcome, {fullName}</p>
-            <p className="text-sm text-gray-500 capitalize">{user.role.replace("-", " ")}</p>
-          </div>
-          </div>
-          <div>
-            <Sidebar />
-          </div>
-      </header>
-      {user.role === "main-contractor" && 
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Wallet Balance Section */}
-        {user.role === "main-contractor" && (
-          <div className="flex flex-col gap-2 py-7 items-center justify-center bg-gradient-to-br from-blue-950 to-blue-400 rounded-xl shadow-md">
-            <div className="flex gap-3">
-              <IoWallet className="text-white" size={30} />
-              <h2 className="text-2xl font-semibold text-white">Wallet Balance</h2>
-            </div>
-            <p className="text-3xl font-bold text-green-400 mt-2">
-              Ksh. {walletBalance.toLocaleString()}
+            <p className="text-sm text-gray-500 capitalize">
+              {user.role.replace("-", " ")}
             </p>
           </div>
-        )}
-
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold text-blue">Projects Categories</h2>
-          <div className="flex flex-col gap-3 mt-4">
-            <div className="flex items-center justify-between w-full gap-2 py-2 px-4 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
-              <span className="text-gray-800 text-base">Active Projects</span>
-              <span className="bg-green-200 text-green-700 px-2 py-1 rounded-full text-base">12</span>
-            </div>
-            <div className="flex items-center justify-between w-full gap-2 py-2 px-4 bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors">
-              <span className="text-gray-800 text-base">Completed Projects</span>
-              <span className="bg-blue-200 text-blue-700 px-2 py-1 rounded-full text-base">24</span>
-            </div>
-          </div>
         </div>
-      </div>
-      }
+        <div>
+          <Sidebar />
+        </div>
+      </header>
+      {user.role === "main-contractor" && (
+        <div className="mt-6 flex justify-center">
+          {/* Wallet Balance Section */}
+          {user.role === "main-contractor" && (
+            <div className="flex flex-col gap-2 py-7 items-center justify-center bg-gradient-to-br from-blue-950 to-blue-400 rounded-xl shadow-md w-full max-w-md">
+              <div className="flex gap-3">
+                <IoWallet className="text-white" size={30} />
+                <h2 className="text-2xl font-semibold text-white">
+                  Wallet Balance
+                </h2>
+              </div>
+              <p className="text-3xl font-bold text-green-400 mt-2">
+                Ksh. {walletBalance.toLocaleString()}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Projects Section */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
