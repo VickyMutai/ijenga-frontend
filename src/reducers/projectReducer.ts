@@ -11,7 +11,7 @@ interface Project {
   projectDescription: string;
   supervisorContractor: string;
   supervisorConsultant: string;
-  subcontractor: string;
+  subcontractors: string[]; // ✅ Ensure this is an array
 }
 
 interface ProjectsState {
@@ -51,7 +51,6 @@ export const fetchProjects = createAsyncThunk(
       }));
 
       return formattedProjects;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       return rejectWithValue("Failed to fetch projects");
     }
@@ -91,14 +90,21 @@ export const updateProject = createAsyncThunk(
 
       const url = `/projects/${projectId}/edit_project/`;
 
-      const response = await api.put(url, projectData, {
+      // ✅ Ensure subcontractors is an array
+      const formattedProjectData = {
+        ...projectData,
+        subcontractors: projectData.subcontractors ?? [], // ✅ Ensures it's an array
+      };
+
+      const response = await api.put(url, formattedProjectData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return response.data.data;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      return rejectWithValue("Failed to update project");
+      console.log("API Response:", response.data); // ✅ Debugging
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Error updating project");
     }
   }
 );
@@ -128,14 +134,14 @@ export const fetchProjectDetails = createAsyncThunk(
         projectDescription: projectData.project_description || "",
         supervisorContractor: projectData.supervisor_contractor || "Not Assigned",
         supervisorConsultant: projectData.supervisor_consultant || "Not Assigned",
-        subcontractor: projectData.subcontractors.length > 0 ? projectData.subcontractors[0] : "Not Assigned",
+        subcontractors: Array.isArray(projectData.subcontractors) ? projectData.subcontractors : [], // ✅ Ensures an array
       };
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       return rejectWithValue("Failed to fetch project details");
     }
   }
 );
+
 
 export const deleteProject = createAsyncThunk<
   string, // Returning only projectId
@@ -190,8 +196,12 @@ const projectsSlice = createSlice({
       })
       .addCase(fetchProjectDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.selectedProject = action.payload; 
+        state.selectedProject = {
+          ...action.payload,
+          subcontractors: action.payload.subcontractors || [], // ✅ Ensure an array
+        };
       })
+      
       .addCase(fetchProjectDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;

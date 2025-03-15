@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound, BriefcaseBusiness, BriefcaseConveyorBelt} from "lucide-react";
 import { useAppDispatch } from "../reducers/store";
@@ -55,7 +56,7 @@ export default function Sidebar() {
                 <span className="ml-2 font-semibold text-blue">Projects</span>
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link to="/subcontracted-works-details/:projectId/:id" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
                 <BrickWall className="text-blue"/>
                 <span className="ml-2 font-semibold text-blue">Subcontracted Works</span>
@@ -72,7 +73,7 @@ export default function Sidebar() {
                 <BriefcaseConveyorBelt className="text-blue"/>
                 <span className="ml-2 font-semibold text-blue">Manage Laborers</span>
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/profile" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
                 <UserRound className="text-blue"/>

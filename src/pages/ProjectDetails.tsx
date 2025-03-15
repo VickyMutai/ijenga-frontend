@@ -110,10 +110,18 @@ export default function ProjectDetails() {
           <div className="flex items-center gap-2 mb-3">
             <MdApartment size={27} />
             <div>
-              <p className="text-sm text-gray-500">Sub-Contractor</p>
+              <p className="text-sm text-gray-500">Sub-Contractors</p>
               <p className="text-lg font-semibold">
-                {selectedProject.subcontractor || "Not Assigned"}
+                {selectedProject.subcontractors && selectedProject.subcontractors.length > 0
+                  ? selectedProject.subcontractors
+                      .map((id) => {
+                        const sub = users.find((user) => user.user_id === id);
+                        return sub ? `${sub.first_name} ${sub.last_name}` : "Unknown";
+                      })
+                      .join(", ")
+                  : "Not Assigned"}
               </p>
+
             </div>
           </div>
         </div>

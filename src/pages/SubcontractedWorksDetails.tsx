@@ -2,32 +2,50 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
-import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
-import { fetchLabourers } from "../reducers/labourerReducer";
+import {
+  fetchSubcontractedWorkDetails,
+  addContractorComment,
+  addConsultantComment,
+  approveConsultant,
+  approveContractorSupervisor,
+  approveMainContractor,
+  approveMainContractorCost,
+  approveAttendance,
+} from "../reducers/subcontractedWorksReducer";
+import { deleteLabourer, fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
 import AddLaborerDetails from "../components/AddLaborerDetails";
 import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
 import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
+import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
 import Sidebar from "../components/Sidebar";
 import ProofOfWorkModal from "../components/proofOfWorkModal";
-import { constants  } from "../helpers/constants";
+import { constants, ROLES } from "../helpers/constants";
 
 export default function SubcontractedWorkDetails() {
   const params = useParams();
   const { projectId, id: workId } = params as { projectId: string; id: string };
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedWork, loading } = useSelector((state: RootState) => state.subcontractedWorks);
-  const { labourers = [] } = useSelector((state: RootState) => state.labourers)
-  const proofOfWorks = useSelector((state: RootState) => state.proofOfWorks.proofOfWorks || []);
+  const { selectedWork, loading } = useSelector(
+    (state: RootState) => state.subcontractedWorks
+  );
+  const [contractorReview, setContractorReview] = useState("");
+  const [consultantReview, setConsultantReview] = useState("");
+  const { labourers = [] } = useSelector((state: RootState) => state.labourers);
+  const proofOfWorks = useSelector(
+    (state: RootState) => state.proofOfWorks.proofOfWorks || []
+  );
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
+  const userRole = useSelector((state: RootState) => state.auth.user?.role);
+  const { users } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     dispatch(fetchLabourers(workId));
     dispatch(fetchProofOfWorks(workId));
   }, [dispatch, workId, projectId]);
-  
+
   useEffect(() => {
     if (projectId && workId) {
       dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
@@ -42,55 +60,148 @@ export default function SubcontractedWorkDetails() {
 
   if (loading) return <Loader />;
   if (!selectedWork) return <p>Subcontracted work not found</p>;
-  
-  const handleRemoveLaborer = () => {
-    console.log("Remove laborer clicked");
+
+  const handleSubmitContractorReview = async () => {
+    if (!contractorReview.trim()) return;
+    await dispatch(addContractorComment({ workId, comment: contractorReview }));
+    setContractorReview("");
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
-  // Handle approve works
-  const handleApproveWorks = () => {
-    console.log("Approve works clicked");
+  const handleSubmitConsultantReview = () => {
+    if (!consultantReview.trim()) return;
+    dispatch(addConsultantComment({ workId, comment: consultantReview })).then(
+      () => setConsultantReview("")
+    );
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
-  // Handle approve works and payment
-  const handleApproveWorksAndPayment = () => {
-    console.log("Approve works and payment clicked");
+  const handleApproveContractorSupervisor = async () => {
+    if (!selectedWork.consultant_approval) {
+      alert("Consultant must approve first before the supervisor can approve.");
+      return;
+    }
+    await dispatch(approveContractorSupervisor(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
 
-  // Handle approve payment
-  const handleApprovePayment = () => {
-    console.log("Approve payment clicked");
+  const handleApproveConsultant = async () => {
+    await dispatch(approveConsultant(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+  };
+
+  const handleApproveMainContractor = async () => {
+    if (
+      !selectedWork.contractor_supervisor_approval ||
+      !selectedWork.consultant_approval
+    ) {
+      alert(
+        "Supervisor and Consultant must approve before the main contractor can approve."
+      );
+      return;
+    }
+    await dispatch(approveMainContractor(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
+  };
+
+  const handleCostApprovalMainContractor = async () => {
+    await dispatch(approveMainContractorCost(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh data
+  };
+  const handleApproveAttendance = async () => {
+    try {
+      await dispatch(approveAttendance(workId));
+      dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh Data
+    } catch (error) {
+      console.error("Error approving attendance:", error);
+    }
+  };
+
+  const assignedSubcontractor =
+    selectedWork.assigned_subcontractor &&
+    users.find((user) => user.user_id === selectedWork.assigned_subcontractor);
+
+  const subcontractorName = assignedSubcontractor
+    ? `${assignedSubcontractor.first_name} ${assignedSubcontractor.last_name}`
+    : "Not Assigned";
+  const paymentStatus = selectedWork.payment_status || "Unknown";
+  const costApproval = selectedWork.main_contractor_cost_approval
+    ? "Approved"
+    : "Not Approved";
+  const handleRemoveLaborer = (labourerId: string) => {
+    dispatch(deleteLabourer(labourerId));
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
-        <h1 className=" text-xl md:text-2xl font-bold">Subcontracted Work Details</h1>
+        <h1 className=" text-xl md:text-2xl font-bold">
+          Subcontracted Work Details
+        </h1>
         <Sidebar />
       </header>
 
       <div className="mt-6">
         <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4 mb-10">
           <header className="border-b pb-4">
-            <h2 className="text-xl text-blue font-semibold">{selectedWork.task_title}</h2>
+            <header className="border-b pb-4 flex justify-between items-center">
+              <h2 className="text-xl text-blue font-semibold">
+                {selectedWork.task_title}
+              </h2>
+              <EditSubcontractedWorks workId={workId} />
+            </header>
+
             <p className="text-sm mt-2">{selectedWork.task_description}</p>
-            <p className="text-sm mt-2">Task Category: {selectedWork.task_category}</p>
+            <p className="text-sm mt-2">
+              Task Category: {selectedWork.task_category}
+            </p>
+            <div className="mt-4">
+              <span className="text-sm font-medium text-gray-700">
+                Assigned Subcontractor:
+              </span>
+              <span className="ml-2 font-semibold text-blue-600">
+                {subcontractorName}
+              </span>
+              <div>
+                <span className="text-sm font-medium text-gray-700">
+                  Payment Status:
+                </span>
+                <span className="ml-2 font-semibold text-green-600">
+                  {paymentStatus}
+                </span>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-700">
+                  Cost Approval Status:
+                </span>
+                <span className="ml-2 font-semibold text-green-600">
+                  {costApproval}
+                </span>
+              </div>
+            </div>
           </header>
 
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Labor)</span>
-              <span className="font-medium">Ksh. {selectedWork.task_cost_labor}</span>
+              <span className="font-medium">
+                Ksh. {selectedWork.task_cost_labor}
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Overhead)</span>
-              <span className="font-medium">Ksh. {selectedWork.task_cost_overhead}</span>
+              <span className="font-medium">
+                Ksh. {selectedWork.task_cost_overhead}
+              </span>
             </div>
           </section>
-          
-          <AddLaborerDetails />
 
-          {/* Laborer details table */}
+          {userRole === ROLES.SUBCONTRACTOR && (
+            <>
+              <AddLaborerDetails />
+            </>
+          )}
+
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="blue text-white">
@@ -103,7 +214,7 @@ export default function SubcontractedWorkDetails() {
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Title
-                  </th> 
+                  </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Daily Rate
                   </th>
@@ -124,131 +235,251 @@ export default function SubcontractedWorkDetails() {
                   </tr>
                 ) : (
                   labourers.map((labourer) => (
-                    <tr key={labourer.labourer_id} className="hover:bg-gray-100 transition duration-200">
-                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.national_id_number}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_title}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">Ksh. {labourer.labourer_daily_rate}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{labourer.labourer_mpesa_number}</td>
+                    <tr
+                      key={labourer.labourer_id}
+                      className="hover:bg-gray-100 transition duration-200"
+                    >
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.labourer_name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.national_id_number}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.labourer_title}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        Ksh. {labourer.labourer_daily_rate}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.labourer_mpesa_number}
+                      </td>
                       <td className="px-6 py-4 text-sm">
-                      <div className="flex gap-7">
-                        <EditLaborerDetails />
-                        <button className="hover:text-red-600 transition duration-200 cursor-pointer" onClick={handleRemoveLaborer}>
-                          <FaTrashCan className="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td>
+                        <div className="flex gap-7">
+                          {/* Pass the labourer object as a prop */}
+                          <EditLaborerDetails labourer={labourer} />
+
+                          <button
+                            className="hover:text-red-600 transition duration-200 cursor-pointer"
+                            onClick={() =>
+                              handleRemoveLaborer(labourer.labourer_id)
+                            }
+                          >
+                            <FaTrashCan className="w-6 h-6" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
               </tbody>
-
             </table>
           </section>
         </div>
 
         <div className="flex flex-col md:flex-row gap-10">
           <div className="bg-white p-6 rounded-xl shadow-lg w-full md:w-1/2">
-          <h2 className="text-xl font-semibold text-blue mb-4">Proof of Work Done</h2>
-          <button
-            onClick={() => setIsProofModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
-          >
-            Upload Proof of Work
-          </button>
-          {/* Display Uploaded Proofs */}
-          <div className="mt-6 space-y-4">
-            {proofOfWorks.length === 0 ? (
-              <p className="text-gray-600">No proof of work uploaded yet.</p>
-            ) : (
-              proofOfWorks.map((proof) => (
-                <div key={proof.image_id} className="border p-4 rounded-lg flex gap-4">
-                  <img
-                    src={`${constants.BASE_URL}${proof.image_file}`} // ✅ Correct string interpolation
-                    alt="Proof of Work"
-                    className="w-24 h-24 object-cover rounded-lg"
-                  />
-                  <div>
-                    <p className="text-gray-700">{proof.description}</p>
-                  </div>
-                </div>
-              ))
+            {(userRole === ROLES.SUPERVISOR_CONSULTANT ||
+              userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
+              <div>
+                <h2 className="text-xl font-semibold text-blue mb-4">
+                  Proof of Work Done
+                </h2>
+                <button
+                  onClick={() => setIsProofModalOpen(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
+                >
+                  Upload Proof of Work
+                </button>
+                <ProofOfWorkModal
+                  workId={workId}
+                  isOpen={isProofModalOpen}
+                  onClose={() => setIsProofModalOpen(false)}
+                />
+              </div>
             )}
-          </div>
-
-        </div>
-        <ProofOfWorkModal workId={workId} isOpen={isProofModalOpen} onClose={() => setIsProofModalOpen(false)} />
-          {/* Reviews Section */}
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
-            <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
-            <div className="flex flex-col gap-8">
-              <div>
-                <form>
-                  <label
-                    htmlFor="supervisor-review"
-                    className="block text-sm font-medium text-gray-800 mb-1"
+            <div className="mt-6 space-y-4">
+              {proofOfWorks.length === 0 ? (
+                <p className="text-gray-600">No proof of work uploaded yet.</p>
+              ) : (
+                proofOfWorks.map((proof) => (
+                  <div
+                    key={proof.image_id}
+                    className="border p-4 rounded-lg flex gap-4"
                   >
-                    Contractor's Supervisor Review
-                  </label>
-
-                  <textarea
-                    id="supervisor-review"
-                    rows={3}
-                    className="project-modal-input"
-                  ></textarea>
-                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
-                    Submit
-                  </button>
-                </form>
-              </div>
-              <div>
-                <form>
-                  <label
-                    htmlFor="supervisor-review"
-                    className="block text-sm font-medium text-gray-800 mb-1"
-                  >
-                    Consultant's Supervisor Review
-                  </label>
-
-                  <textarea
-                    id="supervisor-review"
-                    rows={3}
-                    className="project-modal-input"
-                  ></textarea>
-                  <button className="w-full md:w-[200px] mt-2 blue text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200">
-                    Submit
-                  </button>
-                </form>
-              </div>
+                    <img
+                      src={`${constants.BASE_URL}${proof.image_file}`}
+                      alt="Proof of Work"
+                      className="w-24 h-24 object-cover rounded-lg"
+                    />
+                    <div>
+                      <p className="text-gray-700">{proof.description}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
+          <ProofOfWorkModal
+            workId={workId}
+            isOpen={isProofModalOpen}
+            onClose={() => setIsProofModalOpen(false)}
+          />
+          {
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
+              <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
+
+              {/* Contractor's Supervisor Review */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
+                  Contractor's Supervisor Review
+                </label>
+                <p className="bg-gray-100 p-3 rounded-lg">
+                  {selectedWork.contractor_supervisor_comments || (
+                    <span className="text-gray-500">No review yet.</span>
+                  )}
+                </p>
+
+                {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+                  !selectedWork.contractor_supervisor_comments && (
+                    <>
+                      <textarea
+                        rows={3}
+                        value={contractorReview}
+                        onChange={(e) => setContractorReview(e.target.value)}
+                        className="w-full p-2 border rounded-lg mt-2"
+                        placeholder="Write a review..."
+                      ></textarea>
+                      <button
+                        onClick={handleSubmitContractorReview}
+                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
+              </div>
+
+              {/* Consultant's Supervisor Review */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
+                  Consultant's Supervisor Review
+                </label>
+                <p className="bg-gray-100 p-3 rounded-lg">
+                  {selectedWork.consultant_supervisor_comments || (
+                    <span className="text-gray-500">No review yet.</span>
+                  )}
+                </p>
+
+                {userRole === ROLES.SUPERVISOR_CONSULTANT &&
+                  !selectedWork.consultant_supervisor_comments && (
+                    <>
+                      <textarea
+                        rows={3}
+                        value={consultantReview}
+                        onChange={(e) => setConsultantReview(e.target.value)}
+                        className="w-full p-2 border rounded-lg mt-2"
+                        placeholder="Write a review..."
+                      ></textarea>
+                      <button
+                        onClick={handleSubmitConsultantReview}
+                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                      >
+                        Submit
+                      </button>
+                    </>
+                  )}
+              </div>
+            </div>
+          }
         </div>
       </div>
 
-      {/* Approval Buttons */}
       <div className="mt-14 flex flex-col items-center">
-        <h2 className="text-xl font-semibold text-blue mb-4">
-          Approval Section
-        </h2>
         <div className="flex flex-col md:flex-row flex-wrap gap-4">
-          <button
-            className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
-            onClick={handleApproveWorks}
-          >
-            <CircleCheck className="mr-2" /> Approve Works
-          </button>
-          <button
-            className="w-full md:w-[300px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
-            onClick={handleApproveWorksAndPayment}
-          >
-            <BadgeCheck className="mr-2" /> Approve Works & Payment
-          </button>
-          <button
-            className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
-            onClick={handleApprovePayment}
-          >
-            <CircleDollarSign className="mr-2" /> Approve Payment
-          </button>
+          {userRole === ROLES.MAIN_CONTRACTOR &&
+            !selectedWork.main_contractor_cost_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                onClick={handleCostApprovalMainContractor}
+              >
+                <CircleDollarSign className="mr-2" /> Approve Cost
+              </button>
+            )}
+          {selectedWork.main_contractor_cost_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Cost Approved by Main Contractor
+            </p>
+          )}
+          {/* Consultant Approval */}
+          {userRole === ROLES.SUPERVISOR_CONSULTANT &&
+            !selectedWork.consultant_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                onClick={handleApproveConsultant}
+              >
+                <BadgeCheck className="mr-2" /> Approve as Consultant
+              </button>
+            )}
+          {selectedWork.consultant_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Approved by Consultant
+            </p>
+          )}
+
+          {/* Attendance Approval Button */}
+          {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+            !selectedWork.contractor_supervisor_attendance_approval && (
+              <button
+                className="w-full md:w-[250px] flex items-center justify-center bg-orange-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-orange-800 transition duration-200"
+                onClick={handleApproveAttendance}
+              >
+                <CircleCheck className="mr-2" /> Approve Attendance
+              </button>
+            )}
+
+          {selectedWork.contractor_supervisor_attendance_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Attendance Approved
+            </p>
+          )}
+
+          {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+            selectedWork.contractor_supervisor_attendance_approval &&
+            selectedWork.consultant_approval &&
+            !selectedWork.contractor_supervisor_payment_approval && (
+              <button
+                className="w-full md:w-[300px] flex items-center justify-center bg-green-800 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                onClick={handleApproveContractorSupervisor}
+              >
+                <BadgeCheck className="mr-2" /> Approve Work & Payment
+              </button>
+            )}
+
+          {selectedWork.contractor_supervisor_payment_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Supervisor Approved Work & Payment
+            </p>
+          )}
+
+          {userRole === ROLES.MAIN_CONTRACTOR &&
+            selectedWork.contractor_supervisor_approval &&
+            selectedWork.consultant_approval &&
+            selectedWork.main_contractor_cost_approval &&
+            !selectedWork.main_contractor_payment_approval && ( // ✅ Ensure approval is NOT given
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                onClick={handleApproveMainContractor}
+              >
+                <CircleDollarSign className="mr-2" /> Approve as Main Contractor
+              </button>
+            )}
+
+          {selectedWork.main_contractor_payment_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Approved by Main Contractor
+            </p>
+          )}
         </div>
       </div>
     </div>

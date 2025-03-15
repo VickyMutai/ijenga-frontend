@@ -29,6 +29,9 @@ const LABOURER_TITLES = [
 const AddLaborerDetails = () => {
   const { id: workId } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const [validationErrors, setValidationErrors] = useState<{
+    labourer_mpesa_number?: string;
+  }>({});
 
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -39,19 +42,44 @@ const AddLaborerDetails = () => {
     labourer_daily_rate: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  if (!formData.labourer_mpesa_number.startsWith("254")) {
+    validationErrors.labourer_mpesa_number =
+      "Phone number must start with 254.";
+  } else if (formData.labourer_mpesa_number.length !== 12) {
+    validationErrors.labourer_mpesa_number =
+      "Phone number must be exactly 12 digits.";
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!workId) {
+    // Clear previous errors
+    setValidationErrors({});
+
+    // Mpesa number validation
+    const errors: { labourer_mpesa_number?: string } = {};
+    if (!formData.labourer_mpesa_number.startsWith("254")) {
+      errors.labourer_mpesa_number = "Phone number must start with 254.";
+    } else if (formData.labourer_mpesa_number.length !== 12) {
+      errors.labourer_mpesa_number = "Phone number must be exactly 12 digits.";
+    }
+
+    // If there are errors, update state and stop form submission
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
       return;
     }
 
+    if (!workId) return;
+
     const labourerData = {
-      workId, // ✅ Pass correct Work ID
+      workId,
       ...formData,
       labourer_daily_rate: Number(formData.labourer_daily_rate),
     };
@@ -59,11 +87,10 @@ const AddLaborerDetails = () => {
     const result = await dispatch(createLabourer(labourerData));
 
     if (createLabourer.fulfilled.match(result)) {
-      dispatch(fetchLabourers(workId)); // ✅ Refresh the list
+      dispatch(fetchLabourers(workId)); // ✅ Refresh list after submission
       setOpen(false);
     }
   };
-
   return (
     <div>
       <CirclePlus
@@ -78,7 +105,9 @@ const AddLaborerDetails = () => {
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
               <div className="flex justify-between items-center gap-7 mt-4 px-4">
-                <h2 className="text-xl md:text-2xl font-bold text-blue">Add Labourer</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-blue">
+                  Add Labourer
+                </h2>
                 <button
                   onClick={() => setOpen(false)}
                   className="rounded-full bg-gray-100 p-2 hover:bg-gray-200"
@@ -104,7 +133,12 @@ const AddLaborerDetails = () => {
                     onChange={handleChange}
                     required
                   />
-                  <select name="labourer_title" className="project-modal-input" onChange={handleChange} required>
+                  <select
+                    name="labourer_title"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  >
                     <option value="">Select Title</option>
                     {LABOURER_TITLES.map((title) => (
                       <option key={title} value={title}>
@@ -120,6 +154,12 @@ const AddLaborerDetails = () => {
                     onChange={handleChange}
                     required
                   />
+                  {/* Show validation error */}
+                  {validationErrors.labourer_mpesa_number && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {validationErrors.labourer_mpesa_number}
+                    </p>
+                  )}
                   <input
                     type="number"
                     name="labourer_daily_rate"
