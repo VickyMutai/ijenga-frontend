@@ -3,14 +3,18 @@ import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { X } from "lucide-react";
 import { FaPencilAlt } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../reducers/store";
-import { editLabourer } from "../reducers/labourerReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../reducers/store";
+import { editLabourer, fetchLabourers } from "../reducers/labourerReducer";
+import { fetchSubcontractedWorkDetails } from "../reducers/subcontractedWorksReducer";
 
 const EditLaborerDetails = ({ labourer }: { labourer: any }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
+  const selectedWork = useSelector(
+    (state: RootState) => state.subcontractedWorks.selectedWork
+  );
   const [formData, setFormData] = useState({
     labourer_name: labourer.labourer_name,
     national_id_number: labourer.national_id_number,
@@ -25,12 +29,23 @@ const EditLaborerDetails = ({ labourer }: { labourer: any }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     await dispatch(
       editLabourer({ labourer_id: labourer.labourer_id, updatedData: formData })
     );
+
+    if (selectedWork) {
+      dispatch(
+        fetchSubcontractedWorkDetails({
+          projectId: selectedWork.project,
+          workId: selectedWork.id,
+        })
+      );
+      dispatch(fetchLabourers(selectedWork.id));
+    }
+
     setOpen(false);
   };
-
   return (
     <div>
       <button

@@ -373,6 +373,34 @@ export const approveMainContractor = createAsyncThunk(
   }
 );
 
+export const approveAttendance = createAsyncThunk(
+  "subcontractedWork/approveAttendance",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
+
+      await api.post(
+        constants.endpoints.subcontractor_works.approve_attendance.replace(
+          "?",
+          workId
+        ),
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return workId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to approve attendance"
+      );
+    }
+  }
+);
+
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
   initialState,
@@ -500,6 +528,19 @@ const subcontractedWorkSlice = createSlice({
         }
       })
       .addCase(approveMainContractorCost.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(approveAttendance.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(approveAttendance.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.selectedWork && state.selectedWork.id === action.payload) {
+          state.selectedWork.contractor_supervisor_attendance_approval = true;
+        }
+      })
+      .addCase(approveAttendance.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

@@ -10,6 +10,7 @@ import {
   approveContractorSupervisor,
   approveMainContractor,
   approveMainContractorCost,
+  approveAttendance,
 } from "../reducers/subcontractedWorksReducer";
 import { deleteLabourer, fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
@@ -106,6 +107,14 @@ export default function SubcontractedWorkDetails() {
   const handleCostApprovalMainContractor = async () => {
     await dispatch(approveMainContractorCost(workId));
     dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh data
+  };
+  const handleApproveAttendance = async () => {
+    try {
+      await dispatch(approveAttendance(workId));
+      dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh Data
+    } catch (error) {
+      console.error("Error approving attendance:", error);
+    }
   };
 
   const assignedSubcontractor =
@@ -418,19 +427,25 @@ export default function SubcontractedWorkDetails() {
             </p>
           )}
 
-          {/* Supervisor Approval (Only if Consultant has approved) */}
+          {/* Attendance Approval Button */}
           {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
-            selectedWork.consultant_approval && (
+            !selectedWork.contractor_supervisor_attendance_approval && (
               <button
-                className="w-full md:w-[200px] flex items-center justify-center bg-green-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
-                onClick={handleApproveContractorSupervisor}
+                className="w-full md:w-[250px] flex items-center justify-center bg-orange-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-orange-800 transition duration-200"
+                onClick={handleApproveAttendance}
               >
-                <CircleCheck className="mr-2" /> Approve as Supervisor
+                <CircleCheck className="mr-2" /> Approve Attendance
               </button>
             )}
 
-          {/* Supervisor Approval for Work & Payment (Only if Consultant has approved) */}
+          {selectedWork.contractor_supervisor_attendance_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Attendance Approved
+            </p>
+          )}
+
           {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
+            selectedWork.contractor_supervisor_attendance_approval &&
             selectedWork.consultant_approval &&
             !selectedWork.contractor_supervisor_payment_approval && (
               <button
@@ -440,6 +455,7 @@ export default function SubcontractedWorkDetails() {
                 <BadgeCheck className="mr-2" /> Approve Work & Payment
               </button>
             )}
+
           {selectedWork.contractor_supervisor_payment_approval && (
             <p className="text-green-700 font-semibold">
               ✅ Supervisor Approved Work & Payment
@@ -449,7 +465,7 @@ export default function SubcontractedWorkDetails() {
           {userRole === ROLES.MAIN_CONTRACTOR &&
             selectedWork.contractor_supervisor_approval &&
             selectedWork.consultant_approval &&
-            !selectedWork.main_contractor_cost_approval && (
+            selectedWork.main_contractor_cost_approval && (
               <button
                 className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
                 onClick={handleApproveMainContractor}
