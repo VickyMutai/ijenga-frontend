@@ -22,7 +22,7 @@ interface SubcontractedWork {
   consultant_approval?: boolean;
   main_contractor_cost_approval?: boolean;
   main_contractor_payment_approval?: boolean;
-  assigned_subcontractor: string;
+  assigned_subcontractor?: string;
   payment_status?: string;
 }
 
