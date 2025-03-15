@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
-import { Menu, BrickWall, Building, HomeIcon, LogOut, X, UserRound, BriefcaseBusiness, BriefcaseConveyorBelt} from "lucide-react";
+import { Menu, Building, HomeIcon, LogOut, X, UserRound } from "lucide-react";
 import { useAppDispatch } from "../reducers/store";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../reducers/authReducer";
@@ -35,7 +34,7 @@ export default function Sidebar() {
         }`}
       >
         <div className="h-full flex flex-col justify-between">
-        <button
+          <button
             onClick={closeSidebar}
             className="absolute top-6 right-6 p-2 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer"
           >
@@ -45,15 +44,23 @@ export default function Sidebar() {
             <h2 className="text-xl font-semibold text-blue mt-16">Menu</h2>
             <ul className="mt-10 space-y-4">
               <li>
-                <Link to="/home" onClick={closeSidebar} className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
-                    <HomeIcon className="text-blue" />
-                    <span className="ml-2 font-semibold text-blue">Home</span>
+                <Link
+                  to="/home"
+                  onClick={closeSidebar}
+                  className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer"
+                >
+                  <HomeIcon className="text-blue" />
+                  <span className="ml-2 font-semibold text-blue">Home</span>
                 </Link>
               </li>
               <li>
-              <Link to="/home" onClick={closeSidebar} className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
-                <Building className="text-blue"/>
-                <span className="ml-2 font-semibold text-blue">Projects</span>
+                <Link
+                  to="/home"
+                  onClick={closeSidebar}
+                  className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer"
+                >
+                  <Building className="text-blue" />
+                  <span className="ml-2 font-semibold text-blue">Projects</span>
                 </Link>
               </li>
               {/* <li>
@@ -75,9 +82,12 @@ export default function Sidebar() {
                 </Link>
               </li> */}
               <li>
-                <Link to="/profile" className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer">
-                <UserRound className="text-blue"/>
-                <span className="ml-2 font-semibold text-blue">Profile</span>
+                <Link
+                  to="/profile"
+                  className="flex items-center p-3 rounded-lg hover:bg-gray-100 transition-all transform hover:translate-x-2 cursor-pointer"
+                >
+                  <UserRound className="text-blue" />
+                  <span className="ml-2 font-semibold text-blue">Profile</span>
                 </Link>
               </li>
             </ul>
