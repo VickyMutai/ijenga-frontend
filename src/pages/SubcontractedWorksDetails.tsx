@@ -9,6 +9,7 @@ import {
   approveConsultant,
   approveContractorSupervisor,
   approveMainContractor,
+  approveMainContractorCost,
 } from "../reducers/subcontractedWorksReducer";
 import { fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
@@ -101,6 +102,12 @@ export default function SubcontractedWorkDetails() {
     await dispatch(approveMainContractor(workId));
     dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
+
+  const handleCostApprovalMainContractor = async () => {
+    await dispatch(approveMainContractorCost(workId));
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh data
+  };
+
   const assignedSubcontractor =
     selectedWork.assigned_subcontractor &&
     users.find((user) => user.user_id === selectedWork.assigned_subcontractor);
@@ -108,11 +115,13 @@ export default function SubcontractedWorkDetails() {
   const subcontractorName = assignedSubcontractor
     ? `${assignedSubcontractor.first_name} ${assignedSubcontractor.last_name}`
     : "Not Assigned";
-
+  const paymentStatus = selectedWork.payment_status || "Unknown";
+  const costApproval = selectedWork.main_contractor_cost_approval
+    ? "Approved"
+    : "Not Approved";
   const handleRemoveLaborer = () => {
     console.log("Remove laborer clicked");
   };
-
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
@@ -125,9 +134,13 @@ export default function SubcontractedWorkDetails() {
       <div className="mt-6">
         <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4 mb-10">
           <header className="border-b pb-4">
-            <h2 className="text-xl text-blue font-semibold">
-              {selectedWork.task_title}
-            </h2>
+            <header className="border-b pb-4 flex justify-between items-center">
+              <h2 className="text-xl text-blue font-semibold">
+                {selectedWork.task_title}
+              </h2>
+              <EditSubcontractedWorks workId={workId} />
+            </header>
+
             <p className="text-sm mt-2">{selectedWork.task_description}</p>
             <p className="text-sm mt-2">
               Task Category: {selectedWork.task_category}
@@ -139,11 +152,25 @@ export default function SubcontractedWorkDetails() {
               <span className="ml-2 font-semibold text-blue-600">
                 {subcontractorName}
               </span>
+              <div>
+                <span className="text-sm font-medium text-gray-700">
+                  Payment Status:
+                </span>
+                <span className="ml-2 font-semibold text-green-600">
+                  {paymentStatus}
+                </span>
+              </div>
+              <div>
+                <span className="text-sm font-medium text-gray-700">
+                  Cost Approval Status:
+                </span>
+                <span className="ml-2 font-semibold text-green-600">
+                  {costApproval}
+                </span>
+              </div>
             </div>
           </header>
-          <div className="mt-6 flex space-x-4">
-            <EditSubcontractedWorks workId={workId} />{" "}
-          </div>
+
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Labor)</span>
@@ -158,13 +185,18 @@ export default function SubcontractedWorkDetails() {
               </span>
             </div>
           </section>
-          <>
-            <AddLaborerDetails />
-            <button
-              className="hover:text-red-600 transition duration-200 cursor-pointer"
-              onClick={handleRemoveLaborer}
-            ></button>
-          </>
+
+          {userRole === ROLES.SUBCONTRACTOR && (
+            <>
+              <AddLaborerDetails />
+              <button
+                className="hover:text-red-600 transition duration-200 cursor-pointer"
+                onClick={handleRemoveLaborer}
+              >
+                <FaTrashCan className="w-6 h-6" />
+              </button>
+            </>
+          )}
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">
@@ -285,7 +317,7 @@ export default function SubcontractedWorkDetails() {
             isOpen={isProofModalOpen}
             onClose={() => setIsProofModalOpen(false)}
           />
-          {userRole !== ROLES.SUBCONTRACTOR && (
+          {
             <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
               <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
 
@@ -351,12 +383,26 @@ export default function SubcontractedWorkDetails() {
                   )}
               </div>
             </div>
-          )}
+          }
         </div>
       </div>
 
       <div className="mt-14 flex flex-col items-center">
         <div className="flex flex-col md:flex-row flex-wrap gap-4">
+          {userRole === ROLES.MAIN_CONTRACTOR &&
+            !selectedWork.main_contractor_cost_approval && (
+              <button
+                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                onClick={handleCostApprovalMainContractor}
+              >
+                <CircleDollarSign className="mr-2" /> Approve Cost
+              </button>
+            )}
+          {selectedWork.main_contractor_cost_approval && (
+            <p className="text-green-700 font-semibold">
+              ✅ Cost Approved by Main Contractor
+            </p>
+          )}
           {/* Consultant Approval */}
           {userRole === ROLES.SUPERVISOR_CONSULTANT &&
             !selectedWork.consultant_approval && (
@@ -383,11 +429,6 @@ export default function SubcontractedWorkDetails() {
                 <CircleCheck className="mr-2" /> Approve as Supervisor
               </button>
             )}
-          {selectedWork.contractor_supervisor_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Approved by Supervisor
-            </p>
-          )}
 
           {/* Supervisor Approval for Work & Payment (Only if Consultant has approved) */}
           {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
@@ -417,7 +458,7 @@ export default function SubcontractedWorkDetails() {
                 <CircleDollarSign className="mr-2" /> Approve as Main Contractor
               </button>
             )}
-          {selectedWork.main_contractor_cost_approval && (
+          {selectedWork.main_contractor_payment_approval && (
             <p className="text-green-700 font-semibold">
               ✅ Approved by Main Contractor
             </p>
