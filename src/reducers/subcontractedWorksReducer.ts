@@ -21,6 +21,7 @@ interface SubcontractedWork {
   consultant_approval?: boolean;
   main_contractor_cost_approval?: boolean;
   main_contractor_payment_approval?: boolean;
+  assigned_subcontractor: string;
 }
 
 interface SubcontractedWorkState {
@@ -102,6 +103,36 @@ export const fetchSubcontractedWorks = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch subcontracted works"
+      );
+    }
+  }
+);
+
+export const editSubcontractedWork = createAsyncThunk(
+  "subcontractedWork/editSubcontractedWork",
+  async (
+    { workId, updatedData }: { workId: string; updatedData: any },
+    { rejectWithValue }
+  ) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
+
+      const url =
+        constants.endpoints.subcontractor_works.edit_subcontracted_work.replace(
+          "?",
+          workId
+        );
+
+      const response = await api.put(url, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      return response.data.data; // Return updated work data
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to update subcontracted work"
       );
     }
   }
@@ -293,7 +324,6 @@ export const approveMainContractor = createAsyncThunk(
   }
 );
 
-
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
   initialState,
@@ -398,6 +428,16 @@ const subcontractedWorkSlice = createSlice({
         }
       })
       .addCase(approveMainContractor.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(editSubcontractedWork.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.selectedWork && state.selectedWork.id === action.payload.id) {
+          state.selectedWork = { ...state.selectedWork, ...action.payload };
+        }
+      })
+      .addCase(editSubcontractedWork.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

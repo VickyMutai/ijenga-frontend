@@ -17,6 +17,7 @@ import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
 import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
+import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
 import Sidebar from "../components/Sidebar";
 import ProofOfWorkModal from "../components/proofOfWorkModal";
 import { constants, ROLES } from "../helpers/constants";
@@ -151,6 +152,9 @@ export default function SubcontractedWorkDetails() {
               </button>
             </>
           )}
+          <div className="mt-6 flex space-x-4">
+            <EditSubcontractedWorks workId={workId} />{" "}
+          </div>
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">

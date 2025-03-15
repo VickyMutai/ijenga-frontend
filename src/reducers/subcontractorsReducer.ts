@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import api from "../api/ijengaApi";
@@ -39,6 +40,21 @@ export const fetchSubcontractors = createAsyncThunk(
     }
   }
 );
+
+export const fetchSubcontractorsByProject = createAsyncThunk(
+  "subcontractors/fetchByProject",
+  async (projectId: string, { rejectWithValue }) => {
+    try {
+      const response = await api.get(
+        `/projects/my_projects/?project_id=${projectId}`
+      );
+      return response.data.subcontractors;
+    } catch (error: any) {
+      return rejectWithValue("Failed to fetch subcontractors");
+    }
+  }
+);
+
 
 // Assign Subcontractor to Subcontracted Work
 export const assignSubcontractorToWork = createAsyncThunk(
@@ -113,6 +129,18 @@ const subcontractorsSlice = createSlice({
             (proj) => proj !== workId
           );
         });
+      })
+      // Fetch subcontractors assigned to a project
+      .addCase(fetchSubcontractorsByProject.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSubcontractorsByProject.fulfilled, (state, action) => {
+        state.loading = false;
+        state.list = action.payload; // ✅ Only store subcontractors for that project
+      })
+      .addCase(fetchSubcontractorsByProject.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
