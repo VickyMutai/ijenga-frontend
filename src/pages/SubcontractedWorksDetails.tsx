@@ -465,7 +465,8 @@ export default function SubcontractedWorkDetails() {
           {userRole === ROLES.MAIN_CONTRACTOR &&
             selectedWork.contractor_supervisor_approval &&
             selectedWork.consultant_approval &&
-            selectedWork.main_contractor_cost_approval && (
+            selectedWork.main_contractor_cost_approval &&
+            !selectedWork.main_contractor_payment_approval && ( // ✅ Ensure approval is NOT given
               <button
                 className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
                 onClick={handleApproveMainContractor}
@@ -473,6 +474,7 @@ export default function SubcontractedWorkDetails() {
                 <CircleDollarSign className="mr-2" /> Approve as Main Contractor
               </button>
             )}
+
           {selectedWork.main_contractor_payment_approval && (
             <p className="text-green-700 font-semibold">
               ✅ Approved by Main Contractor
