@@ -39,10 +39,10 @@ const Signup = () => {
       validationErrors.password = "Password must be at least 8 characters long.";
     }
   
-    if (!formData.phone.startsWith("0")) {
-      validationErrors.phone = "Phone number must start with 0.";
-    } else if (formData.phone.length !== 10) {
-      validationErrors.phone = "Phone number must be exactly 10 digits.";
+    if (!formData.phone.startsWith("254")) {
+      validationErrors.phone = "Phone number must start with 254.";
+    } else if (formData.phone.length !== 12) {
+      validationErrors.phone = "Phone number must be exactly 12 digits.";
     }
     
   
