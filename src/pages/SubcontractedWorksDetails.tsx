@@ -37,6 +37,7 @@ export default function SubcontractedWorkDetails() {
   );
   const [isProofModalOpen, setIsProofModalOpen] = useState(false);
   const userRole = useSelector((state: RootState) => state.auth.user?.role);
+  const { users } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     dispatch(fetchLabourers(workId));
@@ -100,6 +101,13 @@ export default function SubcontractedWorkDetails() {
     await dispatch(approveMainContractor(workId));
     dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
+  const assignedSubcontractor =
+    selectedWork.assigned_subcontractor &&
+    users.find((user) => user.user_id === selectedWork.assigned_subcontractor);
+
+  const subcontractorName = assignedSubcontractor
+    ? `${assignedSubcontractor.first_name} ${assignedSubcontractor.last_name}`
+    : "Not Assigned";
 
   const handleRemoveLaborer = () => {
     console.log("Remove laborer clicked");
@@ -124,8 +132,18 @@ export default function SubcontractedWorkDetails() {
             <p className="text-sm mt-2">
               Task Category: {selectedWork.task_category}
             </p>
+            <div className="mt-4">
+              <span className="text-sm font-medium text-gray-700">
+                Assigned Subcontractor:
+              </span>
+              <span className="ml-2 font-semibold text-blue-600">
+                {subcontractorName}
+              </span>
+            </div>
           </header>
-
+          <div className="mt-6 flex space-x-4">
+            <EditSubcontractedWorks workId={workId} />{" "}
+          </div>
           <section className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm">Task Cost (Labor)</span>
@@ -140,21 +158,13 @@ export default function SubcontractedWorkDetails() {
               </span>
             </div>
           </section>
-
-          {userRole === ROLES.SUBCONTRACTOR && (
-            <>
-              <AddLaborerDetails />
-              <button
-                className="hover:text-red-600 transition duration-200 cursor-pointer"
-                onClick={handleRemoveLaborer}
-              >
-                <FaTrashCan className="w-6 h-6" />
-              </button>
-            </>
-          )}
-          <div className="mt-6 flex space-x-4">
-            <EditSubcontractedWorks workId={workId} />{" "}
-          </div>
+          <>
+            <AddLaborerDetails />
+            <button
+              className="hover:text-red-600 transition duration-200 cursor-pointer"
+              onClick={handleRemoveLaborer}
+            ></button>
+          </>
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">
@@ -346,9 +356,6 @@ export default function SubcontractedWorkDetails() {
       </div>
 
       <div className="mt-14 flex flex-col items-center">
-        <h2 className="text-xl font-semibold text-blue mb-4">
-          Approval Section
-        </h2>
         <div className="flex flex-col md:flex-row flex-wrap gap-4">
           {/* Consultant Approval */}
           {userRole === ROLES.SUPERVISOR_CONSULTANT &&
