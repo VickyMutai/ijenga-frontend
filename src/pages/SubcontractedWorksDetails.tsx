@@ -11,7 +11,7 @@ import {
   approveMainContractor,
   approveMainContractorCost,
 } from "../reducers/subcontractedWorksReducer";
-import { fetchLabourers } from "../reducers/labourerReducer";
+import { deleteLabourer, fetchLabourers } from "../reducers/labourerReducer";
 import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
 import AddLaborerDetails from "../components/AddLaborerDetails";
 import Loader from "../components/Loader";
@@ -119,9 +119,10 @@ export default function SubcontractedWorkDetails() {
   const costApproval = selectedWork.main_contractor_cost_approval
     ? "Approved"
     : "Not Approved";
-  const handleRemoveLaborer = () => {
-    console.log("Remove laborer clicked");
+  const handleRemoveLaborer = (labourerId: string) => {
+    dispatch(deleteLabourer(labourerId));
   };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
@@ -189,12 +190,6 @@ export default function SubcontractedWorkDetails() {
           {userRole === ROLES.SUBCONTRACTOR && (
             <>
               <AddLaborerDetails />
-              <button
-                className="hover:text-red-600 transition duration-200 cursor-pointer"
-                onClick={handleRemoveLaborer}
-              >
-                <FaTrashCan className="w-6 h-6" />
-              </button>
             </>
           )}
 
@@ -252,10 +247,14 @@ export default function SubcontractedWorkDetails() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-7">
-                          <EditLaborerDetails />
+                          {/* Pass the labourer object as a prop */}
+                          <EditLaborerDetails labourer={labourer} />
+
                           <button
                             className="hover:text-red-600 transition duration-200 cursor-pointer"
-                            onClick={handleRemoveLaborer}
+                            onClick={() =>
+                              handleRemoveLaborer(labourer.labourer_id)
+                            }
                           >
                             <FaTrashCan className="w-6 h-6" />
                           </button>
