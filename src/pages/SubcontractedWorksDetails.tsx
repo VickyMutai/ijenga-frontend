@@ -56,10 +56,6 @@ export default function SubcontractedWorkDetails() {
     }
   }, [dispatch, projectId, workId]);
 
-  useEffect(() => {
-    console.log("Selected Work Details in Redux:", selectedWork);
-  }, [selectedWork]);
-
   if (loading) return <Loader />;
   if (!selectedWork) return <p>Subcontracted work not found</p>;
 
@@ -215,12 +211,9 @@ export default function SubcontractedWorkDetails() {
               </span>
             </div>
           </section>
-
-          {userRole === ROLES.SUBCONTRACTOR && (
-            <>
-              <AddLaborerDetails />
-            </>
-          )}
+          <>
+            <AddLaborerDetails />
+          </>
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
             <table className="min-w-full divide-y divide-gray-200">
@@ -274,7 +267,7 @@ export default function SubcontractedWorkDetails() {
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {labourer.labourer_title
                           .replace(/_/g, " ")
-                          .toLowerCase() 
+                          .toLowerCase()
                           .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
                       </td>
 

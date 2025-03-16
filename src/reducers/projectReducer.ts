@@ -104,9 +104,6 @@ export const updateProject = createAsyncThunk(
       const response = await api.put(url, formattedProjectData, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log("API Response:", response.data); // ✅ Debugging
-
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Error updating project");

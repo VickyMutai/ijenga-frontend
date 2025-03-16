@@ -616,9 +616,8 @@ const subcontractedWorkSlice = createSlice({
       .addCase(requestRetentionMoney.pending, (state) => {
         state.loading = true;
       })
-      .addCase(requestRetentionMoney.fulfilled, (state, action) => {
+      .addCase(requestRetentionMoney.fulfilled, (state) => {
         state.loading = false;
-        console.log("Retention Money Request Successful:", action.payload);
       })
       .addCase(requestRetentionMoney.rejected, (state, action) => {
         state.loading = false;
@@ -627,9 +626,8 @@ const subcontractedWorkSlice = createSlice({
       .addCase(approveRetentionMoney.pending, (state) => {
         state.loading = true;
       })
-      .addCase(approveRetentionMoney.fulfilled, (state, action) => {
+      .addCase(approveRetentionMoney.fulfilled, (state) => {
         state.loading = false;
-        console.log("Retention Money Approval Successful:", action.payload);
       })
       .addCase(approveRetentionMoney.rejected, (state, action) => {
         state.loading = false;

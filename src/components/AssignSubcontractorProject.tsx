@@ -27,7 +27,6 @@ const AssignSubcontractorProject = ({
   >([]);
 
   const handleSave = () => {
-    console.log("Selected Projects:", selectedProjects);
     onSave(selectedProjects.map((proj) => proj.value));
     onClose();
   };

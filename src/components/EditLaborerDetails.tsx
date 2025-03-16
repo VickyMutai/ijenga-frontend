@@ -24,7 +24,6 @@ const EditLaborerDetails = ({ labourer }: { labourer: any }) => {
     labourer_overhead_cost: labourer.labourer_overhead_cost,
     number_of_days_worked: labourer.number_of_days_worked,
   });
-  console.log(labourer.labourer_overhead_cost);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
