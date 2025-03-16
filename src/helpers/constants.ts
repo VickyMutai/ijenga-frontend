@@ -1,6 +1,7 @@
 export const constants = {
-  BASE_URL: "https://ijenga.botontapwater.com/",
+  // BASE_URL: "https://ijenga.botontapwater.com/",
   // BASE_URL: "http://localhost:8000/",
+  BASE_URL: "https://backend.wipms.com/",
   endpoints: {
     auth: {
       login: "/auth/login/",
