@@ -21,8 +21,10 @@ const EditLaborerDetails = ({ labourer }: { labourer: any }) => {
     labourer_title: labourer.labourer_title,
     labourer_daily_rate: labourer.labourer_daily_rate,
     labourer_mpesa_number: labourer.labourer_mpesa_number,
+    labourer_overhead_cost: labourer.labourer_overhead_cost,
+    number_of_days_worked: labourer.number_of_days_worked,
   });
-
+  console.log(labourer.labourer_overhead_cost);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -111,7 +113,20 @@ const EditLaborerDetails = ({ labourer }: { labourer: any }) => {
                 onChange={handleChange}
                 className="project-modal-input"
               />
-
+              <input
+                type="text"
+                id="number_of_days_worked"
+                value={formData.number_of_days_worked}
+                onChange={handleChange}
+                className="project-modal-input"
+              />{" "}
+              <input
+                type="text"
+                id="labourer_overhead_cost"
+                value={formData.labourer_overhead_cost}
+                onChange={handleChange}
+                className="project-modal-input"
+              />
               <button
                 type="submit"
                 className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-900"

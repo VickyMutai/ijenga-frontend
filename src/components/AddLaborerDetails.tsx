@@ -40,6 +40,8 @@ const AddLaborerDetails = () => {
     labourer_title: "",
     labourer_mpesa_number: "",
     labourer_daily_rate: "",
+    labourer_overhead_cost: "",
+    number_of_days_worked: "",
   });
 
   if (!formData.labourer_mpesa_number.startsWith("254")) {
@@ -164,6 +166,22 @@ const AddLaborerDetails = () => {
                     type="number"
                     name="labourer_daily_rate"
                     placeholder="Daily Rate"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />{" "}
+                  <input
+                    type="number"
+                    name="number_of_days_worked"
+                    placeholder="Number of Days Worked"
+                    className="project-modal-input"
+                    onChange={handleChange}
+                    required
+                  />
+                  <input
+                    type="number"
+                    name="labourer_overhead_cost"
+                    placeholder="Overhead Cost"
                     className="project-modal-input"
                     onChange={handleChange}
                     required

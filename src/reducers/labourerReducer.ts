@@ -10,6 +10,8 @@ interface Labourer {
   labourer_title: string;
   labourer_daily_rate: number;
   labourer_mpesa_number: string;
+  labourer_overhead_cost: number;
+  number_of_days_worked: number;
 }
 
 interface LabourerState {

@@ -242,6 +242,12 @@ export default function SubcontractedWorkDetails() {
                     Mpesa No.
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Days Worked
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Overhead Cost
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Actions
                   </th>
                 </tr>
@@ -273,6 +279,12 @@ export default function SubcontractedWorkDetails() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {labourer.labourer_mpesa_number}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.number_of_days_worked}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        {labourer.labourer_overhead_cost}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-7">
