@@ -152,7 +152,6 @@ export default function SubcontractedWorkDetails() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
@@ -522,14 +521,17 @@ export default function SubcontractedWorkDetails() {
             </p>
           )}
           {userRole === ROLES.MAIN_CONTRACTOR &&
-          !selectedWork.retention_money_payment_approved && (
-            <button
-              className="w-full md:w-[250px] flex items-center justify-center bg-green-700 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
-              onClick={handleApproveRetention}
-            >
-              <CircleDollarSign className="mr-2" /> Approve Retention Money
-            </button>
-          )}
+            selectedWork.contractor_supervisor_approval &&
+            selectedWork.consultant_approval &&
+            selectedWork.main_contractor_cost_approval &&
+            !selectedWork.retention_money_payment_approved && (
+              <button
+                className="w-full md:w-[250px] flex items-center justify-center bg-green-700 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                onClick={handleApproveRetention}
+              >
+                <CircleDollarSign className="mr-2" /> Approve Retention Money
+              </button>
+            )}
         </div>
       </div>
     </div>
