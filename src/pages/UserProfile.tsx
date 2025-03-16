@@ -1,8 +1,23 @@
-import { Mail, Phone, Trash, UserRound, ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../reducers/store";
+import { fetchUserProfile } from "../reducers/authReducer";
+import { Mail, Phone, UserRound, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { user, loading, error } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, user]); // ✅ Added 'user' dependency to prevent redundant API calls
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-[#1D3557]/10">
@@ -27,33 +42,38 @@ const UserProfile = () => {
             </div>
           </div>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-1 text-[#1D3557]">
-              John Davidson
-            </h2>
-            <p className="text-[#1D3557]/80 text-sm">Main Contractor</p>
-          </div>
+          {loading ? (
+            <p className="text-center text-[#1D3557]">Loading...</p>
+          ) : error ? (
+            <p className="text-center text-red-600">{error}</p>
+          ) : (
+            <>
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold mb-1 text-[#1D3557]">
+                  {user?.first_name } {user?.last_name}
+                </h2>
+                <p className="text-[#1D3557]/80 text-sm capitalize">
+                  {user?.role || "N/A"}
+                </p>
+              </div>
 
-          <div className="space-y-4">
-            <div className="flex gap-2 items-center p-3 bg-[#2ECC71]/20 rounded-lg backdrop-blur-sm border border-[#2ECC71]/40 hover:bg-[#2ECC71]/30 transition-all duration-200">
-              <Mail className="text-[#1D3557]" />
-              <p className="text-sm text-[#1D3557]/90">
-                john.davidson@company.com
-              </p>
-            </div>
+              <div className="space-y-4">
+                <div className="flex gap-2 items-center p-3 bg-[#2ECC71]/20 rounded-lg backdrop-blur-sm border border-[#2ECC71]/40 hover:bg-[#2ECC71]/30 transition-all duration-200">
+                  <Mail className="text-[#1D3557]" />
+                  <p className="text-sm text-[#1D3557]/90">
+                    {user?.email || "No email available"}
+                  </p>
+                </div>
 
-            <div className="flex gap-2 items-center p-3 bg-[#2ECC71]/20 rounded-lg backdrop-blur-sm border border-[#2ECC71]/40 hover:bg-[#2ECC71]/30 transition-all duration-200">
-              <Phone className="text-[#1D3557]" />
-              <p className="text-sm text-[#1D3557]/90">0712345678</p>
-            </div>
-          </div>
-
-          <div className="mt-8">
-            <button className="w-full py-3 px-4 bg-[#28B965] text-white rounded-lg flex items-center justify-center gap-2 hover:bg-[#67b186] transition-all duration-200 border border-[#2ECC71]/40 cursor-pointer">
-              <Trash />
-              <span>Delete Account</span>
-            </button>
-          </div>
+                <div className="flex gap-2 items-center p-3 bg-[#2ECC71]/20 rounded-lg backdrop-blur-sm border border-[#2ECC71]/40 hover:bg-[#2ECC71]/30 transition-all duration-200">
+                  <Phone className="text-[#1D3557]" />
+                  <p className="text-sm text-[#1D3557]/90">
+                    {user?.phone_number || "No phone available"}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

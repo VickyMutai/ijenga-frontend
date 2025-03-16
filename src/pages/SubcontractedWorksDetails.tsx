@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import {
@@ -19,7 +19,12 @@ import { fetchProofOfWorks } from "../reducers/proofOfWorksReducer";
 import AddLaborerDetails from "../components/AddLaborerDetails";
 import Loader from "../components/Loader";
 import { FaTrashCan } from "react-icons/fa6";
-import { BadgeCheck, CircleCheck, CircleDollarSign } from "lucide-react";
+import {
+  BadgeCheck,
+  CircleCheck,
+  CircleDollarSign,
+  ArrowLeft,
+} from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
 import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
 import Sidebar from "../components/Sidebar";
@@ -27,6 +32,7 @@ import ProofOfWorkModal from "../components/proofOfWorkModal";
 import { constants, ROLES } from "../helpers/constants";
 
 export default function SubcontractedWorkDetails() {
+  const navigate = useNavigate();
   const params = useParams();
   const { projectId, id: workId } = params as { projectId: string; id: string };
   const dispatch = useDispatch<AppDispatch>();
@@ -150,6 +156,15 @@ export default function SubcontractedWorkDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <div className="w-[300px] md:w-[400px]">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-[#1D3557] hover:text-[#2ECC71] transition-all duration-200 mb-4 cursor-pointer"
+        >
+          <ArrowLeft size={18} />
+          <span>Go Back</span>
+        </button>
+      </div>
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
         <h1 className=" text-xl md:text-2xl font-bold">
           Subcontracted Work Details

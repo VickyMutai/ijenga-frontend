@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FileText, MapPin } from "lucide-react";
+import { ArrowLeft, FileText, MapPin } from "lucide-react";
 import { MdApartment, MdEngineering } from "react-icons/md";
 import { BiSupport } from "react-icons/bi";
 import Loader from "../components/Loader";
@@ -14,6 +14,7 @@ import { fetchSubcontractedWorks } from "../reducers/subcontractedWorksReducer";
 import Sidebar from "../components/Sidebar";
 
 export default function ProjectDetails() {
+    const navigate = useNavigate();
   const { projectId } = useParams<{ projectId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const { subcontractedWorks } = useSelector(
@@ -60,9 +61,18 @@ export default function ProjectDetails() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <div className="w-[300px] md:w-[400px]">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-[#1D3557] hover:text-[#2ECC71] transition-all duration-200 mb-4 cursor-pointer"
+        >
+          <ArrowLeft size={18} />
+          <span>Go Back</span>
+        </button>
+      </div>
       <header className="py-4 px-6  flex flex-col-reverse lg:flex-row lg:justify-between gap-4">
         <h1 className="text-2xl font-bold">Project Details</h1>
-        <Sidebar />  
+        <Sidebar />
       </header>
 
       <div className="mt-6 bg-gradient-to-br from-blue-50 to-white p-6 rounded-lg shadow-md">
@@ -112,16 +122,18 @@ export default function ProjectDetails() {
             <div>
               <p className="text-sm text-gray-500">Sub-Contractors</p>
               <p className="text-lg font-semibold">
-                {selectedProject.subcontractors && selectedProject.subcontractors.length > 0
+                {selectedProject.subcontractors &&
+                selectedProject.subcontractors.length > 0
                   ? selectedProject.subcontractors
                       .map((id) => {
                         const sub = users.find((user) => user.user_id === id);
-                        return sub ? `${sub.first_name} ${sub.last_name}` : "Unknown";
+                        return sub
+                          ? `${sub.first_name} ${sub.last_name}`
+                          : "Unknown";
                       })
                       .join(", ")
                   : "Not Assigned"}
               </p>
-
             </div>
           </div>
         </div>
