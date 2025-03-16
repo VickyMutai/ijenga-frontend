@@ -33,7 +33,7 @@ const SubContractorsTable = ({ works, projectId }: SubcontractedWorksTableProps)
   }, [dispatch, user]);
 
   const canAddSubcontractedWork =
-    user?.role === "contractors-supervisor" || user?.role === "subcontractor";
+    user?.role === "contractors-supervisor" || user?.role === "subcontractor" || user?.role === "main-contractor";
 
     const handleRowClick = (projectId: string, workId: string) => {
       navigate(`/subcontracted-works-details/${projectId}/${workId}`);
