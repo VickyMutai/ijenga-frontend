@@ -272,8 +272,12 @@ export default function SubcontractedWorkDetails() {
                         {labourer.national_id_number}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
-                        {labourer.labourer_title}
+                        {labourer.labourer_title
+                          .replace(/_/g, " ")
+                          .toLowerCase() 
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
                       </td>
+
                       <td className="px-6 py-4 text-sm text-gray-700">
                         Ksh. {labourer.labourer_daily_rate}
                       </td>
