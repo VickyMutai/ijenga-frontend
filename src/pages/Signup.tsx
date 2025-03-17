@@ -2,15 +2,25 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../reducers/store";
 import { registerUser } from "../reducers/authReducer";
-import { UserRound, UserRoundPlus, Mail, LockKeyhole, Lock, Phone, HardHat } from "lucide-react";
+import {
+  UserRound,
+  UserRoundPlus,
+  Mail,
+  LockKeyhole,
+  Lock,
+  Phone,
+  HardHat,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  
+
   const { loading, error } = useSelector((state: RootState) => state.auth);
-  const [errors, setErrors] = useState<{ phone?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ phone?: string; password?: string }>(
+    {}
+  );
 
   // Form state
   const [formData, setFormData] = useState({
@@ -24,7 +34,9 @@ const Signup = () => {
   });
 
   // Handle input changes
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -32,27 +44,27 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validationErrors: { phone?: string; password?: string } = {};
-  
+
     if (formData.password !== formData.confirmPassword) {
       validationErrors.password = "Passwords do not match!";
     } else if (formData.password.length < 8) {
-      validationErrors.password = "Password must be at least 8 characters long.";
+      validationErrors.password =
+        "Password must be at least 8 characters long.";
     }
-  
+
     if (!formData.phone.startsWith("254")) {
       validationErrors.phone = "Phone number must start with 254.";
     } else if (formData.phone.length !== 12) {
       validationErrors.phone = "Phone number must be exactly 12 digits.";
     }
-    
-  
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-  
+
     setErrors({});
-  
+
     const userData = {
       email: formData.email,
       password: formData.password,
@@ -62,14 +74,13 @@ const Signup = () => {
       role: formData.role.toLowerCase().replace(/\s+/g, "-"),
       phone_number: formData.phone,
     };
-  
+
     const result = await dispatch(registerUser(userData));
-  
+
     if (registerUser.fulfilled.match(result)) {
       navigate("/login");
     }
   };
-  
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#1D3557] to-[#1D3557]/90 flex flex-col items-center justify-center">
@@ -81,7 +92,10 @@ const Signup = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div className="relative">
-              <UserRound className="absolute left-3 top-3 opacity-50" size={20} />
+              <UserRound
+                className="absolute left-3 top-3 opacity-50"
+                size={20}
+              />
               <input
                 type="text"
                 name="firstName"
@@ -94,7 +108,10 @@ const Signup = () => {
             </div>
 
             <div className="relative">
-              <UserRound className="absolute left-3 top-3 opacity-50" size={20} />
+              <UserRound
+                className="absolute left-3 top-3 opacity-50"
+                size={20}
+              />
               <input
                 type="text"
                 name="lastName"
@@ -129,7 +146,9 @@ const Signup = () => {
               className="sign-up-input"
               required
             />
-            {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}         
+            {errors.phone && (
+              <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+            )}
           </div>
           <div className="relative">
             <HardHat className="absolute left-3 top-3 opacity-50" size={21} />
@@ -141,9 +160,12 @@ const Signup = () => {
               required
             >
               <option value="">Select Role</option>
-              <option value="Main Contractor">Main Contractor</option>
-              <option value="contractors supervisor">Supervisor Contractor</option>
-              <option value="consultants supervisor">Supervisor Consultant</option>
+              <option value="contractors supervisor">
+                Supervisor Contractor
+              </option>
+              <option value="consultants supervisor">
+                Supervisor Consultant
+              </option>
               <option value="Subcontractor">Subcontractor</option>
             </select>
           </div>
@@ -160,7 +182,10 @@ const Signup = () => {
             />
           </div>
           <div className="relative">
-            <LockKeyhole className="absolute left-3 top-3 opacity-50" size={20} />
+            <LockKeyhole
+              className="absolute left-3 top-3 opacity-50"
+              size={20}
+            />
             <input
               type="password"
               name="confirmPassword"
@@ -172,7 +197,9 @@ const Signup = () => {
             />
           </div>
 
-          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+          )}
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
@@ -186,7 +213,9 @@ const Signup = () => {
         </form>
         <div className="flex justify-center mt-4 text-sm text-blue">
           <p className="mr-1">Already have an account?</p>
-          <Link to="/login" className="text-green">Log In</Link>
+          <Link to="/login" className="text-green">
+            Log In
+          </Link>
         </div>
       </div>
     </div>
