@@ -43,12 +43,19 @@ export default function ProjectDetails() {
 
   useEffect(() => {}, [subcontractedWorks]);
 
-  const getSupervisorName = (uuid: string | null) => {
-    if (!uuid) return "Not Assigned";
-    const supervisor = users.find((user) => user.user_id === uuid);
-    return supervisor
-      ? `${supervisor.first_name} ${supervisor.last_name}`
-      : "Not Assigned";
+  const getSupervisorNames = (uuids: string[] | null) => {
+    if (!uuids || uuids.length === 0) return "Not Assigned";
+
+    const supervisorNames = uuids
+      .map((uuid) => {
+        const supervisor = users.find((user) => user.user_id === uuid);
+        return supervisor
+          ? `${supervisor.first_name} ${supervisor.last_name}`
+          : "Unknown";
+      })
+      .join(", ");
+
+    return supervisorNames;
   };
 
   if (loading) return <Loader />;
@@ -98,7 +105,7 @@ export default function ProjectDetails() {
             <div>
               <p className="text-sm text-gray-500">Supervisor Contractor</p>
               <p className="text-lg font-semibold">
-                {getSupervisorName(selectedProject.supervisorContractor)}
+                {getSupervisorNames(selectedProject.supervisorContractor)}
               </p>
             </div>
           </div>
@@ -107,7 +114,7 @@ export default function ProjectDetails() {
             <div>
               <p className="text-sm text-gray-500">Supervisor Consultant</p>
               <p className="text-lg font-semibold">
-                {getSupervisorName(selectedProject.supervisorConsultant)}
+                {getSupervisorNames(selectedProject.supervisorConsultant)}
               </p>
             </div>
           </div>

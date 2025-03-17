@@ -3,8 +3,8 @@ import api from "../api/ijengaApi";
 import { constants } from "../helpers/constants";
 
 interface ProofOfWork {
-  image_id: string;  // ✅ Matches API response
-  image_file: string; // ✅ Matches API response
+  image_id: string;
+  image_file: string;
   description: string;
 }
 

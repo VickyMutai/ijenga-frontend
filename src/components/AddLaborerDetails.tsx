@@ -89,7 +89,7 @@ const AddLaborerDetails = () => {
     const result = await dispatch(createLabourer(labourerData));
 
     if (createLabourer.fulfilled.match(result)) {
-      dispatch(fetchLabourers(workId)); // ✅ Refresh list after submission
+      dispatch(fetchLabourers(workId));
       setOpen(false);
     }
   };

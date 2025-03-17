@@ -77,10 +77,9 @@ export const createLabourer = createAsyncThunk<
           workId
         );
 
-      // Ensure workId is included in subcontracted_works array
       const payload = {
         ...labourerData,
-        subcontracted_works: [workId], // ✅ Ensure workId is sent
+        subcontracted_works: [workId],
       };
 
       const response = await api.post(url, payload, {

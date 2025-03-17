@@ -18,7 +18,7 @@ const ForgotPassword = () => {
     const result = await dispatch(forgotPassword(email));
 
     if (forgotPassword.fulfilled.match(result)) {
-      setMessage("✅ Password reset link sent! Check your email.");
+      setMessage("Password reset link sent! Check your email.");
     }
   };
 
@@ -27,7 +27,9 @@ const ForgotPassword = () => {
       <div className="w-[300px] md:w-[400px] bg-white p-6 md:p-8 rounded-lg shadow-2xl border-2 border-[#2ECC71]">
         <div className="flex flex-col gap-1 items-center mb-8">
           <KeyRound className="text-blue mb-2" size={30} />
-          <h2 className="text-2xl md:text-3xl font-bold text-blue">Forgot Password</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-blue">
+            Forgot Password
+          </h2>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="relative">
@@ -55,7 +57,10 @@ const ForgotPassword = () => {
           </button>
         </form>
         <div className="flex justify-center mt-4 text-sm text-blue">
-          <p className="mr-1">Remembered your password?</p><Link to="/login" className="text-green">Log In</Link>
+          <p className="mr-1">Remembered your password?</p>
+          <Link to="/login" className="text-green">
+            Log In
+          </Link>
         </div>
       </div>
     </div>

@@ -191,7 +191,7 @@ export const addContractorComment = createAsyncThunk(
         }
       );
 
-      return comment; // ✅ Return only the comment string
+      return comment;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.detail || "Failed to add contractor review"
@@ -222,7 +222,7 @@ export const addConsultantComment = createAsyncThunk(
         }
       );
 
-      return comment; // ✅ Return only the comment string
+      return comment;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.detail || "Failed to add consultant review"
@@ -247,14 +247,12 @@ export const approveContractorSupervisor = createAsyncThunk(
         return rejectWithValue("Unauthorized: No authentication token found.");
       }
 
-      // ✅ Prevent Supervisor Contractor from approving before Main Contractor approves cost
       if (!selectedWork.main_contractor_cost_approval) {
         return rejectWithValue(
           "Main Contractor must approve the cost before Supervisor Contractor can approve."
         );
       }
 
-      // Proceed with approval
       await api.post(
         constants.endpoints.subcontractor_works.approve_contractor_supervisor.replace(
           "?",
@@ -325,7 +323,6 @@ export const approveMainContractorCost = createAsyncThunk(
         return rejectWithValue("Unauthorized: No authentication token found.");
       }
 
-      // ✅ API call for Main Contractor Cost Approval
       await api.post(
         constants.endpoints.subcontractor_works.approve_cost.replace(
           "?",

@@ -9,9 +9,9 @@ interface Project {
   projectName: string;
   projectLocation: string;
   projectDescription: string;
-  supervisorContractor: string;
-  supervisorConsultant: string;
-  subcontractors: string[]; // ✅ Ensure this is an array
+  supervisorContractor: string[];
+  supervisorConsultant: string[];
+  subcontractors: string[];
 }
 
 interface ProjectsState {
@@ -47,13 +47,19 @@ export const fetchProjects = createAsyncThunk(
         projectName: proj.project_name || "Unnamed Project",
         projectLocation: proj.project_location || "Unknown Location",
         projectDescription: proj.project_description || "",
-        supervisorContractor: proj.supervisor_contractor || "",
-        supervisorConsultant: proj.supervisor_consultant || "",
-        subcontractor: proj.subcontractor || "",
+        supervisorContractor: Array.isArray(proj.supervisor_contractor)
+          ? proj.supervisor_contractor
+          : [],
+        supervisorConsultant: Array.isArray(proj.supervisor_consultant)
+          ? proj.supervisor_consultant
+          : [],
+        subcontractors: Array.isArray(proj.subcontractors)
+          ? proj.subcontractors
+          : [],
       }));
 
       const walletBalance =
-        parseFloat(response.data.data[0]?.project_wallet_balance) || 0; // ✅ Extract wallet balance
+        parseFloat(response.data.data[0]?.project_wallet_balance) || 0;
 
       return { projects: formattedProjects, walletBalance };
     } catch (error) {
@@ -61,44 +67,61 @@ export const fetchProjects = createAsyncThunk(
     }
   }
 );
-
 export const createProject = createAsyncThunk(
   "projects/createProject",
-  async (projectData: {
-    project_name: string;
-    project_location: string;
-    project_description?: string;
-    supervisor_contractor?: string;
-    supervisor_consultant?: string;
-  }, { rejectWithValue }) => {
+  async (
+    projectData: {
+      project_name: string;
+      project_location: string;
+      project_description?: string;
+      supervisor_contractor?: string[]; // ✅ Change from string to string[]
+      supervisor_consultant?: string[]; // ✅ Change from string to string[]
+    },
+    { rejectWithValue }
+  ) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
 
-      const response = await api.post(constants.endpoints.projects.create_project, projectData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.post(
+        constants.endpoints.projects.create_project,
+        projectData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       return response.data.data; // Return new project
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || "Failed to create project");
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to create project"
+      );
     }
   }
 );
 
 export const updateProject = createAsyncThunk(
   "projects/updateProject",
-  async ({ projectId, projectData }: { projectId: string; projectData: Partial<Project> }, { rejectWithValue }) => {
+  async (
+    {
+      projectId,
+      projectData,
+    }: { projectId: string; projectData: Partial<Project> },
+    { rejectWithValue }
+  ) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
 
       const url = `/projects/${projectId}/edit_project/`;
 
-      // ✅ Ensure subcontractors is an array
       const formattedProjectData = {
         ...projectData,
-        subcontractors: projectData.subcontractors ?? [], // ✅ Ensures it's an array
+        supervisorContractor: projectData.supervisorContractor ?? [],
+        supervisorConsultant: projectData.supervisorConsultant ?? [],
+        subcontractors: projectData.subcontractors ?? [],
       };
 
       const response = await api.put(url, formattedProjectData, {
@@ -116,7 +139,8 @@ export const fetchProjectDetails = createAsyncThunk(
   async (projectId: string, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
 
       const url = `${constants.endpoints.projects.project_detail}?project_id=${projectId}`;
 
@@ -125,7 +149,8 @@ export const fetchProjectDetails = createAsyncThunk(
       });
 
       const projectsArray = response.data.data;
-      if (!projectsArray || projectsArray.length === 0) return rejectWithValue("Project not found");
+      if (!projectsArray || projectsArray.length === 0)
+        return rejectWithValue("Project not found");
 
       const projectData = projectsArray[0];
 
@@ -134,16 +159,19 @@ export const fetchProjectDetails = createAsyncThunk(
         projectName: projectData.project_name || "Unnamed Project",
         projectLocation: projectData.project_location || "Unknown Location",
         projectDescription: projectData.project_description || "",
-        supervisorContractor: projectData.supervisor_contractor || "Not Assigned",
-        supervisorConsultant: projectData.supervisor_consultant || "Not Assigned",
-        subcontractors: Array.isArray(projectData.subcontractors) ? projectData.subcontractors : [], // ✅ Ensures an array
+        supervisorContractor:
+          projectData.supervisor_contractor || "Not Assigned",
+        supervisorConsultant:
+          projectData.supervisor_consultant || "Not Assigned",
+        subcontractors: Array.isArray(projectData.subcontractors)
+          ? projectData.subcontractors
+          : [],
       };
     } catch (error) {
       return rejectWithValue("Failed to fetch project details");
     }
   }
 );
-
 
 export const deleteProject = createAsyncThunk<
   string, // Returning only projectId
@@ -152,9 +180,13 @@ export const deleteProject = createAsyncThunk<
 >("projects/deleteProject", async (projectId, { rejectWithValue }) => {
   try {
     const token = localStorage.getItem("authToken");
-    if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+    if (!token)
+      return rejectWithValue("Unauthorized: No authentication token found.");
 
-    const url = constants.endpoints.projects.delete_project.replace("?", projectId);
+    const url = constants.endpoints.projects.delete_project.replace(
+      "?",
+      projectId
+    );
 
     await api.delete(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -173,7 +205,7 @@ const projectsSlice = createSlice({
       state.projects = [];
       state.loading = false;
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -194,17 +226,19 @@ const projectsSlice = createSlice({
       })
       .addCase(createProject.rejected, (state, action) => {
         state.error = action.payload as string;
-      })      .addCase(fetchProjectDetails.pending, (state) => {
+      })
+      .addCase(fetchProjectDetails.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchProjectDetails.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedProject = {
           ...action.payload,
-          subcontractors: action.payload.subcontractors || [], // ✅ Ensure an array
+          supervisorContractor: action.payload.supervisorContractor || [],
+          supervisorConsultant: action.payload.supervisorConsultant || [],
+          subcontractors: action.payload.subcontractors || [],
         };
       })
-      
       .addCase(fetchProjectDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
@@ -221,11 +255,13 @@ const projectsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(deleteProject.fulfilled, (state, action) => {
-        state.projects = state.projects.filter((project) => project.id !== action.payload);
+        state.projects = state.projects.filter(
+          (project) => project.id !== action.payload
+        );
       })
       .addCase(deleteProject.rejected, (state, action) => {
         state.error = action.payload as string;
-      })
+      });
   },
 });
 

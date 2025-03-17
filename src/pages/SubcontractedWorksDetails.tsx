@@ -111,12 +111,12 @@ export default function SubcontractedWorkDetails() {
 
   const handleCostApprovalMainContractor = async () => {
     await dispatch(approveMainContractorCost(workId));
-    dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh data
+    dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
   };
   const handleApproveAttendance = async () => {
     try {
       await dispatch(approveAttendance(workId));
-      dispatch(fetchSubcontractedWorkDetails({ projectId, workId })); // ✅ Refresh Data
+      dispatch(fetchSubcontractedWorkDetails({ projectId, workId }));
     } catch (error) {
       console.error("Error approving attendance:", error);
     }
@@ -212,18 +212,22 @@ export default function SubcontractedWorkDetails() {
 
           <section className="mb-8 bg-[#f8fafb] p-6 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
-              <span className="text-gray-700 mb-2 text-base md:text-lg">Task Cost (Labor)</span>
-              <span className="font-bold text-blue text-lg md:text-xl">
-                Ksh. {selectedWork.task_cost_labor}
-              </span>
-            </div>
-            
-            <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
-              <span className="text-gray-700 mb-2 text-base md:text-lg">Task Cost (Overhead)</span>
-              <span className="font-bold text-blue text-lg md:text-xl">
-                Ksh. {selectedWork.task_cost_overhead}
-              </span>
+              <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
+                <span className="text-gray-700 mb-2 text-base md:text-lg">
+                  Task Cost (Labor)
+                </span>
+                <span className="font-bold text-blue text-lg md:text-xl">
+                  Ksh. {selectedWork.task_cost_labor}
+                </span>
+              </div>
+
+              <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
+                <span className="text-gray-700 mb-2 text-base md:text-lg">
+                  Task Cost (Overhead)
+                </span>
+                <span className="font-bold text-blue text-lg md:text-xl">
+                  Ksh. {selectedWork.task_cost_overhead}
+                </span>
               </div>
             </div>
           </section>
@@ -539,7 +543,7 @@ export default function SubcontractedWorkDetails() {
             selectedWork.contractor_supervisor_approval &&
             selectedWork.consultant_approval &&
             selectedWork.main_contractor_cost_approval &&
-            !selectedWork.main_contractor_payment_approval && ( // ✅ Ensure approval is NOT given
+            !selectedWork.main_contractor_payment_approval && (
               <button
                 className="flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
                 onClick={handleApproveMainContractor}

@@ -17,8 +17,7 @@ const UserProfile = () => {
     if (!user) {
       dispatch(fetchUserProfile());
     }
-  }, [dispatch, user]); // ✅ Added 'user' dependency to prevent redundant API calls
-
+  }, [dispatch, user]);
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-[#1D3557]/10">
       {/* Go Back Link */}

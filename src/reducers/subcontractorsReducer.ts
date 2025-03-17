@@ -32,7 +32,7 @@ export const fetchSubcontractors = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.get(`/subcontractors/`);
-      return response.data as Subcontractor[]; // ✅ Cast API response
+      return response.data as Subcontractor[];
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.detail || "Failed to fetch subcontractors"
@@ -119,7 +119,7 @@ const subcontractorsSlice = createSlice({
         const { subcontractorId, project } = action.payload;
         const subcontractor = state.list.find((s) => s.id === subcontractorId);
         if (subcontractor) {
-          subcontractor.projects.push(project); // ✅ Update assigned project dynamically
+          subcontractor.projects.push(project);
         }
       })
       .addCase(unassignSubcontractorFromWork.fulfilled, (state, action) => {
@@ -130,13 +130,12 @@ const subcontractorsSlice = createSlice({
           );
         });
       })
-      // Fetch subcontractors assigned to a project
       .addCase(fetchSubcontractorsByProject.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchSubcontractorsByProject.fulfilled, (state, action) => {
         state.loading = false;
-        state.list = action.payload; // ✅ Only store subcontractors for that project
+        state.list = action.payload;
       })
       .addCase(fetchSubcontractorsByProject.rejected, (state, action) => {
         state.loading = false;

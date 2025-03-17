@@ -24,7 +24,7 @@ const ResetPassword = () => {
       setUserId(userIdParam);
       setToken(tokenParam);
     } else {
-      setMessage("❌ Invalid password reset link!");
+      setMessage("Invalid password reset link!");
     }
   }, [searchParams]);
 
@@ -32,14 +32,14 @@ const ResetPassword = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      setMessage("❌ Passwords do not match!");
+      setMessage("Passwords do not match!");
       return;
     }
 
     const result = await dispatch(resetPassword({ user_id: userId, token, new_password: password, re_enter_password: confirmPassword }));
 
     if (resetPassword.fulfilled.match(result)) {
-      setMessage("✅ Password reset successful! Redirecting to login...");
+      setMessage("Password reset successful! Redirecting to login...");
       setTimeout(() => navigate("/login"), 3000);
     }
   };
