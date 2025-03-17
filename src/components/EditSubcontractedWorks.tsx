@@ -58,11 +58,12 @@ useEffect(() => {
   return (
     <div>
       <button
-        className="flex-1 w-full blue hover:bg-blue-900 text-white cursor-pointer py-2 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+        className="bg-[#1D3557] hover:bg-[#14253d] text-white px-4 py-2 rounded-full transition-all duration-300 transform cursor-pointer hover:scale-105 flex items-center gap-2"
         onClick={() => setOpen(true)}
       >
         <FaPencilAlt />
-        <span>Edit Works</span>
+        <span className="hidden md:block">Edit Works</span>
+        <span className="block md:hidden">Edit</span>
       </button>
 
       <Dialog

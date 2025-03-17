@@ -24,6 +24,8 @@ import {
   CircleCheck,
   CircleDollarSign,
   ArrowLeft,
+  Upload,
+  CheckCircle,
 } from "lucide-react";
 import EditLaborerDetails from "../components/EditLaborerDetails";
 import EditSubcontractedWorks from "../components/EditSubcontractedWorks";
@@ -174,56 +176,64 @@ export default function SubcontractedWorkDetails() {
 
       <div className="mt-6">
         <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 space-y-4 mb-10">
-          <header className="border-b pb-4">
-            <header className="border-b pb-4 flex justify-between items-center">
-              <h2 className="text-xl text-blue font-semibold">
+          <div className="pb-4">
+            <header className="mb-6 flex justify-between items-center">
+              <h2 className="text-xl md:text-2xl text-blue font-semibold capitalize">
                 {selectedWork.task_title}
               </h2>
               <EditSubcontractedWorks workId={workId} />
             </header>
 
-            <p className="text-sm mt-2">{selectedWork.task_description}</p>
-            <p className="text-sm mt-2">
-              Task Category: {selectedWork.task_category}
+            <p className="text-base mb-2">{selectedWork.task_description}</p>
+            <p className="text-sm text-gray-600 mb-4">
+              Task Category:{" "}
+              <span className="font-medium capitalize">
+                {selectedWork.task_category}
+              </span>
             </p>
-            <div className="mt-4">
-              <span className="text-sm font-medium text-gray-700">
-                Assigned Subcontractor:
-              </span>
-              <span className="ml-2 font-semibold text-blue-600">
-                {subcontractorName}
-              </span>
-              <div>
-                <span className="text-sm font-medium text-gray-700">
+            <div className="bg-gray-100 p-4 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="flex flex-col">
+                <span className="text-gray-600 text-sm mb-1 font-medium">
+                  Assigned Subcontractor:
+                </span>
+                <span className="font-semibold text-[#1D3557] capitalize">
+                  {subcontractorName}
+                </span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-gray-600 text-sm mb-1 font-medium">
                   Payment Status:
                 </span>
-                <span className="ml-2 font-semibold text-green-600">
+                <span className="font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block w-fit capitalize">
                   {paymentStatus}
                 </span>
               </div>
-              <div>
-                <span className="text-sm font-medium text-gray-700">
+              <div className="flex flex-col">
+                <span className="text-gray-600 text-sm mb-1 font-medium">
                   Cost Approval Status:
                 </span>
-                <span className="ml-2 font-semibold text-green-600">
+                <span className="font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block w-fit capitalize">
                   {costApproval}
                 </span>
               </div>
             </div>
-          </header>
+          </div>
 
-          <section className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Task Cost (Labor)</span>
-              <span className="font-medium">
+          <section className="mb-8 bg-[#f8fafb] p-6 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
+              <span className="text-gray-700 mb-2 text-base md:text-lg">Task Cost (Labor)</span>
+              <span className="font-bold text-blue text-lg md:text-xl">
                 Ksh. {selectedWork.task_cost_labor}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm">Task Cost (Overhead)</span>
-              <span className="font-medium">
+            
+            <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
+              <span className="text-gray-700 mb-2 text-base md:text-lg">Task Cost (Overhead)</span>
+              <span className="font-bold text-blue text-lg md:text-xl">
                 Ksh. {selectedWork.task_cost_overhead}
               </span>
+              </div>
             </div>
           </section>
           <>
@@ -321,27 +331,30 @@ export default function SubcontractedWorkDetails() {
           </section>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-10">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full md:w-1/2">
-            {(userRole === ROLES.SUPERVISOR_CONSULTANT ||
-              userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
-              <div>
-                <h2 className="text-xl font-semibold text-blue mb-4">
-                  Proof of Work Done
-                </h2>
-                <button
-                  onClick={() => setIsProofModalOpen(true)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
-                >
-                  Upload Proof of Work
-                </button>
-                <ProofOfWorkModal
-                  workId={workId}
-                  isOpen={isProofModalOpen}
-                  onClose={() => setIsProofModalOpen(false)}
-                />
-              </div>
-            )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-blue mb-4">
+                Proof of Work Done
+              </h2>
+              {(userRole === ROLES.SUPERVISOR_CONSULTANT ||
+                userRole === ROLES.SUPERVISOR_CONTRACTOR) && (
+                <>
+                  <button
+                    onClick={() => setIsProofModalOpen(true)}
+                    className="bg-[#2ECC71] hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+                  >
+                    <Upload />
+                    <span>Upload Proof of Work</span>
+                  </button>
+                  <ProofOfWorkModal
+                    workId={workId}
+                    isOpen={isProofModalOpen}
+                    onClose={() => setIsProofModalOpen(false)}
+                  />
+                </>
+              )}
+            </div>
             <div className="mt-6 space-y-4">
               {proofOfWorks.length === 0 ? (
                 <p className="text-gray-600">No proof of work uploaded yet.</p>
@@ -349,7 +362,7 @@ export default function SubcontractedWorkDetails() {
                 proofOfWorks.map((proof) => (
                   <div
                     key={proof.image_id}
-                    className="border p-4 rounded-lg flex gap-4"
+                    className="flex items-start space-x-4 bg-gray-100 p-4 rounded-lg"
                   >
                     <img
                       src={`${constants.BASE_URL}${proof.image_file}`}
@@ -357,7 +370,9 @@ export default function SubcontractedWorkDetails() {
                       className="w-24 h-24 object-cover rounded-lg"
                     />
                     <div>
-                      <p className="text-gray-700">{proof.description}</p>
+                      <p className="text-gray-800 mt-2 font-medium">
+                        {proof.description}
+                      </p>
                     </div>
                   </div>
                 ))
@@ -370,7 +385,7 @@ export default function SubcontractedWorkDetails() {
             onClose={() => setIsProofModalOpen(false)}
           />
           {
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full md:w-1/2">
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
               <h2 className="text-xl font-semibold text-blue mb-4">Reviews</h2>
 
               {/* Contractor's Supervisor Review */}
@@ -378,7 +393,7 @@ export default function SubcontractedWorkDetails() {
                 <label className="block text-sm font-medium text-gray-800 mb-1">
                   Contractor's Supervisor Review
                 </label>
-                <p className="bg-gray-100 p-3 rounded-lg">
+                <p className="bg-gray-100 p-3 rounded-lg text-sm">
                   {selectedWork.contractor_supervisor_comments || (
                     <span className="text-gray-500">No review yet.</span>
                   )}
@@ -391,12 +406,12 @@ export default function SubcontractedWorkDetails() {
                         rows={3}
                         value={contractorReview}
                         onChange={(e) => setContractorReview(e.target.value)}
-                        className="w-full p-2 border rounded-lg mt-2"
+                        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#1D3557] focus:border-[#1D3557] outline-none transition-all duration-300"
                         placeholder="Write a review..."
                       ></textarea>
                       <button
                         onClick={handleSubmitContractorReview}
-                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                        className="mt-2 bg-[#1D3557] hover:bg-[#14253d] text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 gap-2 ml-auto"
                       >
                         Submit
                       </button>
@@ -409,7 +424,7 @@ export default function SubcontractedWorkDetails() {
                 <label className="block text-sm font-medium text-gray-800 mb-1">
                   Consultant's Supervisor Review
                 </label>
-                <p className="bg-gray-100 p-3 rounded-lg">
+                <p className="bg-gray-100 p-3 rounded-lg text-sm">
                   {selectedWork.consultant_supervisor_comments || (
                     <span className="text-gray-500">No review yet.</span>
                   )}
@@ -422,12 +437,12 @@ export default function SubcontractedWorkDetails() {
                         rows={3}
                         value={consultantReview}
                         onChange={(e) => setConsultantReview(e.target.value)}
-                        className="w-full p-2 border rounded-lg mt-2"
+                        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-[#1D3557] focus:border-[#1D3557] outline-none transition-all duration-300"
                         placeholder="Write a review..."
                       ></textarea>
                       <button
                         onClick={handleSubmitConsultantReview}
-                        className="w-full md:w-[200px] mt-2 bg-blue-600 text-white cursor-pointer py-2 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                        className="mt-2 bg-[#1D3557] hover:bg-[#14253d] text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 gap-2 ml-auto"
                       >
                         Submit
                       </button>
@@ -439,35 +454,38 @@ export default function SubcontractedWorkDetails() {
         </div>
       </div>
 
-      <div className="mt-14 flex flex-col items-center">
-        <div className="flex flex-col md:flex-row flex-wrap gap-4">
+      <div className="bg-[#f8fafb] border border-gray-200 rounded-xl shadow-sm p-6 mb-6">
+        <h2 className="text-lg md:text-xl font-bold text-[#1D3557] mb-6">
+          Approval section
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {userRole === ROLES.MAIN_CONTRACTOR &&
             !selectedWork.main_contractor_cost_approval && (
               <button
-                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                className="flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
                 onClick={handleCostApprovalMainContractor}
               >
                 <CircleDollarSign className="mr-2" /> Approve Cost
               </button>
             )}
           {selectedWork.main_contractor_cost_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Cost Approved by Main Contractor
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Cost Approved by Main Contractor
             </p>
           )}
           {/* Consultant Approval */}
           {userRole === ROLES.SUPERVISOR_CONSULTANT &&
             !selectedWork.consultant_approval && (
               <button
-                className="w-full md:w-[200px] flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
+                className="flex items-center justify-center bg-blue-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-blue-900 transition duration-200"
                 onClick={handleApproveConsultant}
               >
                 <BadgeCheck className="mr-2" /> Approve as Consultant
               </button>
             )}
           {selectedWork.consultant_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Approved by Consultant
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Approved by Consultant
             </p>
           )}
 
@@ -475,7 +493,7 @@ export default function SubcontractedWorkDetails() {
           {userRole === ROLES.SUPERVISOR_CONTRACTOR &&
             !selectedWork.contractor_supervisor_attendance_approval && (
               <button
-                className="w-full md:w-[250px] flex items-center justify-center bg-orange-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-orange-800 transition duration-200"
+                className="flex items-center justify-center bg-orange-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-orange-800 transition duration-200"
                 onClick={handleApproveAttendance}
               >
                 <CircleCheck className="mr-2" /> Approve Attendance
@@ -483,8 +501,8 @@ export default function SubcontractedWorkDetails() {
             )}
 
           {selectedWork.contractor_supervisor_attendance_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Attendance Approved
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Attendance Approved
             </p>
           )}
 
@@ -493,7 +511,7 @@ export default function SubcontractedWorkDetails() {
             selectedWork.consultant_approval &&
             !selectedWork.contractor_supervisor_payment_approval && (
               <button
-                className="w-full md:w-[300px] flex items-center justify-center bg-green-800 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                className="flex items-center justify-center bg-green-800 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
                 onClick={handleApproveContractorSupervisor}
               >
                 <BadgeCheck className="mr-2" /> Approve Work & Payment
@@ -501,8 +519,8 @@ export default function SubcontractedWorkDetails() {
             )}
 
           {selectedWork.contractor_supervisor_payment_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Supervisor Approved Work & Payment
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Supervisor Approved Work & Payment
             </p>
           )}
 
@@ -513,7 +531,7 @@ export default function SubcontractedWorkDetails() {
             selectedWork.main_contractor_payment_approval &&
             !selectedWork.retention_money_payment_requested && (
               <button
-                className="w-full md:w-[250px] flex items-center justify-center bg-yellow-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-yellow-800 transition duration-200"
+                className="flex items-center justify-center bg-yellow-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-yellow-800 transition duration-200"
                 onClick={handleRequestRetention}
               >
                 <CircleDollarSign className="mr-2" /> Request Retention Money
@@ -521,8 +539,8 @@ export default function SubcontractedWorkDetails() {
             )}
 
           {selectedWork.retention_money_payment_requested && (
-            <p className="text-green-700 font-semibold">
-              ✅ Requested Retention Money
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Requested Retention Money
             </p>
           )}
 
@@ -532,7 +550,7 @@ export default function SubcontractedWorkDetails() {
             selectedWork.main_contractor_cost_approval &&
             !selectedWork.main_contractor_payment_approval && ( // ✅ Ensure approval is NOT given
               <button
-                className="w-full md:w-[200px] flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
+                className="flex items-center justify-center bg-purple-600 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-purple-900 transition duration-200"
                 onClick={handleApproveMainContractor}
               >
                 <CircleDollarSign className="mr-2" /> Approve as Main Contractor
@@ -540,8 +558,8 @@ export default function SubcontractedWorkDetails() {
             )}
 
           {selectedWork.main_contractor_payment_approval && (
-            <p className="text-green-700 font-semibold">
-              ✅ Approved by Main Contractor
+            <p className="text-green-700 text-sm flex items-center gap-2 bg-green-100 p-3 rounded-xl">
+              <CheckCircle /> Approved by Main Contractor
             </p>
           )}
           {userRole === ROLES.MAIN_CONTRACTOR &&
@@ -550,7 +568,7 @@ export default function SubcontractedWorkDetails() {
             selectedWork.main_contractor_cost_approval &&
             !selectedWork.retention_money_payment_approved && (
               <button
-                className="w-full md:w-[250px] flex items-center justify-center bg-green-700 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
+                className="flex items-center justify-center bg-green-700 text-white cursor-pointer py-3 px-4 rounded-lg hover:bg-green-900 transition duration-200"
                 onClick={handleApproveRetention}
               >
                 <CircleDollarSign className="mr-2" /> Approve Retention Money

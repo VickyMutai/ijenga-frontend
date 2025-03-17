@@ -20,7 +20,7 @@ export default function Sidebar() {
   };
 
   return (
-    <>
+    <div>
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="p-2 bg-gray-200 rounded-lg transition-colors z-50 cursor-pointer"
@@ -104,6 +104,6 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
