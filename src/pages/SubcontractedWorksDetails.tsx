@@ -175,14 +175,14 @@ export default function SubcontractedWorkDetails() {
               <EditSubcontractedWorks workId={workId} />
             </header>
 
-            <p className="text-base mb-2">{selectedWork.task_description}</p>
+            <p className="text-base mb-2 text-gray-800">{selectedWork.task_description}</p>
             <p className="text-sm text-gray-600 mb-4">
               Task Category:{" "}
               <span className="font-medium capitalize">
                 {selectedWork.task_category}
               </span>
             </p>
-            <div className="bg-gray-100 p-4 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="bg-gray-50 p-4 py-5 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex flex-col">
                 <span className="text-gray-600 text-sm mb-1 font-medium">
                   Assigned Subcontractor:
@@ -210,22 +210,18 @@ export default function SubcontractedWorkDetails() {
             </div>
           </div>
 
-          <section className="mb-8 bg-[#f8fafb] p-6 rounded-lg">
+          <section className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
-                <span className="text-gray-700 mb-2 text-base md:text-lg">
-                  Task Cost (Labor)
-                </span>
-                <span className="font-bold text-blue text-lg md:text-xl">
+              <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                <span className="text-gray-700 mb-2 text-base">Task Cost (Labor)</span>
+                <span className="text-3xl font-bold text-[#1D3557] self-end mt-auto">
                   Ksh. {selectedWork.task_cost_labor}
                 </span>
               </div>
 
-              <div className="bg-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-center items-center">
-                <span className="text-gray-700 mb-2 text-base md:text-lg">
-                  Task Cost (Overhead)
-                </span>
-                <span className="font-bold text-blue text-lg md:text-xl">
+              <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
+                <span className="text-gray-700 mb-2 text-base">Task Cost (Overhead)</span>
+                <span className="text-3xl font-bold text-[#1D3557] self-end mt-auto">
                   Ksh. {selectedWork.task_cost_overhead}
                 </span>
               </div>
