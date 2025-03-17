@@ -74,8 +74,8 @@ export const createProject = createAsyncThunk(
       project_name: string;
       project_location: string;
       project_description?: string;
-      supervisor_contractor?: string[]; // ✅ Change from string to string[]
-      supervisor_consultant?: string[]; // ✅ Change from string to string[]
+      supervisor_contractor?: string[];
+      supervisor_consultant?: string[];
     },
     { rejectWithValue }
   ) => {
