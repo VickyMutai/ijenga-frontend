@@ -266,6 +266,9 @@ export default function SubcontractedWorkDetails() {
                     Overhead Cost
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
+                    Total Cost
+                  </th>
+                  <th className="px-6 py-3 text-left text-sm font-semibold uppercase">
                     Actions
                   </th>
                 </tr>
@@ -307,6 +310,12 @@ export default function SubcontractedWorkDetails() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-700">
                         {labourer.labourer_overhead_cost}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700">
+                        Ksh.{" "}
+                        {labourer.number_of_days_worked *
+                          labourer.labourer_daily_rate +
+                          labourer.labourer_overhead_cost}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-7">

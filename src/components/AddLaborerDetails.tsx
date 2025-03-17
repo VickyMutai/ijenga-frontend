@@ -144,7 +144,9 @@ const AddLaborerDetails = () => {
                     <option value="">Select Title</option>
                     {LABOURER_TITLES.map((title) => (
                       <option key={title} value={title}>
-                        {title.replace(/_/g, " ").toUpperCase()}
+                        {title.replace(/_/g, " ")
+                          .toLowerCase()
+                          .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
                       </option>
                     ))}
                   </select>
