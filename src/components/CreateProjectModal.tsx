@@ -43,33 +43,31 @@ export default function CreateProjectModal() {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
 
-  const projectData = {
-    ...formData,
-    supervisor_contractor:
-      formData.supervisor_contractor.length > 0
-        ? formData.supervisor_contractor
-        : [],
-    supervisor_consultant:
-      formData.supervisor_consultant.length > 0
-        ? formData.supervisor_consultant
-        : [],
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const projectData = {
+      ...formData,
+      supervisor_contractor:
+        formData.supervisor_contractor.length > 0
+          ? formData.supervisor_contractor
+          : [],
+      supervisor_consultant:
+        formData.supervisor_consultant.length > 0
+          ? formData.supervisor_consultant
+          : [],
+    };
+
+    const resultAction = await dispatch(createProject(projectData));
+
+    if (createProject.fulfilled.match(resultAction)) {
+      window.location.reload();
+      dispatch(fetchProjects());
+    }
+
+    setOpen(false);
   };
-
-  const resultAction = await dispatch(createProject(projectData));
-
-  if (createProject.fulfilled.match(resultAction)) {
-    dispatch(fetchProjects());
-    window.location.reload();
-  }
-
-  setOpen(false);
-};
-
-
 
   return (
     <div>
