@@ -11,10 +11,11 @@ interface Project {
   projectName: string;
   projectLocation: string;
   projectDescription: string;
-  supervisorContractor?: string;
-  supervisorConsultant?: string;
+  supervisorContractor?: string[];
+  supervisorConsultant?: string[];
   subcontractor?: string;
 }
+
 
 interface ProjectsTableProps {
   projects: Project[];

@@ -77,8 +77,6 @@ const {
           )}
         </div>
       )}
-
-      {/* Projects Section */}
       <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-blue">My Projects</h2>
