@@ -63,6 +63,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   if (createProject.fulfilled.match(resultAction)) {
     dispatch(fetchProjects());
+    window.location.reload();
   }
 
   setOpen(false);
