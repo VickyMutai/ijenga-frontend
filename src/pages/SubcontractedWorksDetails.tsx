@@ -175,11 +175,16 @@ export default function SubcontractedWorkDetails() {
               <EditSubcontractedWorks workId={workId} />
             </header>
 
-            <p className="text-base mb-2 text-gray-800">{selectedWork.task_description}</p>
+            <p className="text-base mb-2 text-gray-800">
+              {selectedWork.task_description}
+            </p>
             <p className="text-sm text-gray-600 mb-4">
               Task Category:{" "}
               <span className="font-medium capitalize">
-                {selectedWork.task_category}
+                {selectedWork.task_category
+                  .replace(/_/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
               </span>
             </p>
             <div className="bg-gray-50 p-4 py-5 rounded-lg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -213,14 +218,18 @@ export default function SubcontractedWorkDetails() {
           <section className="mb-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                <span className="text-gray-700 mb-2 text-base">Task Cost (Labor)</span>
+                <span className="text-gray-700 mb-2 text-base">
+                  Task Cost (Labor)
+                </span>
                 <span className="text-3xl font-bold text-[#1D3557] self-end mt-auto">
                   Ksh. {selectedWork.task_cost_labor}
                 </span>
               </div>
 
               <div className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 flex flex-col">
-                <span className="text-gray-700 mb-2 text-base">Task Cost (Overhead)</span>
+                <span className="text-gray-700 mb-2 text-base">
+                  Task Cost (Overhead)
+                </span>
                 <span className="text-3xl font-bold text-[#1D3557] self-end mt-auto">
                   Ksh. {selectedWork.task_cost_overhead}
                 </span>
