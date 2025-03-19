@@ -24,6 +24,10 @@ const LABOURER_TITLES = [
   "civil_works",
   "masonry",
   "casual",
+  "plasterers",
+  "intern",
+  "attache",
+  "student",
 ];
 
 const AddLaborerDetails = () => {
@@ -60,19 +64,13 @@ const AddLaborerDetails = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Clear previous errors
     setValidationErrors({});
-
-    // Mpesa number validation
     const errors: { labourer_mpesa_number?: string } = {};
     if (!formData.labourer_mpesa_number.startsWith("254")) {
       errors.labourer_mpesa_number = "Phone number must start with 254.";
     } else if (formData.labourer_mpesa_number.length !== 12) {
       errors.labourer_mpesa_number = "Phone number must be exactly 12 digits.";
     }
-
-    // If there are errors, update state and stop form submission
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors);
       return;
@@ -142,13 +140,16 @@ const AddLaborerDetails = () => {
                     required
                   >
                     <option value="">Select Title</option>
-                    {LABOURER_TITLES.map((title) => (
-                      <option key={title} value={title}>
-                        {title.replace(/_/g, " ")
-                          .toLowerCase()
-                          .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
-                      </option>
-                    ))}
+                    {[...LABOURER_TITLES]
+                      .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+                      .map((title) => (
+                        <option key={title} value={title}>
+                          {title
+                            .replace(/_/g, " ")
+                            .toLowerCase()
+                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        </option>
+                      ))}
                   </select>
                   <input
                     type="text"
@@ -158,7 +159,6 @@ const AddLaborerDetails = () => {
                     onChange={handleChange}
                     required
                   />
-                  {/* Show validation error */}
                   {validationErrors.labourer_mpesa_number && (
                     <p className="text-red-600 text-sm mt-1">
                       {validationErrors.labourer_mpesa_number}
