@@ -248,6 +248,9 @@ export default function SubcontractedWorkDetails() {
           </>
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
+            <div className="mb-4 font-medium text-lg">
+              Total Laborers: {labourers.length}
+            </div>
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="blue text-white">
                 <tr>
