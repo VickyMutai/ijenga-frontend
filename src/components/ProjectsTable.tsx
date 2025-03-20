@@ -33,7 +33,7 @@ export default function ProjectsTable({ projects }: ProjectsTableProps) {
   };
 
   const handleDelete = async (projectId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevents navigating when clicking delete
+    e.stopPropagation();
     const confirmDelete = window.confirm("Are you sure you want to delete this project?");
     if (confirmDelete) {
       await dispatch(deleteProject(projectId));

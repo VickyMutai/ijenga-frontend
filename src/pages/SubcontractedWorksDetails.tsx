@@ -133,8 +133,15 @@ export default function SubcontractedWorkDetails() {
   const costApproval = selectedWork.main_contractor_cost_approval
     ? "Approved"
     : "Not Approved";
-  const handleRemoveLaborer = (labourerId: string) => {
-    dispatch(deleteLabourer(labourerId));
+
+  const handleRemoveLaborer = (labourerId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this labourer?"
+    );
+    if (confirmDelete) {
+      dispatch(deleteLabourer(labourerId));
+    }
   };
 
   const handleRequestRetention = async () => {
@@ -324,8 +331,8 @@ export default function SubcontractedWorkDetails() {
 
                           <button
                             className="hover:text-red-600 transition duration-200 cursor-pointer"
-                            onClick={() =>
-                              handleRemoveLaborer(labourer.labourer_id)
+                            onClick={(e) =>
+                              handleRemoveLaborer(labourer.labourer_id, e)
                             }
                           >
                             <FaTrashCan className="w-6 h-6" />
