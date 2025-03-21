@@ -342,17 +342,23 @@ export default function SubcontractedWorkDetails() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-7">
-                          {/* Pass the labourer object as a prop */}
-                          <EditLaborerDetails labourer={labourer} />
-
-                          <button
-                            className="hover:text-red-600 transition duration-200 cursor-pointer"
-                            onClick={(e) =>
-                              handleRemoveLaborer(labourer.labourer_id, e)
-                            }
-                          >
-                            <FaTrashCan className="w-6 h-6" />
-                          </button>
+                          {!selectedWork.main_contractor_payment_approval ? (
+                            <>
+                              <EditLaborerDetails labourer={labourer} />
+                              <button
+                                className="hover:text-red-600 transition duration-200 cursor-pointer"
+                                onClick={(e) =>
+                                  handleRemoveLaborer(labourer.labourer_id, e)
+                                }
+                              >
+                                <FaTrashCan className="w-6 h-6" />
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-green-600 font-semibold">
+                              Paid
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>
