@@ -182,7 +182,13 @@ export default function SubcontractedWorkDetails() {
               <h2 className="text-xl md:text-2xl text-blue font-semibold capitalize">
                 {selectedWork.task_title}
               </h2>
-              <EditSubcontractedWorks workId={workId} />
+              {!selectedWork.main_contractor_payment_approval ? (
+                <EditSubcontractedWorks workId={workId} />
+              ) : (
+                <span className="text-green-600 font-semibold">
+                  <CheckCircle />
+                </span>
+              )}
             </header>
 
             <p className="text-base mb-2 text-gray-800">
