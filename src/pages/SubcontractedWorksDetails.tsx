@@ -133,6 +133,9 @@ export default function SubcontractedWorkDetails() {
   const costApproval = selectedWork.main_contractor_cost_approval
     ? "Approved"
     : "Not Approved";
+  const retentionMoneyApproval = selectedWork.retention_money_payment_approved
+    ? "Approved"
+    : "Not Approved";
 
   const handleRemoveLaborer = (labourerId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -218,6 +221,14 @@ export default function SubcontractedWorkDetails() {
                 <span className="font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block w-fit capitalize">
                   {costApproval}
                 </span>
+              </div>{" "}
+              <div className="flex flex-col">
+                <span className="text-gray-600 text-sm mb-1 font-medium">
+                  Retention Money Status:
+                </span>
+                <span className="font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block w-fit capitalize">
+                  {retentionMoneyApproval}
+                </span>
               </div>
             </div>
           </div>
@@ -244,7 +255,9 @@ export default function SubcontractedWorkDetails() {
             </div>
           </section>
           <>
-            <AddLaborerDetails />
+            {!selectedWork.main_contractor_payment_approval && (
+              <AddLaborerDetails />
+            )}
           </>
 
           <section className="overflow-x-auto rounded-lg shadow-md mt-3">
