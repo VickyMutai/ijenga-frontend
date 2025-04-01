@@ -3,7 +3,11 @@ import { useDispatch } from "react-redux";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { CirclePlus, X } from "lucide-react";
 import { AppDispatch, RootState } from "../reducers/store";
-import { createLabourer, fetchLabourers } from "../reducers/labourerReducer";
+import {
+  createLabourer,
+  fetchAllLabourers,
+  fetchLabourers,
+} from "../reducers/labourerReducer";
 import { fetchMetadata } from "../reducers/metaReducer";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -33,6 +37,7 @@ const AddLaborerDetails = () => {
     validationErrors.labourer_mpesa_number =
       "Phone number must be exactly 12 digits.";
   }
+  const { allLabourers } = useSelector((state: RootState) => state.labourers);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -72,7 +77,30 @@ const AddLaborerDetails = () => {
 
   useEffect(() => {
     dispatch(fetchMetadata());
+    dispatch(fetchAllLabourers());
   }, [dispatch]);
+
+  const handleIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const id = e.target.value;
+    setFormData((prev) => ({ ...prev, national_id_number: id }));
+
+    const match = allLabourers.find(
+      (l) => l.national_id_number.trim() === id.trim()
+    );
+
+    if (match) {
+      console.log("Auto-filling details from DB", match);
+      setFormData({
+        national_id_number: id,
+        labourer_name: match.labourer_name,
+        labourer_title: match.labourer_title,
+        labourer_mpesa_number: match.labourer_mpesa_number,
+        labourer_daily_rate: String(match.labourer_daily_rate),
+        labourer_overhead_cost: String(match.labourer_overhead_cost),
+        number_of_days_worked: "1",
+      });
+    }
+  };
 
   const { labourerTitles } = useSelector((state: RootState) => state.metaData);
 
@@ -104,23 +132,26 @@ const AddLaborerDetails = () => {
                 <form className="space-y-2" onSubmit={handleSubmit}>
                   <input
                     type="text"
-                    name="labourer_name"
-                    placeholder="Labourer Name"
+                    name="national_id_number"
+                    value={formData.national_id_number}
+                    onChange={handleIdChange}
                     className="project-modal-input"
-                    onChange={handleChange}
+                    placeholder="ID Number"
                     required
                   />
                   <input
                     type="text"
-                    name="national_id_number"
-                    placeholder="ID Number"
+                    name="labourer_name"
+                    placeholder="Labourer Name"
                     className="project-modal-input"
+                    value={formData.labourer_name}
                     onChange={handleChange}
                     required
                   />
                   <select
                     name="labourer_title"
                     className="project-modal-input"
+                    value={formData.labourer_title}
                     onChange={handleChange}
                     required
                   >
@@ -139,6 +170,7 @@ const AddLaborerDetails = () => {
                     placeholder="Mpesa Number"
                     className="project-modal-input"
                     onChange={handleChange}
+                    value={formData.labourer_mpesa_number}
                     required
                   />
                   {validationErrors.labourer_mpesa_number && (

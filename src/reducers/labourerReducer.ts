@@ -16,12 +16,14 @@ interface Labourer {
 
 interface LabourerState {
   labourers: Labourer[];
+  allLabourers: Labourer[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: LabourerState = {
   labourers: [],
+  allLabourers: [],
   loading: false,
   error: null,
 };
@@ -50,6 +52,29 @@ export const fetchLabourers = createAsyncThunk<
     return rejectWithValue(error.response?.data || error.message);
   }
 });
+
+export const fetchAllLabourers = createAsyncThunk(
+  "labourers/fetchAllLabourers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized");
+
+      const response = await api.get(
+        constants.endpoints.labourers.all_labourers,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      return response.data.results;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data || "Failed to fetch labourers"
+      );
+    }
+  }
+);
 
 export const createLabourer = createAsyncThunk<
   Labourer,
@@ -163,6 +188,9 @@ const labourerSlice = createSlice({
       .addCase(fetchLabourers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchAllLabourers.fulfilled, (state, action) => {
+        state.allLabourers = action.payload;
       })
       .addCase(createLabourer.pending, (state) => {
         state.loading = true;

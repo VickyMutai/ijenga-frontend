@@ -59,6 +59,7 @@ export const constants = {
         "/subcontracted-works/?/create_and_assign_labourer/",
       edit_labourer: "/labourers/?/edit_labourer/",
       get_labourers: "/labourers/work_labourers/",
+      all_labourers: "/labourers/",
       get_labourers_by_works: "/subcontracted-works/?/assigned_labourers/",
       get_labourers_by_id:
         "/labourers/my_labourers/?labourer_id={{labourer_id}}",
