@@ -36,15 +36,19 @@ export const fetchUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("authToken");
-      if (!token) return rejectWithValue("Unauthorized: No authentication token found.");
+      if (!token)
+        return rejectWithValue("Unauthorized: No authentication token found.");
 
       const response = await api.get(constants.endpoints.auth.all_users, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      return Array.isArray(response.data.data.users) ? response.data.data.users : [];
+      // ✅ Correct shape
+      return Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || "Failed to fetch users");
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to fetch users"
+      );
     }
   }
 );
@@ -65,32 +69,43 @@ export const fetchUserProfile = createAsyncThunk(
       const { user, permissions } = response.data.data;
       return { user, permissions };
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.detail || "Failed to fetch user profile");
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to fetch user profile"
+      );
     }
   }
 );
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (userData: { 
-    email: string; 
-    password: string; 
-    re_enter_password: string; 
-    first_name: string; 
-    last_name: string; 
-    role: string; 
-    phone_number: string; 
-  }, { rejectWithValue }) => {
+  async (
+    userData: {
+      email: string;
+      password: string;
+      re_enter_password: string;
+      first_name: string;
+      last_name: string;
+      role: string;
+      phone_number: string;
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await api.post(constants.endpoints.auth.register, userData);
-      
+      const response = await api.post(
+        constants.endpoints.auth.register,
+        userData
+      );
+
       // Extract user and token from response
       const { user, tokens } = response.data.data;
       return { user, token: tokens.access };
     } catch (error: unknown) {
       if (error instanceof Error) return rejectWithValue(error.message);
       if (typeof error === "object" && error !== null && "response" in error) {
-        return rejectWithValue((error as { response?: { data?: string } }).response?.data || "Registration failed");
+        return rejectWithValue(
+          (error as { response?: { data?: string } }).response?.data ||
+            "Registration failed"
+        );
       }
       return rejectWithValue("An unknown error occurred");
     }
@@ -99,9 +114,15 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (credentials: { email: string; password: string }, { dispatch, rejectWithValue }) => {
+  async (
+    credentials: { email: string; password: string },
+    { dispatch, rejectWithValue }
+  ) => {
     try {
-      const response = await api.post(constants.endpoints.auth.login, credentials);
+      const response = await api.post(
+        constants.endpoints.auth.login,
+        credentials
+      );
       const { tokens, user } = response.data.data;
 
       if (tokens?.access) {
@@ -114,7 +135,8 @@ export const loginUser = createAsyncThunk(
       return { user, token: tokens.access };
     } catch (error: any) {
       const errorMessage =
-        error.response?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
+        error.response?.data?.non_field_errors?.[0] ||
+        "Login failed. Please try again.";
       return rejectWithValue(errorMessage);
     }
   }
@@ -124,7 +146,6 @@ export const loadUser = createAsyncThunk(
   "auth/loadUser",
   async (_, { rejectWithValue }) => {
     const token = localStorage.getItem("authToken");
-
 
     if (!token) {
       return rejectWithValue("No token found");
@@ -141,15 +162,15 @@ export const loadUser = createAsyncThunk(
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        return { 
-          user: userResponse.data.data.user, 
-          permissions: userResponse.data.data.permissions, 
-          token 
+        return {
+          user: userResponse.data.data.user,
+          permissions: userResponse.data.data.permissions,
+          token,
         };
       } else {
         return rejectWithValue("User not logged in");
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
       return rejectWithValue("Failed to load user");
     }
@@ -160,11 +181,18 @@ export const forgotPassword = createAsyncThunk(
   "auth/forgotPassword",
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await api.post(constants.endpoints.auth.forgot_password, { email });
-      return response.data.message || "Password reset link sent! Check your email.";
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const response = await api.post(
+        constants.endpoints.auth.forgot_password,
+        { email }
+      );
+      return (
+        response.data.message || "Password reset link sent! Check your email."
+      );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
-      return rejectWithValue("Failed to send password reset link. Please try again.");
+      return rejectWithValue(
+        "Failed to send password reset link. Please try again."
+      );
     }
   }
 );
@@ -172,10 +200,15 @@ export const forgotPassword = createAsyncThunk(
 export const resetPassword = createAsyncThunk(
   "auth/resetPassword",
   async (
-    { user_id, token, new_password, re_enter_password }: { 
-      user_id: string; 
-      token: string; 
-      new_password: string; 
+    {
+      user_id,
+      token,
+      new_password,
+      re_enter_password,
+    }: {
+      user_id: string;
+      token: string;
+      new_password: string;
       re_enter_password: string;
     },
     { rejectWithValue }
@@ -189,21 +222,24 @@ export const resetPassword = createAsyncThunk(
       });
 
       return response.data.message || "Password successfully reset!";
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error: unknown) {
       return rejectWithValue("Failed to reset password. Please try again.");
     }
   }
 );
 
-export const logout = createAsyncThunk("auth/logout", async (_, { dispatch }) => {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("refreshToken");
+export const logout = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch }) => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
 
-  dispatch(resetProjects());
+    dispatch(resetProjects());
 
-  return null;
-});
+    return null;
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -217,7 +253,7 @@ const authSlice = createSlice({
     },
     clearError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -261,7 +297,7 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });      
+      });
   },
 });
 
