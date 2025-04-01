@@ -35,6 +35,7 @@ interface SubcontractedWorkState {
   selectedWork: SubcontractedWork | null;
   loading: boolean;
   error: string | null;
+  paidLabourerIds: string[];
 }
 
 const initialState: SubcontractedWorkState = {
@@ -42,6 +43,7 @@ const initialState: SubcontractedWorkState = {
   selectedWork: null,
   loading: false,
   error: null,
+  paidLabourerIds: [],
 };
 
 export const createSubcontractedWork = createAsyncThunk(
@@ -466,6 +468,30 @@ export const approveRetentionMoney = createAsyncThunk(
   }
 );
 
+export const fetchPaymentRecords = createAsyncThunk(
+  "subcontractedWork/fetchPaymentRecords",
+  async (workId: string, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return rejectWithValue("Unauthorized");
+
+      const response = await api.get(
+        constants.endpoints.subcontractor_works.payment_records.replace(
+          "?",
+          workId
+        ),
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(response.data);
+      return response.data.labourers; // Return list of paid labourer IDs
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.detail || "Failed to fetch payment records"
+      );
+    }
+  }
+);
+
 const subcontractedWorkSlice = createSlice({
   name: "subcontractedWork",
   initialState,
@@ -628,6 +654,12 @@ const subcontractedWorkSlice = createSlice({
       })
       .addCase(approveRetentionMoney.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchPaymentRecords.fulfilled, (state, action) => {
+        state.paidLabourerIds = action.payload;
+      })
+      .addCase(fetchPaymentRecords.rejected, (state, action) => {
         state.error = action.payload as string;
       });
   },
