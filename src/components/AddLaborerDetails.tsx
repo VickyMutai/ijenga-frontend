@@ -1,34 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { CirclePlus, X } from "lucide-react";
-import { AppDispatch } from "../reducers/store";
+import { AppDispatch, RootState } from "../reducers/store";
 import { createLabourer, fetchLabourers } from "../reducers/labourerReducer";
+import { fetchMetadata } from "../reducers/metaReducer";
 import { useParams } from "react-router-dom";
-
-const LABOURER_TITLES = [
-  "welders",
-  "aluminium_fabricators",
-  "tiling_installer",
-  "carpenters",
-  "steel_fixers",
-  "plant_mechanics",
-  "plant_operators",
-  "painters",
-  "solar_water_installer",
-  "scattolder",
-  "structural_cabling_installer",
-  "electrician",
-  "plumber",
-  "interior_designer",
-  "civil_works",
-  "masonry",
-  "casual",
-  "plasterers",
-  "intern",
-  "attache",
-  "student",
-];
+import { useSelector } from "react-redux";
 
 const AddLaborerDetails = () => {
   const { id: workId } = useParams<{ id: string }>();
@@ -91,6 +69,13 @@ const AddLaborerDetails = () => {
       setOpen(false);
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchMetadata());
+  }, [dispatch]);
+
+  const { labourerTitles } = useSelector((state: RootState) => state.metaData);
+
   return (
     <div>
       <CirclePlus
@@ -140,14 +125,11 @@ const AddLaborerDetails = () => {
                     required
                   >
                     <option value="">Select Title</option>
-                    {[...LABOURER_TITLES]
-                      .sort((a, b) => a.localeCompare(b)) // Sorting alphabetically
+                    {[...labourerTitles]
+                      .sort((a, b) => a.label.localeCompare(b.label))
                       .map((title) => (
-                        <option key={title} value={title}>
-                          {title
-                            .replace(/_/g, " ")
-                            .toLowerCase()
-                            .replace(/\b\w/g, (char) => char.toUpperCase())}
+                        <option key={title.key} value={title.key}>
+                          {title.label}
                         </option>
                       ))}
                   </select>

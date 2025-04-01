@@ -5,6 +5,7 @@ import subcontractedWorkReducer from "./subcontractedWorksReducer";
 import labourersReducer from "./labourerReducer";
 import proofofworkReducer from "./proofOfWorksReducer";
 import subcontractorsReducer from "./subcontractorsReducer";
+import metaReducer from "./metaReducer";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     labourers: labourersReducer,
     proofOfWorks: proofofworkReducer,
     subcontractors: subcontractorsReducer,
+    metaData: metaReducer,
   },
 });
 
